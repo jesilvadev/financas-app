@@ -10,9 +10,9 @@ import { OnboardingComponent } from './pages/auth/onboarding/onboarding.componen
 
 export const routes: Routes = [
   // Rotas de autenticação
-  { path: 'auth/signin', component: SigninComponent },
-  { path: 'auth/signup', component: SignupComponent },
-  { path: 'auth/onboarding', component: OnboardingComponent },
+  { path: 'signin', component: SigninComponent },
+  { path: 'signup', component: SignupComponent },
+  { path: 'onboarding', component: OnboardingComponent },
 
   // Rotas principais com layout
   {
