@@ -1,7 +1,7 @@
 <div class="min-h-svh bg-layer text-black flex flex-col">
   <!-- HEADER -->
   <header
-    class="relative bg-primary text-white px-5 pt-6 pb-16 overflow-hidden"
+    class="relative bg-primary text-white px-5 pt-12 pb-20 overflow-hidden"
   >
     <div class="mx-auto max-w-md">
       <div class="flex items-center justify-between">
@@ -21,16 +21,15 @@
           <!-- Bell icon -->
           <svg
             xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 24 24"
+            width="22"
+            height="27"
+            viewBox="0 0 22 27"
             fill="none"
-            stroke="currentColor"
-            stroke-width="2"
             class="h-6 w-6"
           >
             <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              d="M14.86 17.21a4 4 0 0 1-5.72 0M18 8a6 6 0 1 0-12 0c0 7-3 7-3 7h18s-3 0-3-7"
+              d="M0 22.6667V20.4443H2.66667V10.5777C2.66667 8.71856 3.21856 7.05745 4.32233 5.59433C5.42589 4.13145 6.874 3.2 8.66667 2.8V2C8.66667 1.44444 8.86111 0.972222 9.25 0.583333C9.63889 0.194444 10.1111 0 10.6667 0C11.2222 0 11.6944 0.194444 12.0833 0.583333C12.4722 0.972222 12.6667 1.44444 12.6667 2V2.8C14.4593 3.2 15.9074 4.13145 17.011 5.59433C18.1148 7.05745 18.6667 8.71856 18.6667 10.5777V20.4443H21.3333V22.6667H0ZM10.6667 26.6667C9.93334 26.6667 9.30556 26.4056 8.78333 25.8833C8.26111 25.3611 8 24.7333 8 24H13.3333C13.3333 24.7333 13.0722 25.3611 12.55 25.8833C12.0278 26.4056 11.4 26.6667 10.6667 26.6667ZM4.889 20.4443H16.4443V10.5777C16.4443 8.97767 15.8814 7.61478 14.7557 6.489C13.6297 5.363 12.2667 4.8 10.6667 4.8C9.06667 4.8 7.70367 5.363 6.57767 6.489C5.45189 7.61478 4.889 8.97767 4.889 10.5777V20.4443Z"
+              fill="currentColor"
             />
           </svg>
         </button>
@@ -90,10 +89,6 @@
               fill="currentColor"
             />
           </svg>
-          <div
-            *ngIf="rlaHome.isActive"
-            class="h-1 w-6 bg-primary rounded-full"
-          ></div>
         </a>
 
         <!-- Stats -->
@@ -118,10 +113,6 @@
               fill="currentColor"
             />
           </svg>
-          <div
-            *ngIf="rlaStats.isActive"
-            class="h-1 w-6 bg-primary rounded-full"
-          ></div>
         </a>
 
         <!-- Espaço para FAB -->
@@ -149,10 +140,6 @@
               fill="currentColor"
             />
           </svg>
-          <div
-            *ngIf="rlaHistory.isActive"
-            class="h-1 w-6 bg-primary rounded-full"
-          ></div>
         </a>
 
         <!-- Perfil -->
@@ -177,10 +164,6 @@
               fill="currentColor"
             />
           </svg>
-          <div
-            *ngIf="rlaProfile.isActive"
-            class="h-1 w-6 bg-primary rounded-full"
-          ></div>
         </a>
       </div>
 
