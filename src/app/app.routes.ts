@@ -7,17 +7,24 @@ import { ProfileComponent } from './pages/profile/profile.component';
 import { SigninComponent } from './pages/auth/signin/signin.component';
 import { SignupComponent } from './pages/auth/signup/signup.component';
 import { OnboardingComponent } from './pages/auth/onboarding/onboarding.component';
+import { authGuard } from './guards/auth.guard';
+import { guestGuard } from './guards/guest.guard';
 
 export const routes: Routes = [
-  // Rotas de autenticação
-  { path: 'signin', component: SigninComponent },
-  { path: 'signup', component: SignupComponent },
-  { path: 'onboarding', component: OnboardingComponent },
+  // Rotas de autenticação (apenas para não autenticados)
+  { path: 'signin', component: SigninComponent, canActivate: [guestGuard] },
+  { path: 'signup', component: SignupComponent, canActivate: [guestGuard] },
+  {
+    path: 'onboarding',
+    component: OnboardingComponent,
+    canActivate: [guestGuard],
+  },
 
-  // Rotas principais com layout
+  // Rotas principais com layout (apenas para autenticados)
   {
     path: '',
     component: MainLayoutComponent,
+    canActivate: [authGuard],
     children: [
       { path: '', component: HomeComponent },
       { path: 'stats', component: StatsComponent },
@@ -25,4 +32,7 @@ export const routes: Routes = [
       { path: 'profile', component: ProfileComponent },
     ],
   },
+
+  // Fallback - redirecionar qualquer rota não encontrada para signin
+  { path: '**', redirectTo: 'signin' },
 ];

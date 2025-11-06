@@ -1,11 +1,14 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Router } from '@angular/router';
 import { Step1Component } from './step1/step1.component';
 import { Step2Component } from './step2/step2.component';
 import { Step3Component } from './step3/step3.component';
 import { Step4Component } from './step4/step4.component';
 import { Step5Component } from './step5/step5.component';
 import { ConclusaoComponent } from './conclusao/conclusao.component';
+import { AuthService } from '../../../services/auth.service';
+import { SignupData } from '../../../models/user.model';
 
 @Component({
   selector: 'app-signup',
@@ -23,7 +26,7 @@ import { ConclusaoComponent } from './conclusao/conclusao.component';
 })
 export class SignupComponent {
   currentStep: number = 1;
-  signupData: any = {
+  signupData: SignupData = {
     fullName: '',
     email: '',
     password: '',
@@ -31,6 +34,10 @@ export class SignupComponent {
     expenses: [],
     startDay: '',
   };
+  isLoading: boolean = false;
+  errorMessage: string = '';
+
+  constructor(private authService: AuthService, private router: Router) {}
 
   // Step 1
   onStep1Next(data: any): void {
@@ -81,9 +88,24 @@ export class SignupComponent {
 
   // Finalizar cadastro
   completeSignup(): void {
+    this.isLoading = true;
+    this.errorMessage = '';
+
     console.log('Dados do cadastro:', this.signupData);
-    // Aqui você implementaria a lógica de criar a conta
-    // Por enquanto, apenas avançamos para a tela de conclusão
-    this.currentStep = 6;
+
+    this.authService.signup(this.signupData).subscribe({
+      next: (user) => {
+        console.log('Cadastro bem-sucedido:', user);
+        this.isLoading = false;
+        this.currentStep = 6;
+      },
+      error: (error) => {
+        console.error('Erro no cadastro:', error);
+        this.errorMessage = error.message || 'Erro ao criar conta';
+        this.isLoading = false;
+        // Voltar para o step 2 onde estão os dados de email/senha
+        this.currentStep = 2;
+      },
+    });
   }
 }
