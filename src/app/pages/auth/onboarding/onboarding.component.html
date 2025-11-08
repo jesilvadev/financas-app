@@ -1,114 +1,91 @@
-<div class="min-h-screen flex items-center justify-center bg-gray-50 px-4">
-  <div class="w-full max-w-lg">
-    <div class="bg-white rounded-lg shadow-sm p-8">
-      <!-- Indicador de Steps -->
-      <div class="flex justify-center mb-8">
-        <div class="flex items-center space-x-2">
-          <div
-            class="w-2 h-2 rounded-full transition-colors"
-            [class.bg-gray-900]="currentStep === 1"
-            [class.bg-gray-300]="currentStep !== 1"
-          ></div>
-          <div
-            class="w-2 h-2 rounded-full transition-colors"
-            [class.bg-gray-900]="currentStep === 2"
-            [class.bg-gray-300]="currentStep !== 2"
-          ></div>
-          <div
-            class="w-2 h-2 rounded-full transition-colors"
-            [class.bg-gray-900]="currentStep === 3"
-            [class.bg-gray-300]="currentStep !== 3"
-          ></div>
-        </div>
-      </div>
+<section class="min-h-screen flex items-center justify-center p-4">
+  <div class="w-full max-w-lg flex flex-col gap-8">
+    <div class="flex justify-center gap-2">
+      <span
+        class="h-2 w-2 rounded-full"
+        [class.bg-gray-900]="currentStep === 1"
+        [class.border]="currentStep !== 1"
+      ></span>
+      <span
+        class="h-2 w-2 rounded-full"
+        [class.bg-gray-900]="currentStep === 2"
+        [class.border]="currentStep !== 2"
+      ></span>
+      <span
+        class="h-2 w-2 rounded-full"
+        [class.bg-gray-900]="currentStep === 3"
+        [class.border]="currentStep !== 3"
+      ></span>
+    </div>
 
-      <!-- Step 1 - Boas-vindas -->
-      <div *ngIf="currentStep === 1" class="text-center">
-        <h1 class="text-3xl font-semibold text-gray-900 mb-4">Bem-vindo!</h1>
-        <p class="text-gray-600 mb-6">
-          Estamos felizes em tê-lo aqui. Vamos começar sua jornada para um
-          controle financeiro mais eficiente.
-        </p>
-        <p class="text-gray-600 mb-8">
-          Nos próximos passos, você conhecerá as principais funcionalidades da
-          nossa plataforma.
-        </p>
+    <div *ngIf="currentStep === 1" class="flex flex-col gap-4 text-center">
+      <h1 class="text-3xl font-medium">Bem-vindo!</h1>
+      <p class="text-sm">
+        Estamos felizes em tê-lo aqui. Vamos iniciar sua jornada para um
+        controle financeiro mais eficiente.
+      </p>
+      <p class="text-sm">
+        Nos próximos passos, você conhecerá as principais funcionalidades da
+        plataforma.
+      </p>
+      <button
+        (click)="nextStep()"
+        class="border rounded px-4 py-2 text-sm font-medium"
+      >
+        Começar
+      </button>
+    </div>
 
+    <div *ngIf="currentStep === 2" class="flex flex-col gap-4 text-center">
+      <h2 class="text-2xl font-medium">Organize suas Finanças</h2>
+      <p class="text-sm">
+        Acompanhe gastos, visualize estatísticas detalhadas e mantenha um
+        histórico completo de transações.
+      </p>
+      <p class="text-sm">
+        Tenha controle total sobre suas finanças de forma simples e intuitiva.
+      </p>
+      <div class="flex gap-3">
+        <button
+          (click)="previousStep()"
+          class="flex-1 border rounded px-4 py-2 text-sm"
+        >
+          Voltar
+        </button>
         <button
           (click)="nextStep()"
-          class="w-full bg-gray-900 text-white py-2 px-4 rounded-md hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 transition-colors"
+          class="flex-1 border rounded px-4 py-2 text-sm font-medium"
         >
-          Começar
+          Continuar
         </button>
       </div>
+    </div>
 
-      <!-- Step 2 - Segunda etapa -->
-      <div *ngIf="currentStep === 2" class="text-center">
-        <h2 class="text-2xl font-semibold text-gray-900 mb-4">
-          Organize suas Finanças
-        </h2>
-        <p class="text-gray-600 mb-6">
-          Com nossa plataforma, você pode acompanhar seus gastos, visualizar
-          estatísticas detalhadas e manter um histórico completo de suas
-          transações.
-        </p>
-        <p class="text-gray-600 mb-8">
-          Tenha controle total sobre suas finanças de forma simples e intuitiva.
-        </p>
-
-        <div class="flex gap-3">
-          <button
-            (click)="previousStep()"
-            class="flex-1 bg-white border border-gray-300 text-gray-700 py-2 px-4 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-offset-2 transition-colors"
-          >
-            Voltar
-          </button>
-          <button
-            (click)="nextStep()"
-            class="flex-1 bg-gray-900 text-white py-2 px-4 rounded-md hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 transition-colors"
-          >
-            Continuar
-          </button>
-        </div>
+    <div *ngIf="currentStep === 3" class="flex flex-col gap-4 text-center">
+      <h2 class="text-2xl font-medium">Comece Agora!</h2>
+      <p class="text-sm">
+        Você está pronto para começar. Crie sua conta e dê o primeiro passo rumo
+        ao controle total das suas finanças.
+      </p>
+      <p class="text-sm">É rápido, fácil e totalmente gratuito!</p>
+      <div class="flex flex-col gap-3">
+        <button
+          routerLink="/signup"
+          class="border rounded px-4 py-2 text-sm font-medium"
+        >
+          Criar Conta
+        </button>
+        <button
+          (click)="previousStep()"
+          class="border rounded px-4 py-2 text-sm"
+        >
+          Voltar
+        </button>
       </div>
-
-      <!-- Step 3 - Etapa final -->
-      <div *ngIf="currentStep === 3" class="text-center">
-        <h2 class="text-2xl font-semibold text-gray-900 mb-4">Comece Agora!</h2>
-        <p class="text-gray-600 mb-6">
-          Você está pronto para começar. Crie sua conta e dê o primeiro passo
-          rumo ao controle total das suas finanças.
-        </p>
-        <p class="text-gray-600 mb-8">É rápido, fácil e totalmente gratuito!</p>
-
-        <div class="space-y-3">
-          <button
-            routerLink="/signup"
-            class="w-full bg-gray-900 text-white py-2 px-4 rounded-md hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 transition-colors"
-          >
-            Criar Conta
-          </button>
-
-          <button
-            (click)="previousStep()"
-            class="w-full bg-white border border-gray-300 text-gray-700 py-2 px-4 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-offset-2 transition-colors"
-          >
-            Voltar
-          </button>
-        </div>
-
-        <div class="mt-6">
-          <p class="text-sm text-gray-600">
-            Já tem uma conta?
-            <a
-              routerLink="/signin"
-              class="text-gray-900 font-medium hover:underline ml-1"
-            >
-              Entrar
-            </a>
-          </p>
-        </div>
+      <div class="text-sm">
+        <span>Já tem uma conta?</span>
+        <a routerLink="/signin" class="underline ml-1">Entrar</a>
       </div>
     </div>
   </div>
-</div>
+</section>

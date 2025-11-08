@@ -1,81 +1,66 @@
-<div class="min-h-screen flex items-center justify-center bg-gray-50 px-4 py-8">
-  <div class="w-full max-w-md">
-    <div class="bg-white rounded-lg shadow-sm p-8">
-      <!-- Mensagem de Erro -->
-      <div
-        *ngIf="errorMessage"
-        class="mb-4 p-3 bg-red-50 border border-red-200 rounded-md"
-      >
-        <p class="text-sm text-red-600">{{ errorMessage }}</p>
-      </div>
-
-      <!-- Indicador de Progresso -->
-      <div *ngIf="currentStep < 6" class="flex justify-center mb-8">
-        <div class="flex items-center space-x-2">
-          <div
-            class="w-2 h-2 rounded-full transition-colors"
-            [class.bg-gray-900]="currentStep === 1"
-            [class.bg-gray-300]="currentStep !== 1"
-          ></div>
-          <div
-            class="w-2 h-2 rounded-full transition-colors"
-            [class.bg-gray-900]="currentStep === 2"
-            [class.bg-gray-300]="currentStep !== 2"
-          ></div>
-          <div
-            class="w-2 h-2 rounded-full transition-colors"
-            [class.bg-gray-900]="currentStep === 3"
-            [class.bg-gray-300]="currentStep !== 3"
-          ></div>
-          <div
-            class="w-2 h-2 rounded-full transition-colors"
-            [class.bg-gray-900]="currentStep === 4"
-            [class.bg-gray-300]="currentStep !== 4"
-          ></div>
-          <div
-            class="w-2 h-2 rounded-full transition-colors"
-            [class.bg-gray-900]="currentStep === 5"
-            [class.bg-gray-300]="currentStep !== 5"
-          ></div>
-        </div>
-      </div>
-
-      <!-- Step 1 -->
-      <app-step1
-        *ngIf="currentStep === 1"
-        (next)="onStep1Next($event)"
-      ></app-step1>
-
-      <!-- Step 2 -->
-      <app-step2
-        *ngIf="currentStep === 2"
-        (next)="onStep2Next($event)"
-        (back)="onStep2Back()"
-      ></app-step2>
-
-      <!-- Step 3 -->
-      <app-step3
-        *ngIf="currentStep === 3"
-        (next)="onStep3Next($event)"
-        (back)="onStep3Back()"
-      ></app-step3>
-
-      <!-- Step 4 -->
-      <app-step4
-        *ngIf="currentStep === 4"
-        (next)="onStep4Next($event)"
-        (back)="onStep4Back()"
-      ></app-step4>
-
-      <!-- Step 5 -->
-      <app-step5
-        *ngIf="currentStep === 5"
-        (next)="onStep5Next($event)"
-        (back)="onStep5Back()"
-      ></app-step5>
-
-      <!-- Conclusão -->
-      <app-conclusao *ngIf="currentStep === 6"></app-conclusao>
+<section class="min-h-screen flex items-center justify-center p-4">
+  <div class="w-full max-w-md flex flex-col gap-6">
+    <div *ngIf="errorMessage" class="flex flex-col gap-2 text-sm">
+      <p>{{ errorMessage }}</p>
     </div>
+
+    <div *ngIf="currentStep < 6" class="flex justify-center gap-2">
+      <span
+        class="h-2 w-2 rounded-full"
+        [class.bg-gray-900]="currentStep === 1"
+        [class.border]="currentStep !== 1"
+      ></span>
+      <span
+        class="h-2 w-2 rounded-full"
+        [class.bg-gray-900]="currentStep === 2"
+        [class.border]="currentStep !== 2"
+      ></span>
+      <span
+        class="h-2 w-2 rounded-full"
+        [class.bg-gray-900]="currentStep === 3"
+        [class.border]="currentStep !== 3"
+      ></span>
+      <span
+        class="h-2 w-2 rounded-full"
+        [class.bg-gray-900]="currentStep === 4"
+        [class.border]="currentStep !== 4"
+      ></span>
+      <span
+        class="h-2 w-2 rounded-full"
+        [class.bg-gray-900]="currentStep === 5"
+        [class.border]="currentStep !== 5"
+      ></span>
+    </div>
+
+    <app-step1
+      *ngIf="currentStep === 1"
+      (next)="onStep1Next($event)"
+    ></app-step1>
+
+    <app-step2
+      *ngIf="currentStep === 2"
+      (next)="onStep2Next($event)"
+      (back)="onStep2Back()"
+    ></app-step2>
+
+    <app-step3
+      *ngIf="currentStep === 3"
+      (next)="onStep3Next($event)"
+      (back)="onStep3Back()"
+    ></app-step3>
+
+    <app-step4
+      *ngIf="currentStep === 4"
+      (next)="onStep4Next($event)"
+      (back)="onStep4Back()"
+    ></app-step4>
+
+    <app-step5
+      *ngIf="currentStep === 5"
+      (next)="onStep5Next($event)"
+      (back)="onStep5Back()"
+    ></app-step5>
+
+    <app-conclusao *ngIf="currentStep === 6"></app-conclusao>
   </div>
-</div>
+</section>
