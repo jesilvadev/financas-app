@@ -13,19 +13,10 @@
           <button
             type="button"
             aria-label="Fechar modal"
+            class="text-primary text-base leading-none px-1 py-1 mt-1 mr-1 rounded-full transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
             (click)="handleClose()"
           >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              height="24px"
-              viewBox="0 -960 960 960"
-              width="24px"
-              fill="#6B54EC"
-            >
-              <path
-                d="m336-280-56-56 144-144-144-143 56-56 144 144 143-144 56 56-144 143 144 144-56 56-143-144-144 144Z"
-              />
-            </svg>
+            ✕
           </button>
         </div>
 
@@ -85,75 +76,83 @@
     </ng-container>
 
     <ng-template #formTemplate>
-      <div class="flex flex-1 flex-col px-4 py-5 gap-5">
+      <div class="flex flex-1 flex-col px-5 py-5 gap-5">
         <div class="flex items-center justify-between">
           <button
             type="button"
-            class="rounded-full bg-primary/10 px-4 py-1 text-xs font-semibold uppercase tracking-wide text-primary"
+            aria-label="Voltar"
+            class="px-1 py-1 rounded-full transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
             (click)="backToTypeSelection()"
           >
-            {{ entryType === "income" ? "Receita" : "Despesa" }}
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="#6B54EC"
+            >
+              <path d="M15.41 7.41 14 6l-6 6 6 6 1.41-1.41L10.83 12z" />
+            </svg>
           </button>
+          <div class="text-success font-semibold">Registrar ganho</div>
           <button
             type="button"
             aria-label="Fechar modal"
-            class="rounded-full bg-disable/20 p-2 text-description transition hover:bg-disable/30 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
+            class="px-1 py-1 rounded-full transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
             (click)="handleClose()"
           >
-            ✕
+            <button
+              type="button"
+              aria-label="Fechar modal"
+              class="text-primary text-base leading-none px-1 py-1 rounded-full transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
+              (click)="handleClose()"
+            >
+              ✕
+            </button>
           </button>
         </div>
 
-        <div class="flex-1 space-y-4 overflow-y-auto pr-1">
-          <label
-            class="flex flex-col gap-2 text-sm font-medium text-description"
-          >
-            Valor
+        <div class="flex-1 space-y-6 overflow-y-auto pr-1">
+          <div class="space-y-2">
             <div
-              class="flex items-center rounded-2xl border border-black/10 bg-white px-4 py-3 focus-within:border-primary/40 focus-within:ring-2 focus-within:ring-primary/20"
+              class="h-[63px] rounded-md border-2 border-primary/30 bg-white px-4 py-3 focus-within:border-primary focus-within:ring-0"
             >
-              <span class="mr-3 text-sm font-semibold text-description">
-                R$
-              </span>
+              <div class="flex h-full items-center gap-3 text-description">
+                <span>R$</span>
+                <input
+                  type="number"
+                  min="0"
+                  step="0.01"
+                  placeholder="0,00"
+                  class="w-full border-0 bg-transparent text-base text-black outline-none placeholder:text-disable"
+                  [(ngModel)]="amount"
+                />
+              </div>
+            </div>
+          </div>
+
+          <div class="space-y-2">
+            <div
+              class="h-[63px] rounded-md border-2 border-primary/30 bg-white px-4 py-3 focus-within:border-primary focus-within:ring-0"
+            >
               <input
-                type="number"
-                min="0"
-                step="0.01"
-                placeholder="0,00"
-                class="w-full border-0 bg-transparent text-base font-semibold text-black outline-none"
-                [(ngModel)]="amount"
+                type="text"
+                placeholder="Freelance, Comissão..."
+                class="w-full h-full border-0 bg-transparent text-black outline-none placeholder:text-disable"
+                [(ngModel)]="category"
               />
             </div>
-          </label>
+          </div>
 
-          <label
-            class="flex flex-col gap-2 text-sm font-medium text-description"
+          <button
+            type="button"
+            class="h-[63px] w-full items-center justify-center rounded-xl bg-primary px-6 text-base font-medium text-white transition hover:bg-primary/90 active:scale-95 disabled:pointer-events-none disabled:opacity-50"
+            [disabled]="!isFormValid"
+            (click)="submit()"
           >
-            Categoria
-            <div
-              class="rounded-2xl border border-black/10 bg-white px-4 py-3 focus-within:border-primary/40 focus-within:ring-2 focus-within:ring-primary/20"
-            >
-              <select
-                class="w-full border-0 bg-transparent text-base font-semibold text-black outline-none"
-                [(ngModel)]="category"
-              >
-                <option value="" disabled>Selecione</option>
-                <option *ngFor="let item of availableCategories" [value]="item">
-                  {{ item }}
-                </option>
-              </select>
-            </div>
-          </label>
+            Confirmar
+          </button>
         </div>
-
-        <button
-          type="button"
-          class="flex w-full items-center justify-center rounded-full bg-primary px-6 py-3 text-base font-semibold text-white transition hover:bg-primary/90 active:scale-95 disabled:pointer-events-none disabled:opacity-50"
-          [disabled]="!isFormValid"
-          (click)="submit()"
-        >
-          Confirmar
-        </button>
       </div>
     </ng-template>
   </div>
