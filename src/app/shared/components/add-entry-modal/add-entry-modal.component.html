@@ -126,12 +126,16 @@
               <div class="flex h-full items-center gap-3 text-description">
                 <span>R$</span>
                 <input
-                  type="number"
-                  min="0"
-                  step="0.01"
+                  type="text"
+                  inputmode="decimal"
+                  autocomplete="off"
                   placeholder="0,00"
+                  mask="separator.2"
+                  thousandSeparator="."
+                  decimalMarker=","
+                  [dropSpecialCharacters]="false"
                   class="w-full border-0 bg-transparent text-base text-black outline-none placeholder:text-disable"
-                  [(ngModel)]="amount"
+                  [(ngModel)]="amountInput"
                 />
               </div>
             </div>

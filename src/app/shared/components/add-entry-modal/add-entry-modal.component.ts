@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { NgxMaskDirective } from 'ngx-mask';
 
 type EntryType = 'income' | 'expense';
 
@@ -13,8 +14,9 @@ export interface AddEntryPayload {
 @Component({
   selector: 'app-add-entry-modal',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, NgxMaskDirective],
   templateUrl: './add-entry-modal.component.html',
+  providers: [],
 })
 export class AddEntryModalComponent {
   @Input() open = false;
@@ -23,7 +25,7 @@ export class AddEntryModalComponent {
   @Output() confirm = new EventEmitter<AddEntryPayload>();
 
   entryType: EntryType | null = null;
-  amount: number | null = null;
+  amountInput: string = '';
   category = '';
 
   private readonly categories: Record<EntryType, string[]> = {
@@ -36,10 +38,11 @@ export class AddEntryModalComponent {
   }
 
   get isFormValid(): boolean {
+    const parsed = this.parseCurrencyBr(this.amountInput);
     return (
       this.entryType !== null &&
-      this.amount !== null &&
-      this.amount > 0 &&
+      parsed !== null &&
+      parsed > 0 &&
       !!this.category
     );
   }
@@ -51,7 +54,7 @@ export class AddEntryModalComponent {
 
   reset(): void {
     this.entryType = null;
-    this.amount = null;
+    this.amountInput = '';
     this.category = '';
   }
 
@@ -66,15 +69,23 @@ export class AddEntryModalComponent {
   }
 
   submit(): void {
-    if (!this.isFormValid || this.entryType === null || this.amount === null) {
+    const parsed = this.parseCurrencyBr(this.amountInput);
+    if (!this.isFormValid || this.entryType === null || parsed === null) {
       return;
     }
 
     this.confirm.emit({
       type: this.entryType,
-      amount: Number(this.amount),
+      amount: parsed,
       category: this.category,
     });
     this.reset();
+  }
+
+  private parseCurrencyBr(formatted: string): number | null {
+    if (!formatted) return null;
+    const normalized = formatted.replace(/\\./g, '').replace(',', '.');
+    const num = Number(normalized);
+    return Number.isFinite(num) ? num : null;
   }
 }
