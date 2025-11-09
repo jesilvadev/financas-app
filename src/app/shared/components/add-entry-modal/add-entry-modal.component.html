@@ -1,0 +1,115 @@
+<div
+  *ngIf="open"
+  class="fixed inset-0 z-[999] flex items-center justify-center bg-black/50 backdrop-blur-sm px-4"
+  (click)="handleClose()"
+>
+  <div
+    class="w-full max-w-xs h-[22.5rem] rounded-3xl bg-layer shadow-2xl ring-1 ring-black/10 overflow-hidden flex flex-col"
+    (click)="$event.stopPropagation()"
+  >
+    <ng-container *ngIf="!entryType; else formTemplate">
+      <div class="flex flex-1 flex-col">
+        <button
+          type="button"
+          class="relative flex flex-1 flex-col items-center justify-center gap-3 bg-success/10 text-success transition hover:bg-success/15 active:scale-[0.99] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-success/40"
+          (click)="selectType('income')"
+        >
+          <span
+            class="flex h-14 w-14 items-center justify-center rounded-full bg-success text-white text-3xl leading-none shadow-lg shadow-success/20"
+          >
+            +
+          </span>
+          <span class="text-base font-semibold uppercase">Receita</span>
+        </button>
+
+        <div class="h-px w-full bg-disable/20"></div>
+
+        <button
+          type="button"
+          class="relative flex flex-1 flex-col items-center justify-center gap-3 bg-error/5 text-error transition hover:bg-error/10 active:scale-[0.99] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-error/30"
+          (click)="selectType('expense')"
+        >
+          <span
+            class="flex h-14 w-14 items-center justify-center rounded-full bg-error text-white text-3xl leading-none shadow-lg shadow-error/20"
+          >
+            −
+          </span>
+          <span class="text-base font-semibold uppercase">Despesa</span>
+        </button>
+      </div>
+    </ng-container>
+
+    <ng-template #formTemplate>
+      <div class="flex flex-1 flex-col px-4 py-5 gap-5">
+        <div class="flex items-center justify-between">
+          <button
+            type="button"
+            class="rounded-full bg-primary/10 px-4 py-1 text-xs font-semibold uppercase tracking-wide text-primary"
+            (click)="backToTypeSelection()"
+          >
+            {{ entryType === "income" ? "Receita" : "Despesa" }}
+          </button>
+          <button
+            type="button"
+            aria-label="Fechar modal"
+            class="rounded-full bg-disable/20 p-2 text-description transition hover:bg-disable/30 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
+            (click)="handleClose()"
+          >
+            ✕
+          </button>
+        </div>
+
+        <div class="flex-1 space-y-4 overflow-y-auto pr-1">
+          <label
+            class="flex flex-col gap-2 text-sm font-medium text-description"
+          >
+            Valor
+            <div
+              class="flex items-center rounded-2xl border border-black/10 bg-white px-4 py-3 focus-within:border-primary/40 focus-within:ring-2 focus-within:ring-primary/20"
+            >
+              <span class="mr-3 text-sm font-semibold text-description">
+                R$
+              </span>
+              <input
+                type="number"
+                min="0"
+                step="0.01"
+                placeholder="0,00"
+                class="w-full border-0 bg-transparent text-base font-semibold text-black outline-none"
+                [(ngModel)]="amount"
+              />
+            </div>
+          </label>
+
+          <label
+            class="flex flex-col gap-2 text-sm font-medium text-description"
+          >
+            Categoria
+            <div
+              class="rounded-2xl border border-black/10 bg-white px-4 py-3 focus-within:border-primary/40 focus-within:ring-2 focus-within:ring-primary/20"
+            >
+              <select
+                class="w-full border-0 bg-transparent text-base font-semibold text-black outline-none"
+                [(ngModel)]="category"
+              >
+                <option value="" disabled>Selecione</option>
+                <option *ngFor="let item of availableCategories" [value]="item">
+                  {{ item }}
+                </option>
+              </select>
+            </div>
+          </label>
+        </div>
+
+        <button
+          type="button"
+          class="flex w-full items-center justify-center rounded-full bg-primary px-6 py-3 text-base font-semibold text-white transition hover:bg-primary/90 active:scale-95 disabled:pointer-events-none disabled:opacity-50"
+          [disabled]="!isFormValid"
+          (click)="submit()"
+        >
+          Confirmar
+        </button>
+      </div>
+    </ng-template>
+  </div>
+</div>
