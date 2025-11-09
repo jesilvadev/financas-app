@@ -8,34 +8,79 @@
     (click)="$event.stopPropagation()"
   >
     <ng-container *ngIf="!entryType; else formTemplate">
-      <div class="flex flex-1 flex-col">
-        <button
-          type="button"
-          class="relative flex flex-1 flex-col items-center justify-center gap-3 bg-success/10 text-success transition hover:bg-success/15 active:scale-[0.99] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-success/40"
-          (click)="selectType('income')"
-        >
-          <span
-            class="flex h-14 w-14 items-center justify-center rounded-full bg-success text-white text-3xl leading-none shadow-lg shadow-success/20"
+      <div class="flex flex-1 flex-col px-5 py-5 gap-5">
+        <div class="flex justify-end">
+          <button
+            type="button"
+            aria-label="Fechar modal"
+            (click)="handleClose()"
           >
-            +
-          </span>
-          <span class="text-base font-semibold uppercase">Receita</span>
-        </button>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              height="24px"
+              viewBox="0 -960 960 960"
+              width="24px"
+              fill="#6B54EC"
+            >
+              <path
+                d="m336-280-56-56 144-144-144-143 56-56 144 144 143-144 56 56-144 143 144 144-56 56-143-144-144 144Z"
+              />
+            </svg>
+          </button>
+        </div>
 
-        <div class="h-px w-full bg-disable/20"></div>
+        <div class="text-center space-y-2">
+          <div class="font-semibold text-lg text-primary">
+            O que você quer registrar?
+          </div>
+          <p class="text-primary font-light">
+            Escolha se deseja adicionar um ganho ou uma despesa única
+          </p>
+        </div>
 
-        <button
-          type="button"
-          class="relative flex flex-1 flex-col items-center justify-center gap-3 bg-error/5 text-error transition hover:bg-error/10 active:scale-[0.99] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-error/30"
-          (click)="selectType('expense')"
-        >
-          <span
-            class="flex h-14 w-14 items-center justify-center rounded-full bg-error text-white text-3xl leading-none shadow-lg shadow-error/20"
+        <div class="flex flex-1 flex-col gap-3">
+          <button
+            type="button"
+            class="flex w-full items-center justify-center h-[63px] rounded-2xl bg-[#BDEECF] px-4 py-3 text-success transition hover:bg-success/25 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-success/40"
+            (click)="selectType('income')"
           >
-            −
-          </span>
-          <span class="text-base font-semibold uppercase">Despesa</span>
-        </button>
+            <span class="font-medium flex gap-5 items-center">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                height="24px"
+                viewBox="0 -960 960 960"
+                width="24px"
+                fill="currentColor"
+              >
+                <path
+                  d="M440-280h80v-160h160v-80H520v-160h-80v160H280v80h160v160Zm40 200q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q134 0 227-93t93-227q0-134-93-227t-227-93q-134 0-227 93t-93 227q0 134 93 227t227 93Zm0-320Z"
+                />
+              </svg>
+              Registrar ganho</span
+            >
+          </button>
+
+          <button
+            type="button"
+            class="flex w-full items-center justify-center h-[63px] rounded-2xl bg-[#F7A2A2] px-4 py-3 text-error transition hover:bg-error/25 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-error/30"
+            (click)="selectType('expense')"
+          >
+            <span class="font-medium flex gap-5 items-center">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                height="24px"
+                viewBox="0 -960 960 960"
+                width="24px"
+                fill="currentColor"
+              >
+                <path
+                  d="M280-440h400v-80H280v80ZM480-80q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q134 0 227-93t93-227q0-134-93-227t-227-93q-134 0-227 93t-93 227q0 134 93 227t227 93Zm0-320Z"
+                />
+              </svg>
+              Registrar gasto</span
+            >
+          </button>
+        </div>
       </div>
     </ng-container>
 
