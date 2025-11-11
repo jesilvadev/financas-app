@@ -1,40 +1,33 @@
 <section class="flex flex-col gap-6">
-  <div>
+  <div class="mt-[-3rem]">
     <button type="button" (click)="onBack()" class="text-sm underline">
-      Voltar
+       <img src="/assets/arrow_circle_left_24dp.png" alt="Seta de Voltar" />
     </button>
   </div>
 
   <header class="flex flex-col gap-2">
-    <h1 class="text-2xl font-medium">Período de Controle</h1>
-    <p class="text-sm">Defina o dia de início do seu controle mensal.</p>
+    <h1 class="text-4xl font-bold text-primary">Defina o dia de início do seu controle mensal</h1>
+    
   </header>
 
-  <form class="flex flex-col gap-4" (ngSubmit)="onFinish()">
+  <form class="flex flex-col gap-8" (ngSubmit)="onFinish()">
     <div class="flex flex-col gap-2">
-      <label for="startDay" class="text-sm font-medium">
-        Dia de Início do Mês
-      </label>
       <select
         id="startDay"
         [(ngModel)]="startDay"
         name="startDay"
         required
-        class="border rounded px-3 py-2"
+        class="border rounded-lg px-3 py-5 outline-none text-description"
       >
-        <option value="">Selecione o dia</option>
-        <option *ngFor="let day of days" [value]="day">{{ day }}</option>
+        <option class="bg-white text-black" value="">Dia do mês</option>
+        <option class="bg-white text-black" *ngFor="let day of days" [value]="day">{{ day }}</option>
       </select>
-      <p class="text-xs">
-        Este será o dia que marca o início e o fim de cada período mensal de
-        controle.
-      </p>
     </div>
 
     <button
       type="submit"
       [disabled]="!startDay"
-      class="border rounded px-4 py-2 text-sm font-medium disabled:opacity-70"
+      class="border-0 rounded-xl px-4 py-6 text-lg font-semibold disabled:opacity-70 bg-primary text-white leading-none tracking-normal mb-4"
     >
       Finalizar
     </button>
