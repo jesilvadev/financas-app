@@ -8,10 +8,10 @@
 />
 
 <section
-  class="min-h-screen flex items-center justify-center bg-[#cbd1ff] p-6 font-[Inter]"
+  class="min-h-screen flex items-center justify-center bg-[#BFCAFF] p-6 font-[Inter] text-[#6B54EC]"
 >
   <div class="w-full max-w-xs bg-transparent flex flex-col items-center gap-14">
-    <h1 class="text-5xl font-bold text-indigo-600">Entrar</h1>
+    <h1 class="text-5xl font-bold">Entrar</h1>
 
     <form class="w-full flex flex-col gap-4" (ngSubmit)="onSubmit()">
       <input
@@ -21,7 +21,7 @@
         name="email"
         required
         placeholder="E-mail"
-        class="w-full rounded-lg px-4 py-3 bg-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-400"
+        class="w-full rounded-lg px-4 py-3 bg-white placeholder-[#6B54EC]/50 focus:outline-none focus:ring-2 focus:ring-[#6B54EC]"
       />
 
       <div class="relative w-full">
@@ -32,12 +32,12 @@
           name="password"
           required
           placeholder="Senha"
-          class="w-full rounded-lg px-4 py-3 bg-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-400"
+          class="w-full rounded-lg px-4 py-3 bg-white placeholder-[#6B54EC]/50 focus:outline-none focus:ring-2 focus:ring-[#6B54EC]"
         />
         <button
           type="button"
           (click)="togglePasswordVisibility()"
-          class="absolute inset-y-0 right-4 flex items-center text-gray-500"
+          class="absolute inset-y-0 right-4 flex items-center text-[#6B54EC]/70 hover:text-[#6B54EC]"
         >
           <i
             [ngClass]="showPassword ? 'fa-solid fa-eye-slash' : 'fa-regular fa-eye'"
@@ -48,7 +48,7 @@
 
       <a
         routerLink="/forgot-password"
-        class="text-sm text-indigo-600 self-end hover:underline"
+        class="text-sm self-end hover:underline text-[#6B54EC]"
       >
         Esqueceu sua senha?
       </a>
@@ -56,16 +56,16 @@
       <button
         type="submit"
         [disabled]="isLoading"
-        class="bg-indigo-600 text-white font-semibold rounded-lg py-3 mt-2 hover:bg-indigo-700 transition-all disabled:opacity-70"
+        class="bg-[#6B54EC] text-white font-semibold rounded-lg py-3 mt-2 hover:bg-[#5940D9] transition-all disabled:opacity-70"
       >
         <span *ngIf="!isLoading">Entrar</span>
         <span *ngIf="isLoading">Entrando...</span>
       </button>
     </form>
 
-    <p class="text-sm text-indigo-700">
+    <p class="text-sm text-[#6B54EC]">
       É novo por aqui?
-      <a routerLink="/signup" class="font-semibold hover:underline"
+      <a routerLink="/signup" class="font-semibold hover:underline text-[#6B54EC]"
         >Cadastre-se</a
       >
     </p>
