@@ -1,73 +1,68 @@
-<link
-  href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
-  rel="stylesheet"
-/>
-<link
-  rel="stylesheet"
-  href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
-/>
+<section class="min-h-screen flex items-center justify-center p-4">
+  <div class="w-full max-w-sm flex flex-col gap-6">
+    <header class="flex flex-col gap-2">
+      <h1 class="text-2xl font-medium">Entrar</h1>
+    </header>
 
-<section
-  class="min-h-screen flex items-center justify-center bg-[#cbd1ff] p-6 font-[Inter]"
->
-  <div class="w-full max-w-xs bg-transparent flex flex-col items-center gap-14">
-    <h1 class="text-5xl font-bold text-indigo-600">Entrar</h1>
+    <div *ngIf="errorMessage" class="flex flex-col gap-2">
+      <p class="text-sm">{{ errorMessage }}</p>
+    </div>
 
-    <form class="w-full flex flex-col gap-4" (ngSubmit)="onSubmit()">
-      <input
-        type="email"
-        id="email"
-        [(ngModel)]="email"
-        name="email"
-        required
-        placeholder="E-mail"
-        class="w-full rounded-lg px-4 py-3 bg-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-400"
-      />
-
-      <div class="relative w-full">
+    <form class="flex flex-col gap-4" (ngSubmit)="onSubmit()">
+      <div class="flex flex-col gap-2">
+        <label for="email" class="text-sm font-medium">Email</label>
         <input
-          [type]="showPassword ? 'text' : 'password'"
-          id="password"
-          [(ngModel)]="password"
-          name="password"
+          type="email"
+          id="email"
+          [(ngModel)]="email"
+          name="email"
           required
-          placeholder="Senha"
-          class="w-full rounded-lg px-4 py-3 bg-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-400"
+          placeholder="seu@email.com"
+          class="border rounded px-3 py-2"
         />
-        <button
-          type="button"
-          (click)="togglePasswordVisibility()"
-          class="absolute inset-y-0 right-4 flex items-center text-gray-500"
-        >
-          <i
-            [ngClass]="showPassword ? 'fa-solid fa-eye-slash' : 'fa-regular fa-eye'"
-            class="text-lg"
-          ></i>
-        </button>
       </div>
 
-      <a
-        routerLink="/forgot-password"
-        class="text-sm text-indigo-600 self-end hover:underline"
-      >
-        Esqueceu sua senha?
-      </a>
+      <div class="flex flex-col gap-2">
+        <label for="password" class="text-sm font-medium">Senha</label>
+        <div class="flex items-center gap-2">
+          <input
+            [type]="showPassword ? 'text' : 'password'"
+            id="password"
+            [(ngModel)]="password"
+            name="password"
+            required
+            placeholder="Digite sua senha"
+            class="border rounded px-3 py-2 flex-1"
+          />
+          <button
+            type="button"
+            (click)="togglePasswordVisibility()"
+            class="text-sm underline"
+          >
+            <span *ngIf="showPassword">Ocultar</span>
+            <span *ngIf="!showPassword">Mostrar</span>
+          </button>
+        </div>
+      </div>
 
-      <button
-        type="submit"
-        [disabled]="isLoading"
-        class="bg-indigo-600 text-white font-semibold rounded-lg py-3 mt-2 hover:bg-indigo-700 transition-all disabled:opacity-70"
-      >
-        <span *ngIf="!isLoading">Entrar</span>
-        <span *ngIf="isLoading">Entrando...</span>
-      </button>
+      <div class="flex flex-col gap-3">
+        <a routerLink="/forgot-password" class="text-sm underline">
+          Esqueceu a senha?
+        </a>
+        <button
+          type="submit"
+          [disabled]="isLoading"
+          class="border rounded px-4 py-2 text-sm font-medium disabled:opacity-70"
+        >
+          <span *ngIf="!isLoading">Entrar</span>
+          <span *ngIf="isLoading">Entrando...</span>
+        </button>
+      </div>
     </form>
 
-    <p class="text-sm text-indigo-700">
-      É novo por aqui?
-      <a routerLink="/signup" class="font-semibold hover:underline"
-        >Cadastre-se</a
-      >
-    </p>
+    <div class="flex flex-col items-center gap-2 text-sm">
+      <span>Não tem uma conta?</span>
+      <a routerLink="/signup" class="underline">Cadastre-se</a>
+    </div>
   </div>
 </section>

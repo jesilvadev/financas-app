@@ -1,25 +1,22 @@
+// src/app/pages/auth/onboarding/onboarding.component.ts
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterLink } from '@angular/router';
+import { RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-onboarding',
   standalone: true,
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule, RouterModule],
   templateUrl: './onboarding.component.html',
 })
 export class OnboardingComponent {
-  currentStep: number = 1;
+  currentStep = 1;
 
-  nextStep(): void {
-    if (this.currentStep < 3) {
-      this.currentStep++;
-    }
+  nextStep() {
+    if (this.currentStep < 3) this.currentStep++;
   }
 
-  previousStep(): void {
-    if (this.currentStep > 1) {
-      this.currentStep--;
-    }
+  previousStep() {
+    if (this.currentStep > 1) this.currentStep--;
   }
 }

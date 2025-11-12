@@ -25,24 +25,25 @@ export class SigninComponent {
 
   onSubmit(): void {
     if (!this.email || !this.password) {
-      this.errorMessage = 'Por favor, preencha todos os campos.';
+      this.errorMessage = 'Por favor, preencha todos os campos';
       return;
     }
 
     this.isLoading = true;
     this.errorMessage = '';
 
-    this.authService.login({ email: this.email, password: this.password }).subscribe({
-      next: (user) => {
-        console.log('✅ Login bem-sucedido:', user);
-        this.isLoading = false;
-        this.router.navigate(['/']);
-      },
-      error: (error) => {
-        console.error('❌ Erro no login:', error);
-        this.errorMessage = error?.message || 'Erro ao fazer login. Tente novamente.';
-        this.isLoading = false;
-      },
-    });
+    this.authService
+      .login({ email: this.email, password: this.password })
+      .subscribe({
+        next: (user) => {
+          console.log('Login bem-sucedido:', user);
+          this.router.navigate(['/']);
+        },
+        error: (error) => {
+          console.error('Erro no login:', error);
+          this.errorMessage = error.message || 'Erro ao fazer login';
+          this.isLoading = false;
+        },
+      });
   }
 }
