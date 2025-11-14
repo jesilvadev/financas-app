@@ -1,31 +1,34 @@
 <section class="flex flex-col gap-6">
-  <div>
-    <a routerLink="/signin" class="text-sm underline">Voltar</a>
+  <div class="mt-[-3rem]">
+    <a routerLink="/signin" class="text-sm underline">
+      <img src="/assets/arrow_circle_left_24dp.png" alt="Seta de Voltar" />
+    </a>
   </div>
 
   <header class="flex flex-col gap-2">
-    <h1 class="text-2xl font-medium">Bem-vindo!</h1>
-    <p class="text-sm">Vamos começar com o seu nome completo.</p>
+    <h1 class="text-4xl font-bold text-primary pr-5">
+      Comece <br />
+      informando seu nome completo
+    </h1>
   </header>
 
   <form class="flex flex-col gap-4" (ngSubmit)="onContinue()">
     <div class="flex flex-col gap-2">
-      <label for="fullName" class="text-sm font-medium">Nome Completo</label>
       <input
         type="text"
         id="fullName"
         [(ngModel)]="fullName"
         name="fullName"
         required
-        placeholder="Digite seu nome completo"
-        class="border rounded px-3 py-2"
+        placeholder="Nome"
+        class="border rounded-xl px-3 py-5 outline-none"
       />
     </div>
 
     <button
       type="submit"
       [disabled]="!fullName.trim()"
-      class="border rounded px-4 py-2 text-sm font-medium disabled:opacity-70"
+      class="border-0 rounded-xl px-4 py-6 text-lg font-semibold disabled:opacity-70 bg-primary text-white leading-none tracking-normal"
     >
       Continuar
     </button>

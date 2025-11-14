@@ -1,11 +1,8 @@
-<link
-  href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
-  rel="stylesheet"
-/>
-<link
-  rel="stylesheet"
-  href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
-/>
+<section class="min-h-screen flex items-center justify-center p-4">
+  <div class="w-full max-w-sm flex flex-col gap-6">
+    <header class="flex flex-col gap-2">
+      <h1 class="text-2xl font-medium">Entrar</h1>
+    </header>
 
 <section
   class="min-h-screen flex items-center justify-center bg-[#BFCAFF] p-6 font-[Inter] text-[#6B54EC]"
@@ -26,23 +23,50 @@
 
       <div class="relative w-full">
         <input
-          [type]="showPassword ? 'text' : 'password'"
-          id="password"
-          [(ngModel)]="password"
-          name="password"
+          type="email"
+          id="email"
+          [(ngModel)]="email"
+          name="email"
           required
           placeholder="Senha"
           class="w-full rounded-lg px-4 py-3 bg-white placeholder-[#6B54EC]/50 focus:outline-none focus:ring-2 focus:ring-[#6B54EC]"
         />
+      </div>
+
+      <div class="flex flex-col gap-2">
+        <label for="password" class="text-sm font-medium">Senha</label>
+        <div class="flex items-center gap-2">
+          <input
+            [type]="showPassword ? 'text' : 'password'"
+            id="password"
+            [(ngModel)]="password"
+            name="password"
+            required
+            placeholder="Digite sua senha"
+            class="border rounded px-3 py-2 flex-1"
+          />
+          <button
+            type="button"
+            (click)="togglePasswordVisibility()"
+            class="text-sm underline"
+          >
+            <span *ngIf="showPassword">Ocultar</span>
+            <span *ngIf="!showPassword">Mostrar</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="flex flex-col gap-3">
+        <a routerLink="/forgot-password" class="text-sm underline">
+          Esqueceu a senha?
+        </a>
         <button
           type="button"
           (click)="togglePasswordVisibility()"
           class="absolute inset-y-0 right-4 flex items-center text-[#6B54EC]/70 hover:text-[#6B54EC]"
         >
-          <i
-            [ngClass]="showPassword ? 'fa-solid fa-eye-slash' : 'fa-regular fa-eye'"
-            class="text-lg"
-          ></i>
+          <span *ngIf="!isLoading">Entrar</span>
+          <span *ngIf="isLoading">Entrando...</span>
         </button>
       </div>
 

@@ -1,22 +1,23 @@
 <section class="flex flex-col gap-6">
-  <div>
+  <div class="mt-[-3rem]">
     <button type="button" (click)="onBack()" class="text-sm underline">
-      Voltar
+      <img src="/assets/arrow_circle_left_24dp.png" alt="Seta de Voltar" />
     </button>
   </div>
 
   <header class="flex flex-col gap-2">
-    <h1 class="text-2xl font-medium">Gastos Fixos Mensais</h1>
-    <p class="text-sm">Adicione seus gastos recorrentes.</p>
+    <h1 class="text-4xl font-bold text-primary">
+      Informe seus <strong class="text-error">gastos</strong> mensais fixos
+    </h1>
   </header>
 
   <form class="flex flex-col gap-6" (ngSubmit)="onContinue()">
     <div
       *ngFor="let expense of expenses; let i = index"
-      class="flex flex-col gap-4 border rounded px-4 py-4"
+      class="flex flex-col gap-4 border-0 rounded"
     >
       <div class="flex items-center justify-between text-sm font-medium">
-        <span>Gasto {{ i + 1 }}</span>
+        <span class="text-primary font-medium text-lg">Gasto {{ i + 1 }}</span>
         <button
           *ngIf="expenses.length > 1"
           type="button"
@@ -28,9 +29,6 @@
       </div>
 
       <div class="flex flex-col gap-2">
-        <label [for]="'value-' + i" class="text-sm font-medium">
-          Valor (R$)
-        </label>
         <input
           type="number"
           [id]="'value-' + i"
@@ -39,55 +37,63 @@
           min="0"
           step="0.01"
           placeholder="0,00"
-          class="border rounded px-3 py-2"
+          class="border rounded-lg px-3 py-4 outline-none"
         />
       </div>
+      <div class="flex flex-row justify-between pl-3 pr-7">
+        <div class="flex flex-col gap-2">
+          <select
+            [id]="'category-' + i"
+            [(ngModel)]="expense.category"
+            [name]="'category-' + i"
+            class="border-0 rounded-lg px-6 py-2 bg-primary outline-none font-bold text-white"
+          >
+            <option class="bg-white text-black" value="">Categoria</option>
+            <option
+              class="bg-white text-black"
+              *ngFor="let cat of expenseCategories"
+              [value]="cat"
+            >
+              {{ cat }}
+            </option>
+          </select>
+        </div>
 
-      <div class="flex flex-col gap-2">
-        <label [for]="'category-' + i" class="text-sm font-medium">
-          Categoria
-        </label>
-        <select
-          [id]="'category-' + i"
-          [(ngModel)]="expense.category"
-          [name]="'category-' + i"
-          class="border rounded px-3 py-2"
-        >
-          <option value="">Selecione uma categoria</option>
-          <option *ngFor="let cat of expenseCategories" [value]="cat">
-            {{ cat }}
-          </option>
-        </select>
-      </div>
-
-      <div class="flex flex-col gap-2">
-        <label [for]="'day-' + i" class="text-sm font-medium">
-          Dia do Mês
-        </label>
-        <select
-          [id]="'day-' + i"
-          [(ngModel)]="expense.day"
-          [name]="'day-' + i"
-          class="border rounded px-3 py-2"
-        >
-          <option value="">Selecione o dia</option>
-          <option *ngFor="let day of days" [value]="day">{{ day }}</option>
-        </select>
+        <div class="flex flex-row items-center gap-2 w-20">
+          <label [for]="'day-' + i" class="text-lm font-medium text-primary">
+            Dia
+          </label>
+          <select
+            [id]="'day-' + i"
+            [(ngModel)]="expense.day"
+            [name]="'day-' + i"
+            class="border-0 rounded-lg px-3 py-2 bg-primary outline-none font-bold text-white"
+          >
+            <option class="bg-white text-black" value="">Dia</option>
+            <option
+              class="bg-white text-black"
+              *ngFor="let day of days"
+              [value]="day"
+            >
+              {{ day }}
+            </option>
+          </select>
+        </div>
       </div>
     </div>
 
     <button
       type="button"
       (click)="addExpense()"
-      class="border rounded px-4 py-2 text-sm"
+      class="border-0 rounded text-lg flex gap-2 items-center justify-center text-primary font-bold"
     >
-      + Adicionar outro gasto
+      <img src="/assets/adicionar.png" alt="Adicionar"> Adicionar outro gasto
     </button>
 
     <button
       type="submit"
       [disabled]="!isFormValid()"
-      class="border rounded px-4 py-2 text-sm font-medium disabled:opacity-70"
+      class="border-0 rounded-xl px-4 py-6 text-lg font-semibold disabled:opacity-70 bg-primary text-white leading-none tracking-normal mb-4"
     >
       Continuar
     </button>

@@ -16,10 +16,10 @@ module.exports = {
         white: "#FFFFFF",
 
         // Paleta de feedback / alerts
-        success: "#22C55E", // Verde
+        success: "#1E8315", // Verde
         warning: "#FACC15", // Amarelo
         info: "#3B82F6", // Azul
-        error: "#EF4444", // Vermelho
+        error: "#CD3131", // Vermelho
       },
     },
   },

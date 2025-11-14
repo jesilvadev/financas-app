@@ -172,12 +172,31 @@
       </div>
 
       <!-- FAB central -->
-      <button
-        aria-label="Adicionar"
-        class="absolute -top-6 left-1/2 -translate-x-1/2 h-14 w-14 rounded-full bg-primary text-white shadow-xl ring-4 ring-secondary flex items-center justify-center active:scale-95 transition focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-primary/40"
+      <div
+        class="absolute -top-6 left-1/2 -translate-x-1/2 flex items-center justify-center"
       >
-        <span class="text-2xl leading-none">+</span>
-      </button>
+        <div
+          class="relative h-14 w-14 flex items-center justify-center rounded-full bg-secondary"
+        >
+          <span
+            class="pointer-events-none absolute inset-0 rounded-full ring-4 ring-secondary"
+          ></span>
+          <button
+            aria-label="Adicionar"
+            type="button"
+            class="relative h-full w-full rounded-full bg-primary text-white shadow-xl flex items-center justify-center transition active:scale-95 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-primary/40"
+            (click)="openAddModal()"
+          >
+            <span class="text-2xl leading-none">+</span>
+          </button>
+        </div>
+      </div>
     </div>
   </nav>
+
+  <app-add-entry-modal
+    [open]="isAddModalOpen"
+    (close)="closeAddModal()"
+    (confirm)="handleAddEntry($event)"
+  ></app-add-entry-modal>
 </div>
