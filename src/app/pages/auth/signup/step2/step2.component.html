@@ -1,18 +1,16 @@
 <section class="flex flex-col gap-6">
-  <div>
+  <div class="mt-[-3rem]">
     <button type="button" (click)="onBack()" class="text-sm underline">
-      Voltar
+      <img src="/assets/arrow_circle_left_24dp.png" alt="Seta de Voltar">
     </button>
   </div>
 
   <header class="flex flex-col gap-2">
-    <h1 class="text-2xl font-medium">Dados de Acesso</h1>
-    <p class="text-sm">Informe seu email e crie uma senha.</p>
+    <h1 class="text-4xl font-bold text-primary pr-5">Crie seu acesso com e-mail e senha</h1>
   </header>
 
-  <form class="flex flex-col gap-4" (ngSubmit)="onContinue()">
+  <form class="flex flex-col gap-7" (ngSubmit)="onContinue()">
     <div class="flex flex-col gap-2">
-      <label for="email" class="text-sm font-medium">Email</label>
       <input
         type="email"
         id="email"
@@ -20,13 +18,12 @@
         name="email"
         required
         placeholder="seu@email.com"
-        class="border rounded px-3 py-2"
+        class="border rounded-lg px-3 py-4 outline-none"
       />
     </div>
 
     <div class="flex flex-col gap-2">
-      <label for="password" class="text-sm font-medium">Senha</label>
-      <div class="flex items-center gap-2">
+      <div class="flex items-center gap-2 bg-white px-3 py-4 rounded-lg">
         <input
           [type]="showPassword ? 'text' : 'password'"
           id="password"
@@ -34,23 +31,20 @@
           name="password"
           required
           placeholder="Digite sua senha"
-          class="border rounded px-3 py-2 flex-1"
+          class="border-0 flex-1 outline-none"
         />
         <button
           type="button"
           (click)="togglePasswordVisibility()"
           class="text-xs underline"
         >
-          <span *ngIf="showPassword">Ocultar</span>
-          <span *ngIf="!showPassword">Mostrar</span>
+          <span *ngIf="showPassword"><img src="/assets/visualizar.png" alt="Visualizar"></span>
+          <span *ngIf="!showPassword"><img src="/assets/visualizar.png" alt="Visualizar"></span>
         </button>
       </div>
     </div>
 
-    <div class="flex flex-col gap-2">
-      <label for="confirmPassword" class="text-sm font-medium">
-        Confirmar Senha
-      </label>
+    <div class="flex flex-col gap-2 bg-white px-3 py-4 rounded-lg">
       <div class="flex items-center gap-2">
         <input
           [type]="showConfirmPassword ? 'text' : 'password'"
@@ -59,7 +53,7 @@
           name="confirmPassword"
           required
           placeholder="Repita sua senha"
-          class="border rounded px-3 py-2 flex-1"
+          class="border-0 rounded flex-1 outline-none"
           [class.border-red-500]="
             confirmPassword && password !== confirmPassword
           "
@@ -69,8 +63,8 @@
           (click)="toggleConfirmPasswordVisibility()"
           class="text-xs underline"
         >
-          <span *ngIf="showConfirmPassword">Ocultar</span>
-          <span *ngIf="!showConfirmPassword">Mostrar</span>
+          <span *ngIf="showConfirmPassword"><img src="/assets/visualizar.png" alt="Visualizar"></span>
+          <span *ngIf="!showConfirmPassword"><img src="/assets/visualizar.png" alt="Visualizar"></span>
         </button>
       </div>
       <p
@@ -86,7 +80,7 @@
       [disabled]="
         !email || !password || !confirmPassword || password !== confirmPassword
       "
-      class="border rounded px-4 py-2 text-sm font-medium disabled:opacity-70"
+      class="border-0 rounded-xl px-4 py-6 text-lg font-semibold disabled:opacity-70 bg-primary text-white leading-none tracking-normal"
     >
       Continuar
     </button>

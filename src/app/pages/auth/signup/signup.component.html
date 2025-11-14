@@ -1,33 +1,33 @@
-<section class="min-h-screen flex items-center justify-center p-4">
+<section class="min-h-screen flex justify-center pl-4 pr-4 pt-24 bg-secondary">
   <div class="w-full max-w-md flex flex-col gap-6">
     <div *ngIf="errorMessage" class="flex flex-col gap-2 text-sm">
       <p>{{ errorMessage }}</p>
     </div>
 
-    <div *ngIf="currentStep < 6" class="flex justify-center gap-2">
+    <div *ngIf="currentStep < 6" class="flex justify-end gap-2 pr-2">
       <span
         class="h-2 w-2 rounded-full"
-        [class.bg-gray-900]="currentStep === 1"
+        [class.bg-primary]="currentStep === 1"
         [class.border]="currentStep !== 1"
       ></span>
       <span
         class="h-2 w-2 rounded-full"
-        [class.bg-gray-900]="currentStep === 2"
+        [class.bg-primary]="currentStep === 2"
         [class.border]="currentStep !== 2"
       ></span>
       <span
         class="h-2 w-2 rounded-full"
-        [class.bg-gray-900]="currentStep === 3"
+        [class.bg-primary]="currentStep === 3"
         [class.border]="currentStep !== 3"
       ></span>
       <span
         class="h-2 w-2 rounded-full"
-        [class.bg-gray-900]="currentStep === 4"
+        [class.bg-primary]="currentStep === 4"
         [class.border]="currentStep !== 4"
       ></span>
       <span
         class="h-2 w-2 rounded-full"
-        [class.bg-gray-900]="currentStep === 5"
+        [class.bg-primary]="currentStep === 5"
         [class.border]="currentStep !== 5"
       ></span>
     </div>
