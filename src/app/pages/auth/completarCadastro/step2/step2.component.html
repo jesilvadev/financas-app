@@ -1,0 +1,107 @@
+<section class="flex flex-col gap-6">
+  <div class="mt-[-3rem]">
+    <button type="button" (click)="onBack()" class="text-sm underline">
+      <img src="/assets/arrow_circle_left_24dp.png" alt="Seta de Voltar" />
+    </button>
+  </div>
+
+  <header class="flex flex-col gap-2">
+    <h1 class="text-4xl font-bold text-primary">
+      Informe seus <strong class="text-error">gastos</strong> mensais fixos
+    </h1>
+  </header>
+
+  <form class="flex flex-col gap-6" (ngSubmit)="onContinue()">
+    <div
+      *ngFor="let expense of expenses; let i = index"
+      class="flex flex-col gap-4 border-0 rounded"
+    >
+      <div class="flex items-center justify-between text-sm font-medium">
+        <span class="text-primary font-medium text-lg">Gasto {{ i + 1 }}</span>
+        <button
+          *ngIf="expenses.length > 1"
+          type="button"
+          (click)="removeExpense(i)"
+          class="underline"
+        >
+          Remover
+        </button>
+      </div>
+
+      <div class="flex flex-col gap-2">
+        <input
+          type="number"
+          [id]="'value-' + i"
+          [(ngModel)]="expense.value"
+          [name]="'value-' + i"
+          min="0"
+          step="0.01"
+          placeholder="0,00"
+          class="border rounded-lg px-3 py-4 outline-none"
+        />
+      </div>
+      <div class="flex flex-row justify-between pl-3 pr-7 gap-4 flex-wrap">
+        <div class="flex flex-col gap-2 flex-1 min-w-[160px]">
+          <select
+            [id]="'category-' + i"
+            [(ngModel)]="expense.categoriaId"
+            [name]="'category-' + i"
+            class="border-0 rounded-lg px-4 py-3 bg-primary outline-none font-bold text-white"
+          >
+            <option class="bg-white text-black" value="">Categoria</option>
+            <option
+              class="bg-white text-black"
+              *ngFor="let cat of categoriasDespesa"
+              [value]="cat.id"
+            >
+              {{ cat.nome }}
+            </option>
+          </select>
+          <p
+            *ngIf="categoriasDespesa.length === 0"
+            class="text-xs text-error text-center"
+          >
+            Nenhuma categoria de despesa disponível.
+          </p>
+        </div>
+
+        <div class="flex flex-row items-center gap-2 w-24">
+          <label [for]="'day-' + i" class="text-sm font-medium text-primary">
+            Dia
+          </label>
+          <select
+            [id]="'day-' + i"
+            [(ngModel)]="expense.day"
+            [name]="'day-' + i"
+            class="border-0 rounded-lg px-3 py-2 bg-primary outline-none font-bold text-white"
+          >
+            <option class="bg-white text-black" value="">Dia</option>
+            <option
+              class="bg-white text-black"
+              *ngFor="let day of days"
+              [value]="day"
+            >
+              {{ day }}
+            </option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <button
+      type="button"
+      (click)="addExpense()"
+      class="border-0 rounded text-lg flex gap-2 items-center justify-center text-primary font-bold"
+    >
+      <img src="/assets/adicionar.png" alt="Adicionar" /> Adicionar outro gasto
+    </button>
+
+    <button
+      type="submit"
+      [disabled]="!isFormValid()"
+      class="border-0 rounded-xl px-4 py-6 text-lg font-semibold disabled:opacity-70 bg-primary text-white leading-none tracking-normal mb-4"
+    >
+      Continuar
+    </button>
+  </form>
+</section>

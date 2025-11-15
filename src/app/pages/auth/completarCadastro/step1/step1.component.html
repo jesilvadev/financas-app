@@ -1,0 +1,110 @@
+<section class="flex flex-col gap-6">
+  <div class="mt-[-3rem]">
+    <button type="button" (click)="onBack()" class="text-sm underline">
+      <img src="/assets/arrow_circle_left_24dp.png" alt="Seta de Voltar" />
+    </button>
+  </div>
+
+  <header class="flex flex-col gap-2">
+    <h1 class="text-4xl font-bold text-primary">
+      Informe suas <br />
+      <strong class="text-success">fontes de rendas</strong> mensais fixas
+    </h1>
+  </header>
+
+  <form class="flex flex-col gap-6" (ngSubmit)="onContinue()">
+    <div
+      *ngFor="let income of incomes; let i = index"
+      class="flex flex-col gap-3 border-0 rounded"
+    >
+      <div class="flex items-center justify-between text-sm font-medium">
+        <span class="text-primary font-medium text-lg">Renda {{ i + 1 }}</span>
+        <button
+          *ngIf="incomes.length > 1"
+          type="button"
+          (click)="removeIncome(i)"
+          class="underline"
+        >
+          Remover
+        </button>
+      </div>
+
+      <div class="flex flex-col gap-2">
+        <label [for]="'value-' + i" class="text-sm font-medium"> </label>
+        <input
+          type="number"
+          [id]="'value-' + i"
+          [(ngModel)]="income.value"
+          [name]="'value-' + i"
+          min="0"
+          step="0.01"
+          placeholder="0,00"
+          class="border rounded-lg px-3 py-4 outline-none"
+        />
+      </div>
+
+      <div class="flex flex-row justify-between pl-3 pr-7 gap-4 flex-wrap">
+        <div class="flex flex-col gap-2 flex-1 min-w-[160px]">
+          <select
+            [id]="'category-' + i"
+            [(ngModel)]="income.categoriaId"
+            [name]="'category-' + i"
+            class="border-0 rounded-lg px-4 py-3 bg-primary outline-none font-bold text-white"
+          >
+            <option class="bg-white text-black" value="">Categoria</option>
+            <option
+              class="bg-white text-black"
+              *ngFor="let cat of categoriasReceita"
+              [value]="cat.id"
+            >
+              {{ cat.nome }}
+            </option>
+          </select>
+          <p
+            *ngIf="categoriasReceita.length === 0"
+            class="text-xs text-error text-center"
+          >
+            Nenhuma categoria de receita disponível.
+          </p>
+        </div>
+
+        <div class="flex flex-row items-center gap-2 w-24">
+          <label [for]="'day-' + i" class="text-sm font-medium text-primary">
+            Dia
+          </label>
+          <select
+            [id]="'day-' + i"
+            [(ngModel)]="income.day"
+            [name]="'day-' + i"
+            class="border-0 rounded-lg px-3 py-2 bg-primary outline-none font-bold text-white"
+          >
+            <option class="bg-white text-black" value="">01</option>
+            <option
+              class="bg-white text-black"
+              *ngFor="let day of days"
+              [value]="day"
+            >
+              {{ day }}
+            </option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <button
+      type="button"
+      (click)="addIncome()"
+      class="border-0 rounded px-4 py-2 text-lg flex gap-2 items-center justify-center text-primary font-bold"
+    >
+      <img src="/assets/adicionar.png" alt="Adicionar" /> Adicionar outra renda
+    </button>
+
+    <button
+      type="submit"
+      [disabled]="!isFormValid()"
+      class="border-0 rounded-xl px-4 py-6 text-lg font-semibold disabled:opacity-70 bg-primary text-white leading-none tracking-normal mb-4"
+    >
+      Continuar
+    </button>
+  </form>
+</section>
