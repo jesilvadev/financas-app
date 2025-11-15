@@ -6,11 +6,21 @@ import { finalize } from 'rxjs';
 
 import { AuthService } from '../../../services/auth.service';
 import { AuthLoginRequest, AuthResponse } from '../../../models/auth.model';
+import { UiInputComponent } from '../../../shared/components/ui-input/ui-input.component';
+import { ButtonPrimaryComponent } from '../../../shared/components/button-primary/button-primary.component';
+import { MatIconModule } from '@angular/material/icon';
 
 @Component({
   selector: 'app-signin',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink],
+  imports: [
+    CommonModule,
+    FormsModule,
+    RouterLink,
+    UiInputComponent,
+    ButtonPrimaryComponent,
+    MatIconModule,
+  ],
   templateUrl: './signin.component.html',
 })
 export class SigninComponent {
