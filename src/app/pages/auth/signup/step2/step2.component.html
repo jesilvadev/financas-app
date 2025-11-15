@@ -9,7 +9,7 @@
     <h1 class="text-4xl font-bold text-primary pr-5">Crie seu acesso com e-mail e senha</h1>
   </header>
 
-  <form class="flex flex-col gap-7" (ngSubmit)="onContinue()">
+  <form class="flex flex-col gap-7" (ngSubmit)="onConfirm()">
     <div class="flex flex-col gap-2">
       <input
         type="email"
@@ -26,9 +26,9 @@
       <div class="flex items-center gap-2 bg-white px-3 py-4 rounded-lg">
         <input
           [type]="showPassword ? 'text' : 'password'"
-          id="password"
-          [(ngModel)]="password"
-          name="password"
+          id="senha"
+          [(ngModel)]="senha"
+          name="senha"
           required
           placeholder="Digite sua senha"
           class="border-0 flex-1 outline-none"
@@ -48,14 +48,14 @@
       <div class="flex items-center gap-2">
         <input
           [type]="showConfirmPassword ? 'text' : 'password'"
-          id="confirmPassword"
-          [(ngModel)]="confirmPassword"
-          name="confirmPassword"
+          id="confirmarSenha"
+          [(ngModel)]="confirmarSenha"
+          name="confirmarSenha"
           required
           placeholder="Repita sua senha"
           class="border-0 rounded flex-1 outline-none"
           [class.border-red-500]="
-            confirmPassword && password !== confirmPassword
+            confirmarSenha && senha !== confirmarSenha
           "
         />
         <button
@@ -68,7 +68,7 @@
         </button>
       </div>
       <p
-        *ngIf="confirmPassword && password !== confirmPassword"
+        *ngIf="confirmarSenha && senha !== confirmarSenha"
         class="text-xs text-red-500"
       >
         As senhas não coincidem
@@ -78,11 +78,16 @@
     <button
       type="submit"
       [disabled]="
-        !email || !password || !confirmPassword || password !== confirmPassword
+        isLoading ||
+        !email ||
+        !senha ||
+        !confirmarSenha ||
+        senha !== confirmarSenha
       "
       class="border-0 rounded-xl px-4 py-6 text-lg font-semibold disabled:opacity-70 bg-primary text-white leading-none tracking-normal"
     >
-      Continuar
+      <span *ngIf="!isLoading">Confirmar</span>
+      <span *ngIf="isLoading">Confirmando...</span>
     </button>
   </form>
 </section>

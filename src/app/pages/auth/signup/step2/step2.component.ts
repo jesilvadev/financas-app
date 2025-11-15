@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Output } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
@@ -9,12 +9,13 @@ import { FormsModule } from '@angular/forms';
   templateUrl: './step2.component.html',
 })
 export class Step2Component {
-  @Output() next = new EventEmitter<{ email: string; password: string }>();
+  @Input() isLoading: boolean = false;
+  @Output() next = new EventEmitter<{ email: string; senha: string }>();
   @Output() back = new EventEmitter<void>();
 
   email: string = '';
-  password: string = '';
-  confirmPassword: string = '';
+  senha: string = '';
+  confirmarSenha: string = '';
   showPassword: boolean = false;
   showConfirmPassword: boolean = false;
 
@@ -26,9 +27,15 @@ export class Step2Component {
     this.showConfirmPassword = !this.showConfirmPassword;
   }
 
-  onContinue(): void {
-    if (this.email && this.password && this.password === this.confirmPassword) {
-      this.next.emit({ email: this.email, password: this.password });
+  onConfirm(): void {
+    const emailLimpo = this.email.trim();
+    if (
+      emailLimpo &&
+      this.senha &&
+      this.confirmarSenha &&
+      this.senha === this.confirmarSenha
+    ) {
+      this.next.emit({ email: emailLimpo, senha: this.senha });
     }
   }
 

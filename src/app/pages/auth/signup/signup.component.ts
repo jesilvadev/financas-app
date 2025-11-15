@@ -1,111 +1,83 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
+import { finalize, switchMap, timer } from 'rxjs';
+
 import { Step1Component } from './step1/step1.component';
 import { Step2Component } from './step2/step2.component';
-import { Step3Component } from './step3/step3.component';
-import { Step4Component } from './step4/step4.component';
-import { Step5Component } from './step5/step5.component';
-import { ConclusaoComponent } from './conclusao/conclusao.component';
 import { AuthService } from '../../../services/auth.service';
-import { SignupData } from '../../../models/user.model';
+import {
+  AuthLoginRequest,
+  AuthRegisterRequest,
+} from '../../../models/auth.model';
+
+interface Step1Payload {
+  nome: string;
+}
+
+interface Step2Payload {
+  email: string;
+  senha: string;
+}
 
 @Component({
   selector: 'app-signup',
   standalone: true,
-  imports: [
-    CommonModule,
-    Step1Component,
-    Step2Component,
-    Step3Component,
-    Step4Component,
-    Step5Component,
-    ConclusaoComponent,
-  ],
+  imports: [CommonModule, Step1Component, Step2Component],
   templateUrl: './signup.component.html',
 })
 export class SignupComponent {
   currentStep: number = 1;
-  signupData: SignupData = {
-    fullName: '',
+  signupData: AuthRegisterRequest = {
+    nome: '',
     email: '',
-    password: '',
-    incomes: [],
-    expenses: [],
-    startDay: '',
+    senha: '',
   };
   isLoading: boolean = false;
   errorMessage: string = '';
 
   constructor(private authService: AuthService, private router: Router) {}
 
-  // Step 1
-  onStep1Next(data: any): void {
-    this.signupData.fullName = data.fullName;
+  onStep1Next({ nome }: Step1Payload): void {
+    this.signupData.nome = nome;
     this.currentStep = 2;
   }
 
-  // Step 2
-  onStep2Next(data: any): void {
-    this.signupData.email = data.email;
-    this.signupData.password = data.password;
-    this.currentStep = 3;
+  onStep2Next({ email, senha }: Step2Payload): void {
+    this.signupData.email = email;
+    this.signupData.senha = senha;
+    this.register();
   }
 
   onStep2Back(): void {
     this.currentStep = 1;
   }
 
-  // Step 3
-  onStep3Next(data: any): void {
-    this.signupData.incomes = data.incomes;
-    this.currentStep = 4;
-  }
-
-  onStep3Back(): void {
-    this.currentStep = 2;
-  }
-
-  // Step 4
-  onStep4Next(data: any): void {
-    this.signupData.expenses = data.expenses;
-    this.currentStep = 5;
-  }
-
-  onStep4Back(): void {
-    this.currentStep = 3;
-  }
-
-  // Step 5
-  onStep5Next(data: any): void {
-    this.signupData.startDay = data.startDay;
-    this.completeSignup();
-  }
-
-  onStep5Back(): void {
-    this.currentStep = 4;
-  }
-
-  // Finalizar cadastro
-  completeSignup(): void {
+  private register(): void {
     this.isLoading = true;
     this.errorMessage = '';
 
-    console.log('Dados do cadastro:', this.signupData);
+    const loginPayload: AuthLoginRequest = {
+      email: this.signupData.email,
+      senha: this.signupData.senha,
+    };
 
-    this.authService.signup(this.signupData).subscribe({
-      next: (user) => {
-        console.log('Cadastro bem-sucedido:', user);
-        this.isLoading = false;
-        this.currentStep = 6;
-      },
-      error: (error) => {
-        console.error('Erro no cadastro:', error);
-        this.errorMessage = error.message || 'Erro ao criar conta';
-        this.isLoading = false;
-        // Voltar para o step 2 onde estão os dados de email/senha
-        this.currentStep = 2;
-      },
-    });
+    timer(1000)
+      .pipe(
+        switchMap(() => this.authService.register(this.signupData)),
+        switchMap(() => this.authService.login(loginPayload)),
+        finalize(() => (this.isLoading = false))
+      )
+      .subscribe({
+        next: () => {
+          this.router.navigate(['/completar-cadastro']);
+        },
+        error: (error) => {
+          console.error('Erro no cadastro:', error);
+          this.errorMessage =
+            error?.error?.message || error?.message || 'Erro ao criar conta';
+          this.currentStep = 2;
+        },
+      });
   }
 }

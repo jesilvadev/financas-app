@@ -10,13 +10,14 @@ import { RouterLink } from '@angular/router';
   templateUrl: './step1.component.html',
 })
 export class Step1Component {
-  @Output() next = new EventEmitter<{ fullName: string }>();
+  @Output() next = new EventEmitter<{ nome: string }>();
 
-  fullName: string = '';
+  nome: string = '';
 
   onContinue(): void {
-    if (this.fullName.trim()) {
-      this.next.emit({ fullName: this.fullName });
+    const nomeLimpo = this.nome.trim();
+    if (nomeLimpo) {
+      this.next.emit({ nome: nomeLimpo });
     }
   }
 }
