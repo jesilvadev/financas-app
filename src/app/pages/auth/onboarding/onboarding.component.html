@@ -113,8 +113,10 @@
           (clicked)="onPrimaryClick()"
         />
         <p *ngIf="currentStep === 3" class="text-sm text-primary">
-          Já tem uma conta?
-          <a routerLink="/signin" class="underline font-medium">Entrar</a>
+          Não tem uma conta?
+          <a href (click)="onEnterClick($event)" class="underline font-medium"
+            >Entrar</a
+          >
         </p>
       </div>
     </div>

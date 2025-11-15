@@ -31,7 +31,21 @@ export class OnboardingComponent {
     if (this.currentStep < 3) {
       this.nextStep();
     } else {
+      // Marca onboarding como visto e segue para o cadastro
+      try {
+        localStorage.setItem('onboardingSeen', 'true');
+      } catch {}
       this.router.navigate(['/signup']);
     }
+  }
+
+  onEnterClick(event?: Event): void {
+    if (event) {
+      event.preventDefault();
+    }
+    try {
+      localStorage.setItem('onboardingSeen', 'true');
+    } catch {}
+    this.router.navigate(['/signin']);
   }
 }

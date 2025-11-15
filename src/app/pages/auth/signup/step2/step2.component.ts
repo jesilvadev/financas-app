@@ -1,11 +1,20 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { UiInputComponent } from '../../../../shared/components/ui-input/ui-input.component';
+import { ButtonPrimaryComponent } from '../../../../shared/components/button-primary/button-primary.component';
+import { MatIconModule } from '@angular/material/icon';
 
 @Component({
   selector: 'app-step2',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [
+    CommonModule,
+    FormsModule,
+    MatIconModule,
+    UiInputComponent,
+    ButtonPrimaryComponent,
+  ],
   templateUrl: './step2.component.html',
 })
 export class Step2Component {

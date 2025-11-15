@@ -38,6 +38,14 @@ export class SignupComponent {
 
   constructor(private authService: AuthService, private router: Router) {}
 
+  headerBack(): void {
+    if (this.currentStep === 1) {
+      this.router.navigate(['/signin']);
+    } else {
+      this.onStep2Back();
+    }
+  }
+
   onStep1Next({ nome }: Step1Payload): void {
     this.signupData.nome = nome;
     this.currentStep = 2;

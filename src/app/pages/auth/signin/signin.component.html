@@ -1,6 +1,4 @@
-<section
-  class="min-h-screen flex items-center justify-center bg-secondary p-6 font-[Inter]"
->
+<section class="min-h-screen flex items-center justify-center bg-secondary p-6">
   <div class="w-full max-w-xs bg-transparent flex flex-col items-center gap-14">
     <h1 class="text-5xl font-bold text-primary">Entrar</h1>
 
@@ -26,7 +24,7 @@
         <button
           type="button"
           (click)="togglePasswordVisibility()"
-          class="absolute inset-y-0 right-4 flex items-center text-primary"
+          class="absolute inset-y-0 right-4 flex items-center text-description/60"
         >
           <mat-icon>
             {{ showPassword ? "visibility_off" : "visibility" }}

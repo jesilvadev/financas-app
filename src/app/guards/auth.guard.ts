@@ -10,7 +10,8 @@ export const authGuard: CanActivateFn = (route, state) => {
     return true;
   }
 
-  // Redirecionar para login
-  router.navigate(['/signin']);
+  // Primeiro acesso: enviar para onboarding; senão, para login
+  const hasSeenOnboarding = localStorage.getItem('onboardingSeen') === 'true';
+  router.navigate([hasSeenOnboarding ? '/signin' : '/onboarding']);
   return false;
 };
