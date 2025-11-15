@@ -7,6 +7,7 @@ import { ProfileComponent } from './pages/profile/profile.component';
 import { SigninComponent } from './pages/auth/signin/signin.component';
 import { SignupComponent } from './pages/auth/signup/signup.component';
 import { OnboardingComponent } from './pages/auth/onboarding/onboarding.component';
+import { CompletarCadastroComponent } from './pages/auth/completarCadastro/completarCadastro.component';
 import { authGuard } from './guards/auth.guard';
 import { guestGuard } from './guards/guest.guard';
 
@@ -18,6 +19,11 @@ export const routes: Routes = [
     path: 'onboarding',
     component: OnboardingComponent,
     canActivate: [guestGuard],
+  },
+  {
+    path: 'completar-cadastro',
+    component: CompletarCadastroComponent,
+    canActivate: [authGuard],
   },
 
   // Rotas principais com layout (apenas para autenticados)
