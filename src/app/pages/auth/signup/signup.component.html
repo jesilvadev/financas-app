@@ -1,8 +1,11 @@
 <section
   class="min-h-screen flex flex-col items-center bg-secondary text-primary p-6"
 >
-  <!-- Header fixo seguindo padrão do onboarding -->
-  <header class="w-full max-w-md flex items-center justify-between mt-2">
+  <!-- Header fixo seguindo padrão do onboarding (oculto na step 3) -->
+  <header
+    *ngIf="currentStep < 3"
+    class="w-full max-w-md flex items-center justify-between mt-2"
+  >
     <div class="w-14 h-14 flex items-center justify-start">
       <button
         type="button"
@@ -48,5 +51,7 @@
       (back)="onStep2Back()"
       [isLoading]="isLoading"
     ></app-step2>
+
+    <app-step3 *ngIf="currentStep === 3"></app-step3>
   </div>
 </section>

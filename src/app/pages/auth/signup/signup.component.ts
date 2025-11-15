@@ -1,10 +1,11 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
-import { finalize, switchMap, timer } from 'rxjs';
+import { catchError, finalize, forkJoin, of, switchMap, timer } from 'rxjs';
 
 import { Step1Component } from './step1/step1.component';
 import { Step2Component } from './step2/step2.component';
+import { Step3Component } from './step3/step3.component';
 import { AuthService } from '../../../services/auth.service';
 import {
   AuthLoginRequest,
@@ -23,7 +24,7 @@ interface Step2Payload {
 @Component({
   selector: 'app-signup',
   standalone: true,
-  imports: [CommonModule, Step1Component, Step2Component],
+  imports: [CommonModule, Step1Component, Step2Component, Step3Component],
   templateUrl: './signup.component.html',
 })
 export class SignupComponent {
@@ -54,6 +55,7 @@ export class SignupComponent {
   onStep2Next({ email, senha }: Step2Payload): void {
     this.signupData.email = email;
     this.signupData.senha = senha;
+    this.currentStep = 3;
     this.register();
   }
 
@@ -70,22 +72,25 @@ export class SignupComponent {
       senha: this.signupData.senha,
     };
 
-    timer(1000)
-      .pipe(
-        switchMap(() => this.authService.register(this.signupData)),
-        switchMap(() => this.authService.login(loginPayload)),
-        finalize(() => (this.isLoading = false))
-      )
-      .subscribe({
-        next: () => {
+    const process$ = this.authService.register(this.signupData).pipe(
+      switchMap(() => this.authService.login(loginPayload)),
+      catchError((error) => {
+        console.error('Erro no cadastro:', error);
+        this.errorMessage =
+          error?.error?.message || error?.message || 'Erro ao criar conta';
+        // Volta para a step 2 em caso de erro
+        this.currentStep = 2;
+        return of(null);
+      })
+    );
+
+    // Garante loader por pelo menos 3s e só então navega em caso de sucesso
+    forkJoin([process$, timer(3000)])
+      .pipe(finalize(() => (this.isLoading = false)))
+      .subscribe(([result]) => {
+        if (result) {
           this.router.navigate(['/completar-cadastro']);
-        },
-        error: (error) => {
-          console.error('Erro no cadastro:', error);
-          this.errorMessage =
-            error?.error?.message || error?.message || 'Erro ao criar conta';
-          this.currentStep = 2;
-        },
+        }
       });
   }
 }
