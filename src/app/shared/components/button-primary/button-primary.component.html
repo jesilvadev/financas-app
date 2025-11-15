@@ -3,6 +3,7 @@
   [attr.type]="type"
   [disabled]="disabled || loading"
   [attr.aria-busy]="loading"
+  [routerLink]="routerLink || null"
   (click)="onClick($event)"
 >
   <span *ngIf="!loading">{{ label }}</span>

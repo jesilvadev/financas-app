@@ -1,10 +1,11 @@
 import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-button-primary',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, RouterModule],
   templateUrl: './button-primary.component.html',
 })
 export class ButtonPrimaryComponent {
@@ -13,6 +14,7 @@ export class ButtonPrimaryComponent {
   @Input() loading: boolean = false;
   @Input() disabled: boolean = false;
   @Input() type: 'button' | 'submit' | 'reset' = 'button';
+  @Input() routerLink?: string | any[];
 
   @Output() clicked = new EventEmitter<Event>();
 
