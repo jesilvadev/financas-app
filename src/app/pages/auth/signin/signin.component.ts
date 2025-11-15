@@ -2,7 +2,10 @@ import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
+import { finalize } from 'rxjs';
+
 import { AuthService } from '../../../services/auth.service';
+import { AuthLoginRequest, AuthResponse } from '../../../models/auth.model';
 
 @Component({
   selector: 'app-signin',
@@ -32,17 +35,23 @@ export class SigninComponent {
     this.isLoading = true;
     this.errorMessage = '';
 
+    const payload: AuthLoginRequest = {
+      email: this.email.trim(),
+      senha: this.password,
+    };
+
     this.authService
-      .login({ email: this.email, password: this.password })
+      .login(payload)
+      .pipe(finalize(() => (this.isLoading = false)))
       .subscribe({
-        next: (user) => {
-          console.log('Login bem-sucedido:', user);
+        next: (response: AuthResponse) => {
+          console.log('Login bem-sucedido:', response.usuario);
           this.router.navigate(['/']);
         },
         error: (error) => {
           console.error('Erro no login:', error);
-          this.errorMessage = error.message || 'Erro ao fazer login';
-          this.isLoading = false;
+          this.errorMessage =
+            error?.error?.message || error?.message || 'Erro ao fazer login';
         },
       });
   }
