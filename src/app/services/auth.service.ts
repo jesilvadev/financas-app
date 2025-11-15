@@ -1,118 +1,83 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable } from 'rxjs';
-import { User, LoginCredentials, SignupData } from '../models/user.model';
+import { HttpClient } from '@angular/common/http';
+import { BehaviorSubject, Observable, tap } from 'rxjs';
+
+import {
+  AuthLoginRequest,
+  AuthRegisterRequest,
+  AuthResponse,
+} from '../models/auth.model';
+import { UsuarioResponse } from '../models/user.model';
+import { environment } from '../../environments/environment.local';
 
 @Injectable({
   providedIn: 'root',
 })
 export class AuthService {
-  private currentUserSubject: BehaviorSubject<User | null>;
-  public currentUser: Observable<User | null>;
+  private readonly TOKEN_KEY = 'auth_token';
+  private readonly USER_KEY = 'auth_user';
+  private readonly baseUrl = environment.apiBaseUrl;
 
-  constructor() {
-    const storedUser = localStorage.getItem('currentUser');
-    this.currentUserSubject = new BehaviorSubject<User | null>(
-      storedUser ? JSON.parse(storedUser) : null
+  private currentUserSubject: BehaviorSubject<UsuarioResponse | null>;
+  public currentUser$: Observable<UsuarioResponse | null>;
+
+  constructor(private readonly http: HttpClient) {
+    const storedUser = this.getStoredUser();
+
+    this.currentUserSubject = new BehaviorSubject<UsuarioResponse | null>(
+      storedUser
     );
-    this.currentUser = this.currentUserSubject.asObservable();
+    this.currentUser$ = this.currentUserSubject.asObservable();
   }
 
-  public get currentUserValue(): User | null {
+  public get currentUserValue(): UsuarioResponse | null {
     return this.currentUserSubject.value;
   }
 
+  public get token(): string | null {
+    return localStorage.getItem(this.TOKEN_KEY);
+  }
+
   public get isAuthenticated(): boolean {
-    return !!this.currentUserSubject.value;
+    return !!this.token;
   }
 
-  login(credentials: LoginCredentials): Observable<User> {
-    return new Observable((observer) => {
-      // Simular delay de rede
-      setTimeout(() => {
-        // Buscar usuário no localStorage
-        const users = this.getStoredUsers();
-        const user = users.find(
-          (u) =>
-            u.email === credentials.email &&
-            this.verifyPassword(u.email, credentials.password)
-        );
-
-        if (user) {
-          localStorage.setItem('currentUser', JSON.stringify(user));
-          this.currentUserSubject.next(user);
-          observer.next(user);
-          observer.complete();
-        } else {
-          observer.error({ message: 'Email ou senha inválidos' });
-        }
-      }, 500);
-    });
+  register(payload: AuthRegisterRequest): Observable<AuthResponse> {
+    return this.http
+      .post<AuthResponse>(`${this.baseUrl}auth/register`, payload)
+      .pipe(tap((response) => this.persistAuthState(response)));
   }
 
-  signup(signupData: SignupData): Observable<User> {
-    return new Observable((observer) => {
-      // Simular delay de rede
-      setTimeout(() => {
-        // Verificar se o email já existe
-        const users = this.getStoredUsers();
-        const existingUser = users.find((u) => u.email === signupData.email);
+  login(payload: AuthLoginRequest): Observable<AuthResponse> {
+    return this.http
+      .post<AuthResponse>(`${this.baseUrl}auth/login`, payload)
+      .pipe(tap((response) => this.persistAuthState(response)));
+  }
 
-        if (existingUser) {
-          observer.error({ message: 'Email já cadastrado' });
-          return;
-        }
-
-        // Criar novo usuário
-        const newUser: User = {
-          id: this.generateId(),
-          fullName: signupData.fullName,
-          email: signupData.email,
-          incomes: signupData.incomes,
-          expenses: signupData.expenses,
-          startDay: signupData.startDay,
-          createdAt: new Date(),
-        };
-
-        // Salvar usuário
-        users.push(newUser);
-        localStorage.setItem('users', JSON.stringify(users));
-
-        // Salvar senha (em produção, isso seria hash no backend)
-        this.savePassword(signupData.email, signupData.password);
-
-        // Login automático
-        localStorage.setItem('currentUser', JSON.stringify(newUser));
-        this.currentUserSubject.next(newUser);
-
-        observer.next(newUser);
-        observer.complete();
-      }, 500);
-    });
+  fetchCurrentUser(): Observable<UsuarioResponse> {
+    return this.http
+      .get<UsuarioResponse>(`${this.baseUrl}auth/me`)
+      .pipe(tap((user) => this.persistUser(user)));
   }
 
   logout(): void {
-    localStorage.removeItem('currentUser');
+    localStorage.removeItem(this.TOKEN_KEY);
+    localStorage.removeItem(this.USER_KEY);
     this.currentUserSubject.next(null);
   }
 
-  private getStoredUsers(): User[] {
-    const usersJson = localStorage.getItem('users');
-    return usersJson ? JSON.parse(usersJson) : [];
+  private persistAuthState(response: AuthResponse): void {
+    localStorage.setItem(this.TOKEN_KEY, response.token);
+    this.persistUser(response.usuario);
   }
 
-  private savePassword(email: string, password: string): void {
-    // Em produção, isso seria hash no backend
-    const passwords = JSON.parse(localStorage.getItem('passwords') || '{}');
-    passwords[email] = password;
-    localStorage.setItem('passwords', JSON.stringify(passwords));
+  private persistUser(user: UsuarioResponse): void {
+    localStorage.setItem(this.USER_KEY, JSON.stringify(user));
+    this.currentUserSubject.next(user);
   }
 
-  private verifyPassword(email: string, password: string): boolean {
-    const passwords = JSON.parse(localStorage.getItem('passwords') || '{}');
-    return passwords[email] === password;
-  }
-
-  private generateId(): string {
-    return Math.random().toString(36).substr(2, 9);
+  private getStoredUser(): UsuarioResponse | null {
+    const raw = localStorage.getItem(this.USER_KEY);
+    return raw ? (JSON.parse(raw) as UsuarioResponse) : null;
   }
 }
