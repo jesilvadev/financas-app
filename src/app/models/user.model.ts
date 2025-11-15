@@ -1,35 +1,17 @@
-export interface User {
+export interface UsuarioRequest {
+  nome?: string;
+  email?: string;
+  senha?: string;
+  faixaSalario?: number | null;
+}
+
+export interface UsuarioResponse {
   id: string;
-  fullName: string;
+  nome: string;
   email: string;
-  incomes: Income[];
-  expenses: Expense[];
-  startDay: string;
-  createdAt: Date;
-}
-
-export interface Income {
-  value: number;
-  category: string;
-  day: string;
-}
-
-export interface Expense {
-  value: number;
-  category: string;
-  day: string;
-}
-
-export interface LoginCredentials {
-  email: string;
-  password: string;
-}
-
-export interface SignupData {
-  fullName: string;
-  email: string;
-  password: string;
-  incomes: Income[];
-  expenses: Expense[];
-  startDay: string;
+  faixaSalario: number | null;
+  dataCriacao: string;        // ISO date-time
+  dataAtualizacao: string;    // ISO date-time
+  dataInicioControle: string | null; // ISO date
+  primeiroAcesso: boolean;
 }
