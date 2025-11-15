@@ -1,18 +1,19 @@
 <section class="flex flex-col gap-6 text-center">
-  <header class="flex flex-col gap-2">
-    <h1 class="text-4xl font-bold text-primary">Bem-vindo!</h1>
-    <p class="text-base text-description px-6">
-      Em poucos passos você vai informar suas principais rendas, despesas fixas
-      e o dia em que começa seu controle mensal.
+  <header class="flex flex-col gap-2 text-left">
+    <h1 class="text-4xl font-bold text-primary">
+      Boas Vindas!<br />
+      Sua conta já foi criada
+    </h1>
+    <p>
+      Mas precisamos de mais algumas informações sobre a sua situação finaceira
     </p>
   </header>
 
-  <button
-    type="button"
-    (click)="start()"
-    class="border-0 rounded-xl px-6 py-4 text-lg font-semibold bg-primary text-white leading-none tracking-normal"
-  >
-    Começar
-  </button>
-</section>
+  <app-button-primary label="Vamos lá" (clicked)="start()" />
 
+  <p class="text-sm text-primary mt-2">
+    <a (click)="onExit()" class="font-semibold hover:underline cursor-pointer"
+      >Fazer isso depois</a
+    >
+  </p>
+</section>

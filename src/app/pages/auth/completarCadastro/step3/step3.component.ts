@@ -1,11 +1,12 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { ButtonPrimaryComponent } from '../../../../shared/components/button-primary/button-primary.component';
 
 @Component({
   selector: 'app-step3',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, ButtonPrimaryComponent],
   templateUrl: './step3.component.html',
 })
 export class Step3Component {

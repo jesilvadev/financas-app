@@ -1,10 +1,4 @@
 <section class="flex flex-col gap-6">
-  <div class="mt-[-3rem]">
-    <button type="button" (click)="onBack()" class="text-sm underline">
-      <img src="/assets/arrow_circle_left_24dp.png" alt="Seta de Voltar" />
-    </button>
-  </div>
-
   <header class="flex flex-col gap-2">
     <h1 class="text-4xl font-bold text-primary">
       Informe seus <strong class="text-error">gastos</strong> mensais fixos
@@ -29,15 +23,18 @@
       </div>
 
       <div class="flex flex-col gap-2">
-        <input
-          type="number"
+        <app-ui-input
           [id]="'value-' + i"
           [(ngModel)]="expense.value"
           [name]="'value-' + i"
-          min="0"
-          step="0.01"
           placeholder="0,00"
-          class="border rounded-lg px-3 py-4 outline-none"
+          [useMask]="true"
+          mask="separator.2"
+          thousandSeparator="."
+          decimalMarker=","
+          [dropSpecialCharacters]="false"
+          prefix="R$"
+          inputMode="decimal"
         />
       </div>
       <div class="flex flex-row justify-between pl-3 pr-7 gap-4 flex-wrap">
@@ -96,12 +93,10 @@
       <img src="/assets/adicionar.png" alt="Adicionar" /> Adicionar outro gasto
     </button>
 
-    <button
+    <app-button-primary
       type="submit"
+      label="Continuar"
       [disabled]="!isFormValid()"
-      class="border-0 rounded-xl px-4 py-6 text-lg font-semibold disabled:opacity-70 bg-primary text-white leading-none tracking-normal mb-4"
-    >
-      Continuar
-    </button>
+    />
   </form>
 </section>

@@ -1,6 +1,8 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { UiInputComponent } from '../../../../shared/components/ui-input/ui-input.component';
+import { ButtonPrimaryComponent } from '../../../../shared/components/button-primary/button-primary.component';
 
 import { Categoria } from '../../../../models/categoria.model';
 
@@ -20,7 +22,12 @@ export interface IncomeResult {
 @Component({
   selector: 'app-step1',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [
+    CommonModule,
+    FormsModule,
+    UiInputComponent,
+    ButtonPrimaryComponent,
+  ],
   templateUrl: './step1.component.html',
 })
 export class Step1Component {

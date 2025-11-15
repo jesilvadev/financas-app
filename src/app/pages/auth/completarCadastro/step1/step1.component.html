@@ -1,14 +1,8 @@
 <section class="flex flex-col gap-6">
-  <div class="mt-[-3rem]">
-    <button type="button" (click)="onBack()" class="text-sm underline">
-      <img src="/assets/arrow_circle_left_24dp.png" alt="Seta de Voltar" />
-    </button>
-  </div>
-
   <header class="flex flex-col gap-2">
     <h1 class="text-4xl font-bold text-primary">
       Informe suas <br />
-      <strong class="text-success">fontes de rendas</strong> mensais fixas
+      <span class="text-success">fontes de rendas</span> mensais fixas
     </h1>
   </header>
 
@@ -31,15 +25,18 @@
 
       <div class="flex flex-col gap-2">
         <label [for]="'value-' + i" class="text-sm font-medium"> </label>
-        <input
-          type="number"
+        <app-ui-input
           [id]="'value-' + i"
           [(ngModel)]="income.value"
           [name]="'value-' + i"
-          min="0"
-          step="0.01"
           placeholder="0,00"
-          class="border rounded-lg px-3 py-4 outline-none"
+          [useMask]="true"
+          mask="separator.2"
+          thousandSeparator="."
+          decimalMarker=","
+          [dropSpecialCharacters]="false"
+          prefix="R$"
+          inputMode="decimal"
         />
       </div>
 
@@ -99,12 +96,10 @@
       <img src="/assets/adicionar.png" alt="Adicionar" /> Adicionar outra renda
     </button>
 
-    <button
+    <app-button-primary
       type="submit"
+      label="Continuar"
       [disabled]="!isFormValid()"
-      class="border-0 rounded-xl px-4 py-6 text-lg font-semibold disabled:opacity-70 bg-primary text-white leading-none tracking-normal mb-4"
-    >
-      Continuar
-    </button>
+    />
   </form>
 </section>

@@ -87,6 +87,25 @@ export class CompletarCadastroComponent {
     this.loadCategorias();
   }
 
+  headerBack(): void {
+    if (this.currentStep === 0) {
+      this.router.navigate(['/signin']);
+      return;
+    }
+    if (this.currentStep === 1) {
+      this.onStep1Back();
+      return;
+    }
+    if (this.currentStep === 2) {
+      this.onStep2Back();
+      return;
+    }
+    if (this.currentStep === 3) {
+      this.onStep3Back();
+      return;
+    }
+  }
+
   onIntroNext(): void {
     const user = this.authService.currentUserValue;
     if (user && !user.primeiroAcesso) {

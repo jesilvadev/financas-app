@@ -1,10 +1,4 @@
 <section class="flex flex-col gap-6">
-  <div class="mt-[-3rem]">
-    <button type="button" (click)="onBack()" class="text-sm underline">
-      <img src="/assets/arrow_circle_left_24dp.png" alt="Seta de Voltar" />
-    </button>
-  </div>
-
   <header class="flex flex-col gap-2">
     <h1 class="text-4xl font-bold text-primary">
       Defina o dia de início do seu controle mensal
@@ -31,13 +25,12 @@
       </select>
     </div>
 
-    <button
+    <app-button-primary
       type="submit"
+      label="Finalizar"
+      loadingText="Enviando..."
+      [loading]="isLoading"
       [disabled]="!startDay || isLoading"
-      class="border-0 rounded-xl px-4 py-6 text-lg font-semibold disabled:opacity-70 bg-primary text-white leading-none tracking-normal mb-4"
-    >
-      <span *ngIf="!isLoading">Finalizar</span>
-      <span *ngIf="isLoading">Enviando...</span>
-    </button>
+    />
   </form>
 </section>
