@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, DestroyRef, inject } from '@angular/core';
 import {
   Router,
   RouterLink,
@@ -8,11 +8,10 @@ import {
 } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
 import { AuthService } from '../services/auth.service';
-import { User } from '../models/user.model';
-import {
-  AddEntryModalComponent,
-  AddEntryPayload,
-} from '../shared/components/add-entry-modal/add-entry-modal.component';
+import { UsuarioResponse } from '../models/user.model';
+import { AddEntryModalComponent } from '../shared/components/add-entry-modal/add-entry-modal.component';
+import { Transacao } from '../models/transacao.model';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'app-main-layout',
@@ -31,16 +30,28 @@ export class MainLayoutComponent implements OnInit {
   userName: string = '';
   userInitial: string = '';
   isAddModalOpen = false;
+  private readonly destroyRef = inject(DestroyRef);
 
   constructor(private authService: AuthService, private router: Router) {}
 
   ngOnInit(): void {
-    this.authService.currentUser.subscribe((user: User | null) => {
-      if (user) {
-        this.userName = user.fullName;
-        this.userInitial = user.fullName.charAt(0).toUpperCase();
-      }
-    });
+    this.authService.currentUser$
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((user: UsuarioResponse | null) => {
+        if (user?.primeiroAcesso && this.router.url !== '/completar-cadastro') {
+          this.router.navigate(['/completar-cadastro']);
+          return;
+        }
+
+        if (!user) {
+          this.userName = '';
+          this.userInitial = '';
+          return;
+        }
+
+        this.userName = user.nome;
+        this.userInitial = user.nome.charAt(0).toUpperCase();
+      });
   }
 
   logout(): void {
@@ -56,8 +67,8 @@ export class MainLayoutComponent implements OnInit {
     this.isAddModalOpen = false;
   }
 
-  handleAddEntry(payload: AddEntryPayload): void {
-    console.log('Nova movimentação registrada:', payload);
+  handleAddEntry(transacao: Transacao): void {
+    console.log('Nova movimentação registrada:', transacao);
     this.closeAddModal();
   }
 }
