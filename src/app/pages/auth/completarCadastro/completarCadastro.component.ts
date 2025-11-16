@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
-import { finalize } from 'rxjs';
+import { catchError, finalize, forkJoin, of, timer } from 'rxjs';
 
 import { IntroComponent } from './intro/intro.component';
 import { Step1Component } from './step1/step1.component';
@@ -177,9 +177,13 @@ export class CompletarCadastroComponent {
         next: () => {
           console.log('[CompletarCadastro] Onboarding concluído com sucesso');
           this.currentStep = 4;
-          this.authService.fetchCurrentUser().subscribe({
-            next: () => this.router.navigate(['/']),
-            error: () => this.router.navigate(['/']),
+          forkJoin([
+            this.authService
+              .fetchCurrentUser()
+              .pipe(catchError(() => of(null))),
+            timer(3000), // garante spinner por pelo menos 3s
+          ]).subscribe(() => {
+            this.router.navigate(['/']);
           });
         },
         error: (error) => {
