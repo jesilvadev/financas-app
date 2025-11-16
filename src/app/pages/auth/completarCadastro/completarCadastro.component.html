@@ -18,14 +18,10 @@
       </button>
     </div>
     <div class="flex-1"></div>
-    <div class="w-20 h-14 flex items-center justify-end gap-2">
-      <span
-        class="w-3 h-3 rounded-full transition-all"
-        [ngClass]="{
-          'bg-primary': currentStep >= 0,
-          'bg-white': currentStep < 0
-        }"
-      ></span>
+    <div
+      class="w-20 h-14 flex items-center justify-end gap-2"
+      *ngIf="currentStep >= 1"
+    >
       <span
         class="w-3 h-3 rounded-full transition-all"
         [ngClass]="{
