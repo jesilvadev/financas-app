@@ -1,96 +1,147 @@
 <section class="flex flex-col gap-6">
-  <header class="flex flex-col gap-2">
+  <header class="flex flex-col gap-3">
     <h1 class="text-4xl font-bold text-primary">
       Informe suas <br />
       <span class="text-success">fontes de rendas</span> mensais fixas
     </h1>
+
+    <ul *ngIf="finalizedIncomes.length" class="w-full space-y-2">
+      <li
+        *ngFor="let inc of finalizedIncomes; let idx = index"
+        class="flex items-center justify-between rounded-lg bg-white/60 px-3 py-2"
+      >
+        <div class="text-sm text-primary">
+          <span class="font-semibold">
+            {{ inc.value | currency : "BRL" : "symbol" : "1.2-2" }}
+          </span>
+          <span class="mx-1">•</span>
+          <span>{{ getCategoriaNome(inc.categoriaId) }}</span>
+          <span class="mx-1">•</span>
+          <span>Dia {{ inc.day }}</span>
+        </div>
+        <button
+          type="button"
+          class="text-error"
+          aria-label="Remover renda"
+          (click)="deleteFinalized(idx)"
+        >
+          <mat-icon>delete</mat-icon>
+        </button>
+      </li>
+    </ul>
   </header>
 
   <form class="flex flex-col gap-6" (ngSubmit)="onContinue()">
-    <div
-      *ngFor="let income of incomes; let i = index"
-      class="flex flex-col gap-3 border-0 rounded"
-    >
-      <div class="flex items-center justify-between text-sm font-medium">
-        <span class="text-primary font-medium text-lg">Renda {{ i + 1 }}</span>
-        <button
-          *ngIf="incomes.length > 1"
-          type="button"
-          (click)="removeIncome(i)"
-          class="underline"
-        >
-          Remover
-        </button>
-      </div>
+    <div class="flex flex-col gap-2">
+      <label for="value-current" class="text-sm font-medium"> </label>
+      <app-ui-input
+        id="value-current"
+        [(ngModel)]="currentIncome.value"
+        name="value-current"
+        placeholder="0,00"
+        [useMask]="true"
+        mask="separator.2"
+        thousandSeparator="."
+        decimalMarker=","
+        [dropSpecialCharacters]="false"
+        prefix="R$"
+        inputMode="decimal"
+      />
+    </div>
 
-      <div class="flex flex-col gap-2">
-        <label [for]="'value-' + i" class="text-sm font-medium"> </label>
-        <app-ui-input
-          [id]="'value-' + i"
-          [(ngModel)]="income.value"
-          [name]="'value-' + i"
-          placeholder="0,00"
-          [useMask]="true"
-          mask="separator.2"
-          thousandSeparator="."
-          decimalMarker=","
-          [dropSpecialCharacters]="false"
-          prefix="R$"
-          inputMode="decimal"
-        />
-      </div>
-
-      <div class="flex flex-row justify-between pl-3 pr-7 gap-4 flex-wrap">
-        <div class="flex flex-col gap-2 flex-1 min-w-[160px]">
+    <div class="flex flex-row justify-between pl-3 pr-7 gap-4 flex-wrap">
+      <div class="flex flex-col gap-2 flex-1 min-w-[160px]">
+        <div class="relative">
           <select
-            [id]="'category-' + i"
-            [(ngModel)]="income.categoriaId"
-            [name]="'category-' + i"
-            class="border-0 rounded-lg px-4 py-3 bg-primary outline-none font-bold text-white"
+            id="category-current"
+            [(ngModel)]="currentIncome.categoriaId"
+            name="category-current"
+            class="border-0 rounded-lg px-4 py-3 pr-10 bg-primary outline-none font-bold text-white appearance-none w-full"
           >
-            <option class="bg-white text-black" value="">Categoria</option>
+            <option class="bg-white text-primary" value="">Categoria</option>
             <option
-              class="bg-white text-black"
+              class="bg-white text-primary"
               *ngFor="let cat of categoriasReceita"
               [value]="cat.id"
             >
               {{ cat.nome }}
             </option>
           </select>
-          <p
-            *ngIf="categoriasReceita.length === 0"
-            class="text-xs text-error text-center"
+          <mat-icon
+            class="pointer-events-none !text-white absolute right-3 top-1/2 -translate-y-1/2 select-none"
+            >expand_more</mat-icon
           >
-            Nenhuma categoria de receita disponível.
-          </p>
         </div>
+        <p
+          *ngIf="categoriasReceita.length === 0"
+          class="text-xs text-error text-center"
+        >
+          Nenhuma categoria de receita disponível.
+        </p>
+      </div>
 
-        <div class="flex flex-row items-center gap-2 w-24">
-          <label [for]="'day-' + i" class="text-sm font-medium text-primary">
-            Dia
-          </label>
-          <select
-            [id]="'day-' + i"
-            [(ngModel)]="income.day"
-            [name]="'day-' + i"
-            class="border-0 rounded-lg px-3 py-2 bg-primary outline-none font-bold text-white"
-          >
-            <option class="bg-white text-black" value="">01</option>
-            <option
-              class="bg-white text-black"
-              *ngFor="let day of days"
-              [value]="day"
-            >
-              {{ day }}
-            </option>
-          </select>
-        </div>
+      <div class="flex flex-row items-center gap-2 w-24">
+        <label for="day-current" class="text-sm font-medium text-primary">
+          Dia
+        </label>
+        <button
+          type="button"
+          id="day-current"
+          name="day-current"
+          (click)="openDayModal()"
+          class="border-0 rounded-md px-6 py-2 bg-primary outline-none font-bold text-white flex items-center gap-1"
+          aria-haspopup="dialog"
+          [attr.aria-expanded]="showDayModal ? 'true' : 'false'"
+        >
+          {{ currentIncome.day }}
+        </button>
       </div>
     </div>
+
+    <ng-container *ngIf="showDayModal">
+      <div
+        class="fixed inset-0 bg-black/40 z-40"
+        (click)="closeDayModal()"
+      ></div>
+      <div class="fixed inset-0 z-50 flex items-center justify-center p-4">
+        <div
+          class="w-full max-w-sm mx-2 rounded-lg bg-white px-4 py-8 shadow-lg"
+        >
+          <div class="flex items-center justify-between mb-3">
+            <h2 class="text-lg font-bold text-primary">Selecione o dia</h2>
+            <button
+              type="button"
+              (click)="closeDayModal()"
+              aria-label="Fechar"
+              class="text-primary"
+            >
+              <mat-icon>close</mat-icon>
+            </button>
+          </div>
+          <div class="grid grid-cols-7 gap-2">
+            <button
+              type="button"
+              *ngFor="let day of days"
+              (click)="selectDay(day)"
+              class="rounded-md px-2 py-2 text-sm font-bold border"
+              [ngClass]="{
+                'bg-primary text-white border-primary':
+                  day === currentIncome.day,
+                'bg-white text-primary border-primary hover:bg-primary hover:text-white':
+                  day !== currentIncome.day
+              }"
+            >
+              {{ day }}
+            </button>
+          </div>
+        </div>
+      </div>
+    </ng-container>
 
     <button
       type="button"
       (click)="addIncome()"
+      [disabled]="!isCurrentIncomeValid()"
       class="border-0 rounded px-4 py-2 text-lg flex gap-2 items-center justify-center text-primary font-bold"
     >
       <img src="/assets/adicionar.png" alt="Adicionar" /> Adicionar outra renda
