@@ -7,22 +7,16 @@
 
   <form class="flex flex-col gap-8" (ngSubmit)="onFinish()">
     <div class="flex flex-col gap-2">
-      <select
+      <app-ui-input
         id="startDay"
-        [(ngModel)]="startDay"
         name="startDay"
-        required
-        class="border rounded-lg px-3 py-5 outline-none text-description"
-      >
-        <option class="bg-white text-black" value="">Dia do mês</option>
-        <option
-          class="bg-white text-black"
-          *ngFor="let day of days"
-          [value]="day"
-        >
-          {{ day }}
-        </option>
-      </select>
+        [type]="'tel'"
+        placeholder="Dia do mês (1-31)"
+        inputMode="numeric"
+        autocomplete="off"
+        [(ngModel)]="startDay"
+        (ngModelChange)="handleDayChange($event)"
+      />
     </div>
 
     <app-button-primary
@@ -30,7 +24,7 @@
       label="Finalizar"
       loadingText="Enviando..."
       [loading]="isLoading"
-      [disabled]="!startDay || isLoading"
+      [disabled]="!isValidDay || isLoading"
     />
   </form>
 </section>

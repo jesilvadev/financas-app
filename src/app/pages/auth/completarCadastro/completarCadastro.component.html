@@ -68,6 +68,7 @@
       (next)="onStep1Next($event)"
       (back)="onStep1Back()"
       [categorias]="categoriasReceita"
+      [presetIncomes]="presetIncomesForStep"
     ></app-step1>
 
     <app-step2
@@ -75,6 +76,7 @@
       (next)="onStep2Next($event)"
       (back)="onStep2Back()"
       [categorias]="categoriasDespesa"
+      [presetExpenses]="presetExpensesForStep"
     ></app-step2>
 
     <app-step3
@@ -82,6 +84,7 @@
       (next)="onStep3Next($event)"
       (back)="onStep3Back()"
       [isLoading]="isLoading"
+      [presetStartDay]="presetStartDayForStep"
     ></app-step3>
 
     <app-conclusao *ngIf="currentStep === 4"></app-conclusao>

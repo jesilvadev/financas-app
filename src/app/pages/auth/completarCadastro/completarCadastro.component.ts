@@ -56,6 +56,7 @@ export class CompletarCadastroComponent {
   private usuarioId: string | null = null;
   private receitas: RecorrenciaFormEntry[] = [];
   private despesas: RecorrenciaFormEntry[] = [];
+  private startDaySelected: string = '';
 
   categoriasReceita: Categoria[] = [];
   categoriasDespesa: Categoria[] = [];
@@ -139,6 +140,7 @@ export class CompletarCadastroComponent {
   }
 
   onStep3Next({ startDay }: StartDayPayload): void {
+    this.startDaySelected = startDay;
     this.enviarOnboarding(startDay);
   }
 
@@ -253,5 +255,34 @@ export class CompletarCadastroComponent {
 
     const date = new Date(Date.UTC(year, month, targetDay));
     return date.toISOString().split('T')[0];
+  }
+
+  // Mapeamentos para reidratar os steps ao voltar
+  get presetIncomesForStep(): {
+    value: number;
+    categoriaId: string;
+    day: string;
+  }[] {
+    return this.receitas.map(({ value, categoriaId, day }) => ({
+      value,
+      categoriaId,
+      day,
+    }));
+  }
+
+  get presetExpensesForStep(): {
+    value: number;
+    categoriaId: string;
+    day: string;
+  }[] {
+    return this.despesas.map(({ value, categoriaId, day }) => ({
+      value,
+      categoriaId,
+      day,
+    }));
+  }
+
+  get presetStartDayForStep(): string {
+    return this.startDaySelected;
   }
 }

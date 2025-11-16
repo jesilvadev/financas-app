@@ -34,11 +34,16 @@ export interface IncomeResult {
 })
 export class Step1Component {
   @Input() categorias: Categoria[] = [];
+  @Input() presetIncomes: {
+    value: number;
+    categoriaId: string;
+    day: string;
+  }[] = [];
   @Output() next = new EventEmitter<{ incomes: IncomeResult[] }>();
   @Output() back = new EventEmitter<void>();
 
   finalizedIncomes: IncomeForm[] = [];
-  currentIncome: IncomeForm = { value: null, categoriaId: '', day: '01' };
+  currentIncome: IncomeForm = { value: null, categoriaId: '', day: '' };
   showDayModal = false;
 
   days: string[] = Array.from({ length: 31 }, (_, i) =>
@@ -47,6 +52,20 @@ export class Step1Component {
 
   get categoriasReceita(): Categoria[] {
     return this.categorias.filter((categoria) => categoria.tipo === 'RECEITA');
+  }
+
+  ngOnChanges(): void {
+    if (
+      this.presetIncomes &&
+      this.presetIncomes.length &&
+      this.finalizedIncomes.length === 0
+    ) {
+      this.finalizedIncomes = this.presetIncomes.map((i) => ({
+        value: i.value,
+        categoriaId: i.categoriaId,
+        day: i.day,
+      }));
+    }
   }
 
   addIncome(): void {
@@ -58,7 +77,7 @@ export class Step1Component {
       categoriaId: this.currentIncome.categoriaId,
       day: this.currentIncome.day,
     });
-    this.currentIncome = { value: null, categoriaId: '', day: '01' };
+    this.currentIncome = { value: null, categoriaId: '', day: '' };
   }
 
   deleteFinalized(index: number): void {
