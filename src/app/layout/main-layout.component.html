@@ -1,6 +1,7 @@
 <div class="min-h-svh bg-layer text-black flex flex-col">
   <!-- HEADER -->
   <header
+    *ngIf="isHome"
     class="relative bg-primary text-white px-5 pt-12 pb-20 overflow-hidden"
   >
     <div class="mx-auto max-w-md">
@@ -13,30 +14,6 @@
           </div>
           <div class="text-sm font-medium truncate">{{ userName }}</div>
         </div>
-
-        <button
-          (click)="logout()"
-          aria-label="Sair"
-          class="p-2 rounded-full bg-white/10 hover:bg-white/15 active:bg-white/20 transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/60"
-        >
-          <!-- Logout icon -->
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="22"
-            height="22"
-            viewBox="0 0 24 24"
-            fill="none"
-            class="h-6 w-6"
-            stroke="currentColor"
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-          >
-            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
-            <polyline points="16 17 21 12 16 7" />
-            <line x1="21" y1="12" x2="9" y2="12" />
-          </svg>
-        </button>
       </div>
     </div>
 
@@ -51,7 +28,8 @@
 
   <!-- MAIN (card flutuando) -->
   <main
-    class="flex-1 bg-secondary rounded-t-3xl relative z-10 -mt-10 md:-mt-12"
+    class="flex-1 bg-secondary rounded-t-3xl relative z-10"
+    [ngClass]="{ '-mt-10': isHome, 'md:-mt-12': isHome }"
   >
     <div class="mx-auto max-w-md">
       <router-outlet></router-outlet>
