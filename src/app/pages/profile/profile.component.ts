@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, DestroyRef, OnInit, inject } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { ButtonPrimaryComponent } from '../../shared/components/button-primary/button-primary.component';
+import { ConfirmModalComponent } from '../../shared/components/confirm-modal/confirm-modal.component';
 import { AuthService } from '../../services/auth.service';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { UsuarioResponse } from '../../models/user.model';
@@ -9,12 +10,19 @@ import { UsuarioResponse } from '../../models/user.model';
 @Component({
   selector: 'app-profile',
   standalone: true,
-  imports: [CommonModule, RouterLink, ButtonPrimaryComponent],
+  imports: [
+    CommonModule,
+    RouterLink,
+    ButtonPrimaryComponent,
+    ConfirmModalComponent,
+  ],
   templateUrl: './profile.component.html',
 })
 export class ProfileComponent implements OnInit {
   userFullName: string = '';
   userInitial: string = '';
+  isConfirmLogoutOpen = false;
+  isConfirmingLogout = false;
   private readonly destroyRef = inject(DestroyRef);
 
   constructor(
@@ -34,8 +42,19 @@ export class ProfileComponent implements OnInit {
       });
   }
 
-  logout(): void {
-    this.authService.logout();
-    this.router.navigate(['/signin']);
+  openLogoutConfirm(): void {
+    this.isConfirmLogoutOpen = true;
+  }
+
+  confirmLogout(): void {
+    if (this.isConfirmingLogout) return;
+    this.isConfirmingLogout = true;
+    // nenhuma chamada async necessária, mas permite feedback visual
+    setTimeout(() => {
+      this.authService.logout();
+      this.isConfirmingLogout = false;
+      this.isConfirmLogoutOpen = false;
+      this.router.navigate(['/signin']);
+    }, 0);
   }
 }

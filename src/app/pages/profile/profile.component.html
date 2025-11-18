@@ -105,7 +105,18 @@
   <div class="mt-6">
     <app-button-primary
       label="Sair da conta"
-      (clicked)="logout()"
+      (clicked)="openLogoutConfirm()"
     ></app-button-primary>
   </div>
+
+  <app-confirm-modal
+    [open]="isConfirmLogoutOpen"
+    [title]="'Sair da conta?'"
+    [description]="'Você tem certeza que deseja sair da sua conta agora?'"
+    [confirmLabel]="'Sair'"
+    [cancelLabel]="'Cancelar'"
+    [confirming]="isConfirmingLogout"
+    (confirm)="confirmLogout()"
+    (close)="isConfirmLogoutOpen = false"
+  ></app-confirm-modal>
 </div>
