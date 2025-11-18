@@ -33,6 +33,7 @@ export class MainLayoutComponent implements OnInit {
   userInitial: string = '';
   isAddModalOpen = false;
   isHome: boolean = false;
+  showBottomNav: boolean = true;
   private readonly destroyRef = inject(DestroyRef);
 
   constructor(private authService: AuthService, private router: Router) {}
@@ -40,6 +41,7 @@ export class MainLayoutComponent implements OnInit {
   ngOnInit(): void {
     // estado inicial e atualização por navegação
     this.isHome = this.isHomeRoute(this.router.url);
+    this.showBottomNav = this.computeShowBottomNav(this.router.url);
     this.router.events
       .pipe(
         filter((e): e is NavigationEnd => e instanceof NavigationEnd),
@@ -47,6 +49,9 @@ export class MainLayoutComponent implements OnInit {
       )
       .subscribe((e) => {
         this.isHome = this.isHomeRoute(e.urlAfterRedirects ?? e.url);
+        this.showBottomNav = this.computeShowBottomNav(
+          e.urlAfterRedirects ?? e.url
+        );
       });
 
     this.authService.currentUser$
@@ -76,6 +81,12 @@ export class MainLayoutComponent implements OnInit {
   private isHomeRoute(url: string): boolean {
     const path = (url ?? '').split('?')[0].split('#')[0];
     return path === '/' || path === '';
+  }
+
+  private computeShowBottomNav(url: string): boolean {
+    const path = (url ?? '').split('?')[0].split('#')[0];
+    // Esconder menu inferior na tela de dados do perfil
+    return !path.startsWith('/profile/dados');
   }
 
   logout(): void {

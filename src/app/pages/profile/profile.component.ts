@@ -1,7 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, DestroyRef, OnInit, inject } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
-import { ButtonPrimaryComponent } from '../../shared/components/button-primary/button-primary.component';
 import { ConfirmModalComponent } from '../../shared/components/confirm-modal/confirm-modal.component';
 import { AuthService } from '../../services/auth.service';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
@@ -10,12 +9,7 @@ import { UsuarioResponse } from '../../models/user.model';
 @Component({
   selector: 'app-profile',
   standalone: true,
-  imports: [
-    CommonModule,
-    RouterLink,
-    ButtonPrimaryComponent,
-    ConfirmModalComponent,
-  ],
+  imports: [CommonModule, RouterLink, ConfirmModalComponent],
   templateUrl: './profile.component.html',
 })
 export class ProfileComponent implements OnInit {

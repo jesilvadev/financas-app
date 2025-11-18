@@ -12,6 +12,7 @@ import { authGuard } from './guards/auth.guard';
 import { guestGuard } from './guards/guest.guard';
 import { ProfileDadosComponent } from './pages/profile/dados/dados.component';
 import { ProfileSegurancaComponent } from './pages/profile/seguranca/seguranca.component';
+import { ProfilePersonalizacaoComponent } from './pages/profile/personalizacao/personalizacao.component';
 
 export const routes: Routes = [
   // Rotas de autenticação (apenas para não autenticados)
@@ -40,6 +41,10 @@ export const routes: Routes = [
       { path: 'profile', component: ProfileComponent },
       { path: 'profile/dados', component: ProfileDadosComponent },
       { path: 'profile/seguranca', component: ProfileSegurancaComponent },
+      {
+        path: 'profile/personalizacao',
+        component: ProfilePersonalizacaoComponent,
+      },
     ],
   },
 

@@ -1,4 +1,81 @@
-<div class="p-5">
-  <h1 class="text-xl font-semibold text-black">informações pessoais</h1>
-  <!-- conteúdo futuro: formulário de dados do usuário -->
+<div class="p-6">
+  <div class="flex items-center justify-center mt-6 mb-8 relative">
+    <button
+      type="button"
+      class="absolute left-0 px-1 py-1 rounded-full transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
+      routerLink="/profile"
+      aria-label="Voltar"
+    >
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="28"
+        height="28"
+        viewBox="0 0 24 24"
+        fill="#6B54EC"
+      >
+        <path d="M15.41 7.41 14 6l-6 6 6 6 1.41-1.41L10.83 12z" />
+      </svg>
+    </button>
+    <h1 class="text-xl text-center font-semibold text-primary">
+      Dados Pessoais
+    </h1>
+  </div>
+
+  <div class="mt-4 grid gap-3">
+    <div>
+      <label class="text-sm text-description mb-1 block">Nome</label>
+      <app-ui-input
+        [placeholder]="'Seu nome completo'"
+        [(ngModel)]="nome"
+        [disabled]="loading || saving || !isEditing"
+      ></app-ui-input>
+    </div>
+
+    <div>
+      <label class="text-sm text-description mb-1 block">Email</label>
+      <app-ui-input
+        [type]="'email'"
+        [placeholder]="'seu@email.com'"
+        [(ngModel)]="email"
+        [disabled]="loading || saving || !isEditing"
+        [autocomplete]="'email'"
+      ></app-ui-input>
+    </div>
+
+    <div
+      *ngIf="errorMessage"
+      class="text-sm text-error bg-error/10 rounded-lg px-3 py-2"
+    >
+      {{ errorMessage }}
+    </div>
+
+    <ng-container *ngIf="!isEditing; else editingActions">
+      <div class="mt-4">
+        <app-button-primary
+          label="Editar"
+          [disabled]="loading || saving"
+          (clicked)="editar()"
+        ></app-button-primary>
+      </div>
+    </ng-container>
+
+    <ng-template #editingActions>
+      <div class="mt-4 grid grid-cols-2 gap-3">
+        <button
+          type="button"
+          class="h-[63px] w-full items-center justify-center rounded-xl bg-white px-6 text-base font-medium text-primary transition hover:bg-black/[0.03] active:scale-95 disabled:pointer-events-none disabled:opacity-50 border border-black/5"
+          [disabled]="saving"
+          (click)="cancelar()"
+        >
+          Cancelar
+        </button>
+        <app-button-primary
+          [label]="saving ? 'Salvando...' : 'Salvar'"
+          [loading]="saving"
+          [disabled]="!canSave"
+          (clicked)="salvar()"
+        ></app-button-primary>
+      </div>
+    </ng-template>
+  </div>
 </div>
