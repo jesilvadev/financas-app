@@ -10,6 +10,8 @@ import { OnboardingComponent } from './pages/auth/onboarding/onboarding.componen
 import { CompletarCadastroComponent } from './pages/auth/completarCadastro/completarCadastro.component';
 import { authGuard } from './guards/auth.guard';
 import { guestGuard } from './guards/guest.guard';
+import { ProfileDadosComponent } from './pages/profile/dados/dados.component';
+import { ProfileSegurancaComponent } from './pages/profile/seguranca/seguranca.component';
 
 export const routes: Routes = [
   // Rotas de autenticação (apenas para não autenticados)
@@ -36,6 +38,8 @@ export const routes: Routes = [
       { path: 'stats', component: StatsComponent },
       { path: 'history', component: HistoryComponent },
       { path: 'profile', component: ProfileComponent },
+      { path: 'profile/dados', component: ProfileDadosComponent },
+      { path: 'profile/seguranca', component: ProfileSegurancaComponent },
     ],
   },
 

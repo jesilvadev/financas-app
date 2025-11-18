@@ -1,6 +1,107 @@
-<div class="p-5">
-  <h1 class="text-xl font-semibold text-black">perfil</h1>
+<div class="p-6 pt-14 min-h-svh flex flex-col pb-24">
+  <!-- Avatar + Nome completo -->
+  <div class="my-4 flex flex-col items-center justify-center gap-4 text-center">
+    <div
+      class="h-24 w-24 rounded-full flex items-center justify-center text-black font-semibold select-none"
+    >
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        fill="#6B54EC"
+        width="800px"
+        height="800px"
+        viewBox="0 0 32 32"
+        id="icon"
+      >
+        <g id="SVGRepo_bgCarrier" stroke-width="0" />
 
+        <g
+          id="SVGRepo_tracerCarrier"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        />
+
+        <g id="SVGRepo_iconCarrier">
+          <defs>
+            <style>
+              .cls-1 {
+                fill: none;
+              }
+            </style>
+          </defs>
+          <path
+            id="_inner-path_"
+            data-name="&lt;inner-path&gt;"
+            class="cls-1"
+            d="M8.0071,24.93A4.9958,4.9958,0,0,1,13,20h6a4.9959,4.9959,0,0,1,4.9929,4.93,11.94,11.94,0,0,1-15.9858,0ZM20.5,12.5A4.5,4.5,0,1,1,16,8,4.5,4.5,0,0,1,20.5,12.5Z"
+          />
+          <path
+            d="M26.7489,24.93A13.9893,13.9893,0,1,0,2,16a13.899,13.899,0,0,0,3.2511,8.93l-.02.0166c.07.0845.15.1567.2222.2392.09.1036.1864.2.28.3008.28.3033.5674.5952.87.87.0915.0831.1864.1612.28.2417.32.2759.6484.5372.99.7813.0441.0312.0832.0693.1276.1006v-.0127a13.9011,13.9011,0,0,0,16,0V27.48c.0444-.0313.0835-.0694.1276-.1006.3412-.2441.67-.5054.99-.7813.0936-.08.1885-.1586.28-.2417.3025-.2749.59-.5668.87-.87.0933-.1006.1894-.1972.28-.3008.0719-.0825.1522-.1547.2222-.2392ZM16,8a4.5,4.5,0,1,1-4.5,4.5A4.5,4.5,0,0,1,16,8ZM8.0071,24.93A4.9957,4.9957,0,0,1,13,20h6a4.9958,4.9958,0,0,1,4.9929,4.93,11.94,11.94,0,0,1-15.9858,0Z"
+          />
+          <rect
+            id="_Transparent_Rectangle_"
+            data-name="&lt;Transparent Rectangle&gt;"
+            class="cls-1"
+            width="32"
+            height="32"
+          />
+        </g>
+      </svg>
+    </div>
+    <div class="text-xl font-bold text-primary truncate max-w-[18rem]">
+      {{ userFullName }}
+    </div>
+  </div>
+
+  <!-- Abas -->
+  <div class="mt-6 grid gap-2">
+    <a
+      class="flex items-center justify-between rounded-xl bg-white border border-black/5 px-4 py-6 transition hover:bg-black/[0.03] active:scale-[0.99]"
+      [routerLink]="['/profile/dados']"
+    >
+      <span class="font-medium text-black">Dados</span>
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="22"
+        height="22"
+        viewBox="0 0 24 24"
+        fill="none"
+        class="text-black/70"
+      >
+        <path
+          d="M9 18l6-6-6-6"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        />
+      </svg>
+    </a>
+
+    <a
+      class="flex items-center justify-between rounded-xl bg-white border border-black/5 px-4 py-6 transition hover:bg-black/[0.03] active:scale-[0.99]"
+      [routerLink]="['/profile/seguranca']"
+    >
+      <span class="font-medium text-black">Segurança</span>
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="22"
+        height="22"
+        viewBox="0 0 24 24"
+        fill="none"
+        class="text-black/70"
+      >
+        <path
+          d="M9 18l6-6-6-6"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        />
+      </svg>
+    </a>
+  </div>
+
+  <!-- Sair da conta logo abaixo das abas -->
   <div class="mt-6">
     <app-button-primary
       label="Sair da conta"
