@@ -1,16 +1,19 @@
 // src/app/pages/auth/onboarding/onboarding.component.ts
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterModule } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
+import { ButtonPrimaryComponent } from '../../../shared/components/button-primary/button-primary.component';
 
 @Component({
   selector: 'app-onboarding',
   standalone: true,
-  imports: [CommonModule, RouterModule],
+  imports: [CommonModule, RouterModule, ButtonPrimaryComponent],
   templateUrl: './onboarding.component.html',
 })
 export class OnboardingComponent {
   currentStep = 1;
+
+  constructor(private router: Router) {}
 
   nextStep() {
     if (this.currentStep < 3) this.currentStep++;
@@ -18,5 +21,31 @@ export class OnboardingComponent {
 
   previousStep() {
     if (this.currentStep > 1) this.currentStep--;
+  }
+
+  get primaryLabel(): string {
+    return this.currentStep === 3 ? 'Começar' : 'Continuar';
+  }
+
+  onPrimaryClick(): void {
+    if (this.currentStep < 3) {
+      this.nextStep();
+    } else {
+      // Marca onboarding como visto e segue para o cadastro
+      try {
+        localStorage.setItem('onboardingSeen', 'true');
+      } catch {}
+      this.router.navigate(['/signup']);
+    }
+  }
+
+  onEnterClick(event?: Event): void {
+    if (event) {
+      event.preventDefault();
+    }
+    try {
+      localStorage.setItem('onboardingSeen', 'true');
+    } catch {}
+    this.router.navigate(['/signin']);
   }
 }

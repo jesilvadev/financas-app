@@ -1,0 +1,20 @@
+<section class="flex flex-col gap-6 text-center">
+  <header class="flex flex-col gap-2 text-left">
+    <h1 class="text-4xl font-bold text-primary">
+      Tudo certo!<br />
+      Sua conta foi criada
+    </h1>
+    <p>
+      Só mais alguns passos para deixarmos seu controle financeiro pronto para
+      você.
+    </p>
+  </header>
+
+  <app-button-primary label="Vamos lá" (clicked)="start()" />
+
+  <p class="text-sm text-primary mt-1">
+    <a (click)="onExit()" class="font-semibold hover:underline cursor-pointer"
+      >Fazer isso depois</a
+    >
+  </p>
+</section>

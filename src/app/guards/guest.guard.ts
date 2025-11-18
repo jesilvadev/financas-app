@@ -7,6 +7,12 @@ export const guestGuard: CanActivateFn = (route, state) => {
   const router = inject(Router);
 
   if (!authService.isAuthenticated) {
+    // Se ainda não viu o onboarding, forçar redirecionamento para onboarding
+    const hasSeenOnboarding = localStorage.getItem('onboardingSeen') === 'true';
+    if (!hasSeenOnboarding && state.url !== '/onboarding') {
+      router.navigate(['/onboarding']);
+      return false;
+    }
     return true;
   }
 

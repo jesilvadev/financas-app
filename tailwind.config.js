@@ -1,12 +1,16 @@
 /** @type {import('tailwindcss').Config} */
+const defaultTheme = require("tailwindcss/defaultTheme");
 module.exports = {
   content: ["./src/**/*.{html,ts}"],
   theme: {
     extend: {
+      fontFamily: {
+        sans: ["Inter", ...defaultTheme.fontFamily.sans],
+      },
       colors: {
         // Paleta principal
         primary: "#6B54EC",
-        secondary: "#9EAAFE",
+        secondary: "#BFCBFF",
 
         // Tons neutros e utilitários
         layer: "#FFFFFF",

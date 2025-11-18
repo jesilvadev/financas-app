@@ -1,10 +1,4 @@
 <section class="flex flex-col gap-6">
-  <div class="mt-[-3rem]">
-    <a routerLink="/signin" class="text-sm underline">
-      <img src="/assets/arrow_circle_left_24dp.png" alt="Seta de Voltar" />
-    </a>
-  </div>
-
   <header class="flex flex-col gap-2">
     <h1 class="text-4xl font-bold text-primary pr-5">
       Comece <br />
@@ -12,25 +6,19 @@
     </h1>
   </header>
 
-  <form class="flex flex-col gap-4" (ngSubmit)="onContinue()">
-    <div class="flex flex-col gap-2">
-      <input
-        type="text"
-        id="fullName"
-        [(ngModel)]="fullName"
-        name="fullName"
-        required
-        placeholder="Nome"
-        class="border rounded-xl px-3 py-5 outline-none"
-      />
-    </div>
+  <form class="flex flex-col gap-8" (ngSubmit)="onContinue()">
+    <app-ui-input
+      [(ngModel)]="nome"
+      name="nome"
+      type="text"
+      placeholder="Nome Completo"
+      autocomplete="name"
+    />
 
-    <button
+    <app-button-primary
       type="submit"
-      [disabled]="!fullName.trim()"
-      class="border-0 rounded-xl px-4 py-6 text-lg font-semibold disabled:opacity-70 bg-primary text-white leading-none tracking-normal"
-    >
-      Continuar
-    </button>
+      label="Continuar"
+      [disabled]="!nome.trim()"
+    />
   </form>
 </section>

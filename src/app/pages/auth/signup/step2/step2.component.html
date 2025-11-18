@@ -1,88 +1,73 @@
 <section class="flex flex-col gap-6">
-  <div class="mt-[-3rem]">
-    <button type="button" (click)="onBack()" class="text-sm underline">
-      <img src="/assets/arrow_circle_left_24dp.png" alt="Seta de Voltar">
-    </button>
-  </div>
-
   <header class="flex flex-col gap-2">
-    <h1 class="text-4xl font-bold text-primary pr-5">Crie seu acesso com e-mail e senha</h1>
+    <h1 class="text-4xl font-bold text-primary pr-5">
+      Crie seu acesso com e-mail e senha
+    </h1>
   </header>
 
-  <form class="flex flex-col gap-7" (ngSubmit)="onContinue()">
-    <div class="flex flex-col gap-2">
-      <input
-        type="email"
-        id="email"
-        [(ngModel)]="email"
-        name="email"
-        required
-        placeholder="seu@email.com"
-        class="border rounded-lg px-3 py-4 outline-none"
+  <form class="flex flex-col gap-7" (ngSubmit)="onConfirm()">
+    <app-ui-input
+      [(ngModel)]="email"
+      name="email"
+      type="email"
+      placeholder="E-mail"
+      autocomplete="email"
+    />
+
+    <div class="relative w-full">
+      <app-ui-input
+        [(ngModel)]="senha"
+        name="senha"
+        [type]="showPassword ? 'text' : 'password'"
+        placeholder="Senha"
+        autocomplete="new-password"
       />
+      <button
+        type="button"
+        (click)="togglePasswordVisibility()"
+        class="absolute inset-y-0 right-4 flex items-center text-description/60"
+        aria-label="Mostrar ou ocultar senha"
+      >
+        <mat-icon>{{
+          showPassword ? "visibility_off" : "visibility"
+        }}</mat-icon>
+      </button>
     </div>
 
     <div class="flex flex-col gap-2">
-      <div class="flex items-center gap-2 bg-white px-3 py-4 rounded-lg">
-        <input
-          [type]="showPassword ? 'text' : 'password'"
-          id="password"
-          [(ngModel)]="password"
-          name="password"
-          required
-          placeholder="Digite sua senha"
-          class="border-0 flex-1 outline-none"
-        />
-        <button
-          type="button"
-          (click)="togglePasswordVisibility()"
-          class="text-xs underline"
-        >
-          <span *ngIf="showPassword"><img src="/assets/visualizar.png" alt="Visualizar"></span>
-          <span *ngIf="!showPassword"><img src="/assets/visualizar.png" alt="Visualizar"></span>
-        </button>
-      </div>
-    </div>
-
-    <div class="flex flex-col gap-2 bg-white px-3 py-4 rounded-lg">
-      <div class="flex items-center gap-2">
-        <input
+      <div class="relative w-full">
+        <app-ui-input
+          [(ngModel)]="confirmarSenha"
+          name="confirmarSenha"
           [type]="showConfirmPassword ? 'text' : 'password'"
-          id="confirmPassword"
-          [(ngModel)]="confirmPassword"
-          name="confirmPassword"
-          required
-          placeholder="Repita sua senha"
-          class="border-0 rounded flex-1 outline-none"
-          [class.border-red-500]="
-            confirmPassword && password !== confirmPassword
-          "
+          placeholder="Confirmar Senha"
+          autocomplete="new-password"
         />
         <button
           type="button"
           (click)="toggleConfirmPasswordVisibility()"
-          class="text-xs underline"
+          class="absolute inset-y-0 right-4 flex items-center text-description/60"
+          aria-label="Mostrar ou ocultar confirmação de senha"
         >
-          <span *ngIf="showConfirmPassword"><img src="/assets/visualizar.png" alt="Visualizar"></span>
-          <span *ngIf="!showConfirmPassword"><img src="/assets/visualizar.png" alt="Visualizar"></span>
+          <mat-icon>{{
+            showConfirmPassword ? "visibility_off" : "visibility"
+          }}</mat-icon>
         </button>
       </div>
-      <p
-        *ngIf="confirmPassword && password !== confirmPassword"
-        class="text-xs text-red-500"
-      >
-        As senhas não coincidem
-      </p>
     </div>
 
-    <button
+    <app-button-primary
       type="submit"
+      label="Confirmar"
+      loadingText="Confirmando..."
+      [loading]="isLoading"
       [disabled]="
-        !email || !password || !confirmPassword || password !== confirmPassword
+        isLoading ||
+        !email ||
+        !senha ||
+        !confirmarSenha ||
+        senha !== confirmarSenha
       "
-      class="border-0 rounded-xl px-4 py-6 text-lg font-semibold disabled:opacity-70 bg-primary text-white leading-none tracking-normal"
-    >
-      Continuar
-    </button>
+    />
   </form>
 </section>

@@ -1,0 +1,11 @@
+<button
+  class="h-[63px] w-full items-center justify-center rounded-xl bg-primary px-6 text-base font-medium text-white transition hover:bg-primary/90 active:scale-95 flex"
+  [attr.type]="type"
+  [disabled]="disabled || loading"
+  [attr.aria-busy]="loading"
+  [routerLink]="routerLink || null"
+  (click)="onClick($event)"
+>
+  <span *ngIf="!loading">{{ label }}</span>
+  <span *ngIf="loading">{{ loadingText }}</span>
+</button>
