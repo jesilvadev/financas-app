@@ -28,8 +28,12 @@
 
   <!-- MAIN (card flutuando) -->
   <main
-    class="flex-1 bg-secondary rounded-t-3xl relative z-10"
-    [ngClass]="{ '-mt-10': isHome, 'md:-mt-12': isHome }"
+    class="flex-1 bg-secondary relative z-10"
+    [ngClass]="{
+      'rounded-t-3xl': isHome,
+      '-mt-10': isHome,
+      'md:-mt-12': isHome
+    }"
   >
     <div class="mx-auto max-w-md">
       <router-outlet></router-outlet>
