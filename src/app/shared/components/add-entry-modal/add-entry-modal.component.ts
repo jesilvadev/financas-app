@@ -1,5 +1,12 @@
 import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import {
+  Component,
+  EventEmitter,
+  Input,
+  Output,
+  OnChanges,
+  SimpleChanges,
+} from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { NgxMaskDirective } from 'ngx-mask';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
@@ -19,8 +26,10 @@ type EntryType = 'income' | 'expense';
   imports: [CommonModule, FormsModule, NgxMaskDirective],
   templateUrl: './add-entry-modal.component.html',
 })
-export class AddEntryModalComponent {
+export class AddEntryModalComponent implements OnChanges {
   @Input() open = false;
+  @Input() mode: 'create' | 'edit' = 'create';
+  @Input() initialTransacao?: Transacao | null;
 
   @Output() close = new EventEmitter<void>();
   @Output() confirm = new EventEmitter<Transacao>();
@@ -54,6 +63,23 @@ export class AddEntryModalComponent {
           this.categorias = [];
         }
       });
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (
+      (changes['open'] || changes['mode'] || changes['initialTransacao']) &&
+      this.open &&
+      this.mode === 'edit' &&
+      this.initialTransacao
+    ) {
+      const t = this.initialTransacao;
+      this.entryType = t.tipo === 'RECEITA' ? 'income' : 'expense';
+      this.amountInput = this.formatCurrencyBr(t.valor);
+      this.selectedCategoryId = t.categoriaId;
+      this.descricao = t.descricao ?? '';
+      this.usuarioId = t.userId;
+      this.loadCategorias();
+    }
   }
 
   get availableCategories(): Categoria[] {
@@ -126,20 +152,39 @@ export class AddEntryModalComponent {
     this.isSubmitting = true;
     this.errorMessage = '';
 
-    this.transacaoService.criar(payload).subscribe({
-      next: (transacao) => {
-        this.confirm.emit(transacao);
-        this.isSubmitting = false;
-        this.reset();
-        this.close.emit();
-      },
-      error: (error) => {
-        console.error('Erro ao registrar transação', error);
-        this.errorMessage =
-          error?.error?.message || error?.message || 'Erro ao registrar';
-        this.isSubmitting = false;
-      },
-    });
+    if (this.mode === 'edit' && this.initialTransacao) {
+      this.transacaoService
+        .atualizar(this.initialTransacao.id, payload)
+        .subscribe({
+          next: (transacao) => {
+            this.confirm.emit(transacao);
+            this.isSubmitting = false;
+            this.reset();
+            this.close.emit();
+          },
+          error: (error) => {
+            console.error('Erro ao atualizar transação', error);
+            this.errorMessage =
+              error?.error?.message || error?.message || 'Erro ao atualizar';
+            this.isSubmitting = false;
+          },
+        });
+    } else {
+      this.transacaoService.criar(payload).subscribe({
+        next: (transacao) => {
+          this.confirm.emit(transacao);
+          this.isSubmitting = false;
+          this.reset();
+          this.close.emit();
+        },
+        error: (error) => {
+          console.error('Erro ao registrar transação', error);
+          this.errorMessage =
+            error?.error?.message || error?.message || 'Erro ao registrar';
+          this.isSubmitting = false;
+        },
+      });
+    }
   }
 
   private loadCategorias(): void {
@@ -167,5 +212,13 @@ export class AddEntryModalComponent {
     const normalized = formatted.replace(/\./g, '').replace(',', '.');
     const num = Number(normalized);
     return Number.isFinite(num) ? num : null;
+  }
+
+  private formatCurrencyBr(value: number): string {
+    if (!Number.isFinite(value as number)) return '';
+    return (value as number).toLocaleString('pt-BR', {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    });
   }
 }

@@ -1,4 +1,190 @@
 <div class="p-5">
-  <h1 class="text-xl font-semibold text-black">histórico</h1>
-  <!-- conteúdo futuro da página Histórico -->
+  <!-- Filtros -->
+  <div class="mt-4 grid gap-3">
+    <div class="flex items-center gap-2">
+      <button
+        type="button"
+        class="px-3 py-2 rounded-lg text-sm"
+        [class.bg-primary]="filtroTipo === 'TODOS'"
+        [class.text-white]="filtroTipo === 'TODOS'"
+        [class.bg-white]="filtroTipo !== 'TODOS'"
+        [class.text-black]="filtroTipo !== 'TODOS'"
+        (click)="filtroTipo = 'TODOS'; resetPage()"
+      >
+        Todos
+      </button>
+      <button
+        type="button"
+        class="px-3 py-2 rounded-lg text-sm"
+        [class.bg-[#BDEECF]]="filtroTipo === 'RECEITA'"
+        [class.text-success]="filtroTipo === 'RECEITA'"
+        [class.bg-white]="filtroTipo !== 'RECEITA'"
+        [class.text-black]="filtroTipo !== 'RECEITA'"
+        (click)="filtroTipo = 'RECEITA'; resetPage()"
+      >
+        Receitas
+      </button>
+      <button
+        type="button"
+        class="px-3 py-2 rounded-lg text-sm"
+        [class.bg-[#F7A2A2]]="filtroTipo === 'DESPESA'"
+        [class.text-error]="filtroTipo === 'DESPESA'"
+        [class.bg-white]="filtroTipo !== 'DESPESA'"
+        [class.text-black]="filtroTipo !== 'DESPESA'"
+        (click)="filtroTipo = 'DESPESA'; resetPage()"
+      >
+        Despesas
+      </button>
+    </div>
+
+    <div class="grid grid-cols-1 gap-2">
+      <div
+        class="h-[48px] rounded-md border-2 border-primary/30 bg-white px-4 py-2 flex items-center gap-3"
+      >
+        <select
+          class="w-full border-0 bg-transparent text-black outline-none placeholder:text-disable"
+          [(ngModel)]="filtroCategoriaId"
+          (ngModelChange)="resetPage()"
+        >
+          <option value="">Todas as categorias</option>
+          <option
+            class="text-black"
+            *ngFor="let cat of categorias"
+            [value]="cat.id"
+          >
+            {{ cat.nome }}
+          </option>
+        </select>
+      </div>
+
+      <div class="grid grid-cols-2 gap-2">
+        <div
+          class="h-[48px] rounded-md border-2 border-primary/30 bg-white px-4 py-2 flex items-center gap-3"
+        >
+          <input
+            type="date"
+            class="w-full border-0 bg-transparent text-black outline-none placeholder:text-disable"
+            [(ngModel)]="filtroDataInicio"
+            (ngModelChange)="resetPage()"
+          />
+        </div>
+        <div
+          class="h-[48px] rounded-md border-2 border-primary/30 bg-white px-4 py-2 flex items-center gap-3"
+        >
+          <input
+            type="date"
+            class="w-full border-0 bg-transparent text-black outline-none placeholder:text-disable"
+            [(ngModel)]="filtroDataFim"
+            (ngModelChange)="resetPage()"
+          />
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Estado de carregamento -->
+  <div class="mt-6" *ngIf="loading">
+    <div class="text-center text-primary">Carregando...</div>
+  </div>
+
+  <!-- Empty state -->
+  <div class="mt-6" *ngIf="!loading && filteredTransacoes.length === 0">
+    <div class="text-center text-description">
+      Nenhuma transação encontrada.
+    </div>
+  </div>
+
+  <!-- Lista -->
+  <div
+    class="mt-4 grid gap-2"
+    *ngIf="!loading && filteredTransacoes.length > 0"
+  >
+    <div
+      *ngFor="let t of pagedTransacoes"
+      class="rounded-xl bg-white border border-black/5 px-4 py-3 flex items-center justify-between"
+    >
+      <div class="flex flex-col">
+        <span class="text-xs text-description">{{
+          t.data | date : "dd/MM/yyyy"
+        }}</span>
+        <span class="text-sm font-medium text-black">
+          {{
+            t.descricao || (t.tipo === "RECEITA" ? "Receita" : "Despesa")
+          }}</span
+        >
+        <span class="text-xs text-description">{{ t.categoriaNome }}</span>
+      </div>
+      <div class="flex items-center gap-3">
+        <span
+          class="text-sm font-semibold"
+          [class.text-success]="t.tipo === 'RECEITA'"
+          [class.text-error]="t.tipo === 'DESPESA'"
+        >
+          {{ t.valor | currency : "BRL" : "symbol" : "1.2-2" : "pt" }}
+        </span>
+        <button
+          type="button"
+          class="p-2 rounded-lg bg-white hover:bg-black/[0.03] border border-black/5"
+          (click)="openEdit(t)"
+          aria-label="Editar"
+        >
+          ✎
+        </button>
+        <button
+          type="button"
+          class="p-2 rounded-lg bg-white hover:bg-black/[0.03] border border-black/5"
+          (click)="openDelete(t)"
+          aria-label="Excluir"
+        >
+          🗑
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Paginação -->
+  <div
+    class="mt-4 flex items-center justify-between"
+    *ngIf="!loading && filteredTransacoes.length > 0"
+  >
+    <button
+      type="button"
+      class="px-3 py-2 rounded-lg bg-white border border-black/5 disabled:opacity-50"
+      [disabled]="currentPage === 1"
+      (click)="currentPage = currentPage - 1"
+    >
+      Anterior
+    </button>
+    <div class="text-sm text-description">
+      Página {{ currentPage }} de {{ totalPages }}
+    </div>
+    <button
+      type="button"
+      class="px-3 py-2 rounded-lg bg-white border border-black/5 disabled:opacity-50"
+      [disabled]="currentPage >= totalPages"
+      (click)="currentPage = currentPage + 1"
+    >
+      Próxima
+    </button>
+  </div>
+
+  <!-- Modais -->
+  <app-add-entry-modal
+    [open]="isEntryModalOpen"
+    [mode]="entryModalMode"
+    [initialTransacao]="editingTransacao"
+    (close)="closeEntryModal()"
+    (confirm)="handleEntryConfirm($event)"
+  ></app-add-entry-modal>
+
+  <app-confirm-modal
+    [open]="isConfirmDeleteOpen"
+    [title]="'Excluir transação?'"
+    [description]="'Essa ação não poderá ser desfeita.'"
+    [confirmLabel]="'Excluir'"
+    [cancelLabel]="'Cancelar'"
+    [confirming]="confirmingDelete"
+    (confirm)="confirmDelete()"
+    (close)="isConfirmDeleteOpen = false"
+  ></app-confirm-modal>
 </div>
