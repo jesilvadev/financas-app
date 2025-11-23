@@ -1,32 +1,63 @@
-<div>
-  <div>
-    <div>{{ userFullName | titlecase }}</div>
-  </div>
+<div class="flex justify-center items-center min-h-screen bg-[#BFCBFF] font-inter">
+  <div
+    class="w-full max-w-[400px] min-h-screen bg-[#BFCBFF] rounded-3xl flex flex-col items-center justify-center pb-24 relative">
 
-  <div>
-    <a [routerLink]="['/profile/dados']">Dados ></a>
-  </div>
+    <!-- Avatar -->
+    <div>
+      <img src="/assets/icons/account.png" alt="Avatar" class="w-28 h-28 rounded-full object-cover" />
+    </div>
 
-  <div>
-    <a [routerLink]="['/profile/seguranca']">Segurança ></a>
-  </div>
+    <!-- Nome do usuário -->
+    <h2 class="text-xl font-bold mt-4 mb-2 text-black">
+      {{ (userFullName || 'Jefferson Alves') | titlecase }}
+    </h2>
 
-  <div>
-    <a [routerLink]="['/profile/personalizacao']">Configurações ></a>
-  </div>
+    <!-- Botões de navegação -->
+    <div class="mt-6 w-full px-10 flex flex-col gap-4">
+      <a [routerLink]="['/profile/dados']"
+        class="flex justify-between items-center border-[2px] border-[#6B54EC] px-5 py-3 rounded-xl text-[#6B54EC] font-medium bg-transparent hover:bg-white transition">
+        Dados
+        <span class="text-[#6B54EC] font-medium text-lg">›</span>
+      </a>
 
-  <div>
-    <button type="button" (click)="openLogoutConfirm()">Sair da conta</button>
-  </div>
+      <a [routerLink]="['/profile/seguranca']"
+        class="flex justify-between items-center border-[2px] border-[#6B54EC] px-5 py-3 rounded-xl text-[#6B54EC] font-medium bg-transparent hover:bg-white transition">
+        Segurança
+        <span class="text-[#6B54EC] font-medium text-lg">›</span>
+      </a>
 
-  <app-confirm-modal
-    [open]="isConfirmLogoutOpen"
-    [title]="'Sair da conta?'"
-    [description]="'Você tem certeza que deseja sair da sua conta agora?'"
-    [confirmLabel]="'Sair'"
-    [cancelLabel]="'Cancelar'"
-    [confirming]="isConfirmingLogout"
-    (confirm)="confirmLogout()"
-    (close)="isConfirmLogoutOpen = false"
-  ></app-confirm-modal>
+      <a [routerLink]="['/profile/personalizacao']"
+        class="flex justify-between items-center border-[2px] border-[#6B54EC] px-5 py-3 rounded-xl text-[#6B54EC] font-medium bg-transparent hover:bg-white transition">
+        Configurações
+        <span class="text-[#6B54EC] font-medium text-lg">›</span>
+      </a>
+    </div>
+
+    <!-- Botão sair -->
+    <button type="button" (click)="openLogoutConfirm()"
+      class="mt-12 w-[80%] py-3 bg-[#6B54EC] text-white font-medium rounded-xl shadow-md transition hover:bg-[#5940d8]">
+      Sair da conta
+    </button>
+
+    <!-- Menu inferior (Sujeito a substituição por componente) -->
+    <div
+      class="fixed left-1/2 -translate-x-1/2 bottom-0 w-full max-w-[400px] flex justify-between items-center px-8 py-3 shadow-2xl"
+      style="height: 72px; background: rgba(255, 255, 255, 0.72);">
+
+      <img src="/assets/icons/home.png" alt="Home" class="w-7 h-7 -mt-[8px]" />
+      <img src="/assets/icons/graphs.png" alt="Graphs" class="w-7 h-7 -mt-[8px]" />
+
+      <button class="relative bg-[#6B54EC] rounded-full flex items-center justify-center border-[6px] border-[#BFCBFF]"
+        style="width: 70px; height: 70px; margin-bottom: 60px;">
+        <img src="/assets/icons/plusIcon.png" alt="Add" style="width: 40px; height: 40px;" />
+      </button>
+
+      <img src="/assets/icons/history.png" alt="History" class="w-7 h-7 -mt-[8px]" />
+
+      <div class="flex flex-col items-center w-fit border-b-[5px] border-[#6B54EC] pb-1">
+        <img src="/assets/icons/profile.png" alt="Profile" class="w-7 h-7"
+          style="filter: invert(61%) sepia(84%) saturate(6878%) hue-rotate(243deg) brightness(89%) contrast(93%);" />
+      </div>
+    </div>
+  </div>
 </div>
