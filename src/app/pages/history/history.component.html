@@ -1,109 +1,79 @@
-<div>
-  <div>
+<div class="min-h-screen w-full px-4 py-6 flex flex-col items-center font-inter">
+
+  <h2 class="text-center text-xl font-bold text-[#6b54ec] mb-12 mt-8">
+    Histórico
+  </h2>
+
+  <div class="flex gap-2 mb-4 w-full max-w-md justify-start">
     <button
       type="button"
-      [disabled]="filtroTipo === 'TODOS'"
+      class="px-4 py-1.5 w-24 rounded-lg text-xs font-bold transition"
+      [ngClass]="filtroTipo === 'TODOS' ? 'bg-[#6b54ec] text-white' : 'bg-white text-[#6b54ec]'"
       (click)="filtroTipo = 'TODOS'; resetPage()"
     >
-      Todos
+      Todas
     </button>
     <button
       type="button"
-      [disabled]="filtroTipo === 'RECEITA'"
+      class="px-4 py-1.5 w-24 rounded-lg text-xs font-bold transition"
+      [ngClass]="filtroTipo === 'RECEITA' ? 'bg-[#27BE61] text-white' : 'bg-white text-[#27BE61]'"
       (click)="filtroTipo = 'RECEITA'; resetPage()"
     >
-      Receitas
+      Ganhos
     </button>
     <button
       type="button"
-      [disabled]="filtroTipo === 'DESPESA'"
+      class="px-4 py-1.5 w-24 rounded-lg text-xs font-bold transition"
+      [ngClass]="filtroTipo === 'DESPESA' ? 'bg-[#FF4B4B] text-white' : 'bg-white text-[#FF4B4B]'"
       (click)="filtroTipo = 'DESPESA'; resetPage()"
     >
-      Despesas
+      Gastos
     </button>
   </div>
 
-  <div>
-    <select [(ngModel)]="filtroCategoriaId" (ngModelChange)="resetPage()">
-      <option value="">Todas as categorias</option>
-      <option *ngFor="let cat of categorias" [value]="cat.id">
-        {{ cat.nome }}
-      </option>
-    </select>
-  </div>
-
-  <div>
-    <input
-      type="date"
-      [(ngModel)]="filtroDataInicio"
-      (ngModelChange)="resetPage()"
-    />
-    <input
-      type="date"
-      [(ngModel)]="filtroDataFim"
-      (ngModelChange)="resetPage()"
-    />
-  </div>
-
-  <div *ngIf="loading">Carregando...</div>
-
-  <div *ngIf="!loading && filteredTransacoes.length === 0">
-    Nenhuma transação encontrada.
-  </div>
-
-  <div *ngIf="!loading && filteredTransacoes.length > 0">
-    <div *ngFor="let t of pagedTransacoes">
-      <div>
-        <div>{{ t.data | date : "dd/MM/yyyy" }}</div>
-        <div>
-          {{ t.descricao || (t.tipo === "RECEITA" ? "Receita" : "Despesa") }}
+  <div class="space-y-4 w-full max-w-md">
+    <ng-container *ngIf="pagedTransacoes.length > 0; else semTransacoes">
+      <div
+        *ngFor="let t of pagedTransacoes"
+        class="bg-white rounded-xl px-5 py-4 flex justify-between items-center shadow-sm"
+      >
+        <div class="flex items-center gap-3">
+          <div [ngClass]="t.tipo === 'DESPESA'
+                          ? 'bg-[#f6a1a1]'
+                          : 'bg-[#5DC486]'"
+               class="w-10 h-10 flex items-center justify-center rounded-[12px]">
+            <span [ngClass]="t.tipo === 'DESPESA'
+                            ? 'text-2xl text-[#f85656] font-bold'
+                            : 'text-2xl text-[#1E8315] font-bold'">
+              {{ t.tipo === 'DESPESA' ? '−' : '+' }}
+            </span>
+          </div>
+          <div class="flex flex-col">
+            <span class="font-semibold text-gray-900 text-base">{{ t.descricao }}</span>
+            <span class="text-gray-500 text-xs whitespace-nowrap">
+              {{ t.data | date : "dd MMM yyyy  HH:mm" }}
+            </span>
+          </div>
         </div>
-        <div>{{ t.categoriaNome }}</div>
+        <div class="flex flex-col items-end gap-2">
+          <div class="flex gap-2">
+            <button (click)="openEdit(t)">
+              <img src="assets/icons/pen.png" class="w-5 h-5 opacity-80 hover:opacity-100 transition">
+            </button>
+            <button (click)="openDelete(t)">
+              <img src="assets/icons/trashCan.png" class="w-5 h-5 opacity-80 hover:opacity-100 transition">
+            </button>
+          </div>
+          <span class="font-bold text-gray-900 text-lg">
+            {{ t.valor | currency : "BRL" : "symbol" : "1.2-2" : "pt" }}
+          </span>
+        </div>
       </div>
-      <div>
-        <span>{{
-          t.valor | currency : "BRL" : "symbol" : "1.2-2" : "pt"
-        }}</span>
-        <button type="button" (click)="openEdit(t)">Editar</button>
-        <button type="button" (click)="openDelete(t)">Excluir</button>
+    </ng-container>
+    <ng-template #semTransacoes>
+      <div class="text-center py-12 text-gray-500 font-semibold text-base">
+        Nenhuma transação encontrada.
       </div>
-    </div>
+    </ng-template>
   </div>
-
-  <div *ngIf="!loading && filteredTransacoes.length > 0">
-    <button
-      type="button"
-      [disabled]="currentPage === 1"
-      (click)="currentPage = currentPage - 1"
-    >
-      Anterior
-    </button>
-    <span>Página {{ currentPage }} de {{ totalPages }}</span>
-    <button
-      type="button"
-      [disabled]="currentPage >= totalPages"
-      (click)="currentPage = currentPage + 1"
-    >
-      Próxima
-    </button>
-  </div>
-
-  <app-add-entry-modal
-    [open]="isEntryModalOpen"
-    [mode]="entryModalMode"
-    [initialTransacao]="editingTransacao"
-    (close)="closeEntryModal()"
-    (confirm)="handleEntryConfirm($event)"
-  ></app-add-entry-modal>
-
-  <app-confirm-modal
-    [open]="isConfirmDeleteOpen"
-    [title]="'Excluir transação?'"
-    [description]="'Essa ação não poderá ser desfeita.'"
-    [confirmLabel]="'Excluir'"
-    [cancelLabel]="'Cancelar'"
-    [confirming]="confirmingDelete"
-    (confirm)="confirmDelete()"
-    (close)="isConfirmDeleteOpen = false"
-  ></app-confirm-modal>
 </div>
