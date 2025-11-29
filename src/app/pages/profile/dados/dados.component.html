@@ -71,9 +71,21 @@
           [label]="saving ? 'Salvando...' : 'Salvar'"
           [loading]="saving"
           [disabled]="!canSave"
-          (clicked)="salvar()"
+          (clicked)="openConfirmModal()"
         ></app-button-primary>
       </div>
     </ng-template>
   </div>
+
+  <!-- Modal confirmar atualização de dados -->
+  <app-confirm-modal
+    [open]="isConfirmModalOpen"
+    [title]="'Confirmar alteração de dados'"
+    [description]="'Tem certeza que deseja atualizar seus dados pessoais?'"
+    [confirmLabel]="'Sim, atualizar'"
+    [cancelLabel]="'Cancelar'"
+    [confirming]="saving"
+    (close)="closeConfirmModal()"
+    (confirm)="salvar()"
+  ></app-confirm-modal>
 </div>

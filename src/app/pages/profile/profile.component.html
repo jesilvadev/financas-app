@@ -50,4 +50,16 @@
       ></app-button-primary>
     </div>
   </div>
+
+  <!-- Modal confirmar logout -->
+  <app-confirm-modal
+    [open]="isConfirmLogoutOpen"
+    [title]="'Sair da conta'"
+    [description]="'Tem certeza que deseja sair da sua conta?'"
+    [confirmLabel]="'Sim, sair'"
+    [cancelLabel]="'Cancelar'"
+    [confirming]="isConfirmingLogout"
+    (close)="closeLogoutModal()"
+    (confirm)="confirmLogout()"
+  ></app-confirm-modal>
 </div>

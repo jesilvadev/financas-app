@@ -71,12 +71,8 @@ export class ProfilePersonalizacaoComponent implements OnInit {
 
     this.categoriaService.listarPorUsuario(userId).subscribe({
       next: (categorias) => {
-        this.categoriasReceita = categorias.filter(
-          (c) => c.tipo === 'RECEITA'
-        );
-        this.categoriasDespesa = categorias.filter(
-          (c) => c.tipo === 'DESPESA'
-        );
+        this.categoriasReceita = categorias.filter((c) => c.tipo === 'RECEITA');
+        this.categoriasDespesa = categorias.filter((c) => c.tipo === 'DESPESA');
         this.loadingCategorias = false;
       },
       error: (err) => {
@@ -124,8 +120,19 @@ export class ProfilePersonalizacaoComponent implements OnInit {
   }
 
   // exclusão
+  podeExcluir(categoria: Categoria): boolean {
+    // Categorias padrão do sistema (userId null) não podem ser excluídas
+    return categoria.userId !== null;
+  }
+
   solicitarExclusao(categoria: Categoria): void {
     if (this.deleting) return;
+    // Verifica se a categoria pode ser excluída (não é padrão do sistema)
+    if (!this.podeExcluir(categoria)) {
+      this.deleteErrorMessage =
+        'Categorias padrão do sistema não podem ser excluídas.';
+      return;
+    }
     this.categoriaParaExcluir = categoria;
     this.deleteErrorMessage = '';
     this.isDeleteModalOpen = true;
@@ -135,6 +142,7 @@ export class ProfilePersonalizacaoComponent implements OnInit {
     if (this.deleting) return;
     this.isDeleteModalOpen = false;
     this.categoriaParaExcluir = null;
+    this.deleteErrorMessage = '';
   }
 
   confirmarExclusao(): void {

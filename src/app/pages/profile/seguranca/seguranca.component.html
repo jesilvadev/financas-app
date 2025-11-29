@@ -30,6 +30,7 @@
         [(ngModel)]="senhaAtual"
         [disabled]="savingSenha"
         [autocomplete]="'current-password'"
+        (ngModelChange)="onSenhaInputChange()"
       ></app-ui-input>
     </div>
 
@@ -37,11 +38,15 @@
       <label class="text-sm text-description mb-1 block">Nova senha</label>
       <app-ui-input
         [type]="'password'"
-        [placeholder]="'Crie uma nova senha'"
+        [placeholder]="'Crie uma nova senha (mínimo 6 caracteres)'"
         [(ngModel)]="novaSenha"
         [disabled]="savingSenha"
         [autocomplete]="'new-password'"
+        (ngModelChange)="onSenhaInputChange()"
       ></app-ui-input>
+      <p *ngIf="novaSenhaMuitoCurta" class="text-xs text-error mt-1 px-1">
+        A senha deve ter pelo menos 6 caracteres.
+      </p>
     </div>
 
     <div>
@@ -54,7 +59,18 @@
         [(ngModel)]="confirmarSenha"
         [disabled]="savingSenha"
         [autocomplete]="'new-password'"
+        (ngModelChange)="onSenhaInputChange()"
       ></app-ui-input>
+      <p *ngIf="senhasNaoCoincidem" class="text-xs text-error mt-1 px-1">
+        As senhas não coincidem.
+      </p>
+    </div>
+
+    <div
+      *ngIf="senhaValidationMessage && !senhaErrorMessage"
+      class="text-sm text-error bg-error/10 rounded-lg px-3 py-2"
+    >
+      {{ senhaValidationMessage }}
     </div>
 
     <div
@@ -77,10 +93,22 @@
         [loading]="savingSenha"
         loadingText="Atualizando..."
         [disabled]="!canChangePassword"
-        (clicked)="alterarSenha()"
+        (clicked)="openSenhaModal()"
       ></app-button-primary>
     </div>
   </div>
+
+  <!-- Modal confirmar alteração de senha -->
+  <app-confirm-modal
+    [open]="isSenhaModalOpen"
+    [title]="'Confirmar alteração de senha'"
+    [description]="'Tem certeza que deseja alterar sua senha?'"
+    [confirmLabel]="'Sim, alterar senha'"
+    [cancelLabel]="'Cancelar'"
+    [confirming]="savingSenha"
+    (close)="closeSenhaModal()"
+    (confirm)="alterarSenha()"
+  ></app-confirm-modal>
 
   <!-- Exclusão de conta -->
   <div class="space-y-3 mt-8">

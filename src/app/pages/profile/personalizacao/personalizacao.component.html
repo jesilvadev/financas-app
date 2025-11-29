@@ -28,12 +28,18 @@
     {{ categoriasErrorMessage }}
   </div>
 
+  <!-- Erro exclusão de categorias -->
+  <div
+    *ngIf="deleteErrorMessage"
+    class="mb-4 text-sm text-error bg-error/10 rounded-lg px-3 py-2"
+  >
+    {{ deleteErrorMessage }}
+  </div>
+
   <!-- Criar nova categoria -->
   <div class="mt-4 grid gap-3">
     <div>
-      <label class="text-sm text-description mb-1 block"
-        >Nova categoria</label
-      >
+      <label class="text-sm text-description mb-1 block">Nova categoria</label>
       <app-ui-input
         [placeholder]="'Ex.: Alimentação, Moradia, Salário'"
         [(ngModel)]="novaCategoriaNome"
@@ -98,7 +104,10 @@
       <div *ngIf="loadingCategorias" class="text-xs text-description">
         Carregando categorias...
       </div>
-      <div *ngIf="!loadingCategorias && categoriasReceita.length === 0" class="text-xs text-description">
+      <div
+        *ngIf="!loadingCategorias && categoriasReceita.length === 0"
+        class="text-xs text-description"
+      >
         Nenhuma categoria de ganho criada ainda.
       </div>
       <div class="mt-1 flex flex-wrap gap-2">
@@ -110,6 +119,7 @@
             {{ cat.nome }}
           </span>
           <button
+            *ngIf="podeExcluir(cat)"
             type="button"
             class="h-5 w-5 inline-flex items-center justify-center rounded-full text-[10px] font-bold text-error hover:bg-error/10 disabled:opacity-50 disabled:pointer-events-none"
             (click)="solicitarExclusao(cat)"
@@ -130,7 +140,10 @@
       <div *ngIf="loadingCategorias" class="text-xs text-description">
         Carregando categorias...
       </div>
-      <div *ngIf="!loadingCategorias && categoriasDespesa.length === 0" class="text-xs text-description">
+      <div
+        *ngIf="!loadingCategorias && categoriasDespesa.length === 0"
+        class="text-xs text-description"
+      >
         Nenhuma categoria de gasto criada ainda.
       </div>
       <div class="mt-1 flex flex-wrap gap-2">
@@ -142,6 +155,7 @@
             {{ cat.nome }}
           </span>
           <button
+            *ngIf="podeExcluir(cat)"
             type="button"
             class="h-5 w-5 inline-flex items-center justify-center rounded-full text-[10px] font-bold text-error hover:bg-error/10 disabled:opacity-50 disabled:pointer-events-none"
             (click)="solicitarExclusao(cat)"
@@ -161,7 +175,9 @@
     [title]="'Remover categoria'"
     [description]="
       categoriaParaExcluir
-        ? 'Tem certeza que deseja remover a categoria ' + categoriaParaExcluir.nome + '?'
+        ? 'Tem certeza que deseja remover a categoria ' +
+          categoriaParaExcluir.nome +
+          '?'
         : ''
     "
     [confirmLabel]="'Sim, remover'"
