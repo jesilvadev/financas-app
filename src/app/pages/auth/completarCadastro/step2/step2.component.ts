@@ -7,13 +7,13 @@ import { MatIconModule } from '@angular/material/icon';
 
 import { Categoria } from '../../../../models/categoria.model';
 
-interface ExpenseForm {
+interface IncomeForm {
   value: number | string | null;
   categoriaId: string;
   day: string;
 }
 
-export interface ExpenseResult {
+export interface IncomeResult {
   value: number;
   categoriaId: string;
   categoriaNome: string;
@@ -34,97 +34,86 @@ export interface ExpenseResult {
 })
 export class Step2Component {
   @Input() categorias: Categoria[] = [];
-  @Input() presetExpenses: {
+  @Input() presetIncomes: {
     value: number;
     categoriaId: string;
     day: string;
   }[] = [];
-  @Output() next = new EventEmitter<{ expenses: ExpenseResult[] }>();
+  @Output() next = new EventEmitter<{ incomes: IncomeResult[] }>();
   @Output() back = new EventEmitter<void>();
 
-  finalizedExpenses: ExpenseForm[] = [];
-  currentExpense: ExpenseForm = { value: null, categoriaId: '', day: '' };
+  finalizedIncomes: IncomeForm[] = [];
+  currentIncome: IncomeForm = { value: null, categoriaId: '', day: '' };
   showDayModal = false;
 
   days: string[] = Array.from({ length: 31 }, (_, i) =>
     (i + 1).toString().padStart(2, '0')
   );
 
-  get categoriasDespesa(): Categoria[] {
-    return this.categorias.filter((categoria) => categoria.tipo === 'DESPESA');
+  get categoriasReceita(): Categoria[] {
+    return this.categorias.filter((categoria) => categoria.tipo === 'RECEITA');
   }
 
   ngOnChanges(): void {
     if (
-      this.presetExpenses &&
-      this.presetExpenses.length &&
-      this.finalizedExpenses.length === 0
+      this.presetIncomes &&
+      this.presetIncomes.length &&
+      this.finalizedIncomes.length === 0
     ) {
-      this.finalizedExpenses = this.presetExpenses.map((e) => ({
-        value: e.value,
-        categoriaId: e.categoriaId,
-        day: e.day,
+      this.finalizedIncomes = this.presetIncomes.map((i) => ({
+        value: i.value,
+        categoriaId: i.categoriaId,
+        day: i.day,
       }));
     }
   }
 
-  addExpense(): void {
-    if (!this.isCurrentExpenseValid()) return;
-    const parsed = this.parseCurrencyBr(this.currentExpense.value);
+  addIncome(): void {
+    if (!this.isCurrentIncomeValid()) return;
+    const parsed = this.parseCurrencyBr(this.currentIncome.value);
     if (parsed === null || parsed <= 0) return;
-    this.finalizedExpenses.push({
+    this.finalizedIncomes.push({
       value: parsed,
-      categoriaId: this.currentExpense.categoriaId,
-      day: this.currentExpense.day,
+      categoriaId: this.currentIncome.categoriaId,
+      day: this.currentIncome.day,
     });
-    this.currentExpense = { value: null, categoriaId: '', day: '' };
+    this.currentIncome = { value: null, categoriaId: '', day: '' };
   }
 
   deleteFinalized(index: number): void {
-    this.finalizedExpenses.splice(index, 1);
+    this.finalizedIncomes.splice(index, 1);
   }
 
   onContinue(): void {
-    const base: ExpenseForm[] = [...this.finalizedExpenses];
-    if (this.isCurrentExpenseValid()) {
-      const parsed = this.parseCurrencyBr(this.currentExpense.value);
+    const base: IncomeForm[] = [...this.finalizedIncomes];
+    if (this.isCurrentIncomeValid()) {
+      const parsed = this.parseCurrencyBr(this.currentIncome.value);
       if (parsed !== null && parsed > 0) {
         base.push({
           value: parsed,
-          categoriaId: this.currentExpense.categoriaId,
-          day: this.currentExpense.day,
+          categoriaId: this.currentIncome.categoriaId,
+          day: this.currentIncome.day,
         });
       }
     }
 
-    const validExpenses: ExpenseResult[] = base.map((expense) => ({
+    const validIncomes: IncomeResult[] = base.map((income) => ({
       value:
-        typeof expense.value === 'number'
-          ? expense.value
-          : this.parseCurrencyBr(expense.value) ?? 0,
-      categoriaId: expense.categoriaId,
-      categoriaNome: this.getCategoriaNome(expense.categoriaId),
-      day: expense.day,
+        typeof income.value === 'number'
+          ? income.value
+          : this.parseCurrencyBr(income.value) ?? 0,
+      categoriaId: income.categoriaId,
+      categoriaNome: this.getCategoriaNome(income.categoriaId),
+      day: income.day,
     }));
 
-    if (validExpenses.length > 0) {
-      this.next.emit({ expenses: validExpenses });
+    if (validIncomes.length > 0) {
+      this.next.emit({ incomes: validIncomes });
     }
   }
 
   onBack(): void {
     this.back.emit();
-  }
-
-  isFormValid(): boolean {
-    return this.finalizedExpenses.length > 0 || this.isCurrentExpenseValid();
-  }
-
-  getCategoriaNome(id: string): string {
-    return (
-      this.categoriasDespesa.find((categoria) => categoria.id === id)?.nome ??
-      ''
-    );
   }
 
   openDayModal(): void {
@@ -136,23 +125,30 @@ export class Step2Component {
   }
 
   selectDay(day: string): void {
-    this.currentExpense.day = day;
+    this.currentIncome.day = day;
     this.closeDayModal();
   }
 
-  isDaySelected(day: string): boolean {
-    return this.currentExpense.day === day;
+  isFormValid(): boolean {
+    return this.finalizedIncomes.length > 0 || this.isCurrentIncomeValid();
   }
 
-  isCurrentExpenseValid(): boolean {
-    const expense = this.currentExpense;
-    const parsed = this.parseCurrencyBr(expense.value);
+  isCurrentIncomeValid(): boolean {
+    const income = this.currentIncome;
+    const parsed = this.parseCurrencyBr(income.value);
     return !!(
       parsed &&
       parsed > 0 &&
-      expense.categoriaId &&
-      expense.day &&
-      this.getCategoriaNome(expense.categoriaId)
+      income.categoriaId &&
+      income.day &&
+      this.getCategoriaNome(income.categoriaId)
+    );
+  }
+
+  getCategoriaNome(id: string): string {
+    return (
+      this.categoriasReceita.find((categoria) => categoria.id === id)?.nome ??
+      ''
     );
   }
 

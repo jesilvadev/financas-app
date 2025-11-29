@@ -15,6 +15,7 @@ import { TipoTransacao } from '../../../models/tipoTransacao.enum';
 import { AuthService } from '../../../services/auth.service';
 import { CategoriaService } from '../../../services/categoria.service';
 import { Categoria } from '../../../models/categoria.model';
+import { Step4Component } from './step4/step4.component';
 
 interface IncomePayload {
   incomes: RecorrenciaFormEntry[];
@@ -44,6 +45,7 @@ interface RecorrenciaFormEntry {
     Step1Component,
     Step2Component,
     Step3Component,
+    Step4Component,
     ConclusaoComponent,
   ],
   templateUrl: './completarCadastro.component.html',
@@ -54,6 +56,7 @@ export class CompletarCadastroComponent {
   isLoading = false;
 
   private usuarioId: string | null = null;
+  private saldoAtual: number = 0;
   private receitas: RecorrenciaFormEntry[] = [];
   private despesas: RecorrenciaFormEntry[] = [];
   private startDaySelected: string = '';
@@ -105,6 +108,14 @@ export class CompletarCadastroComponent {
       this.onStep3Back();
       return;
     }
+    if (this.currentStep === 4) {
+      this.onStep4Back();
+      return;
+    }
+    if (this.currentStep === 5) {
+      // Não permite voltar da conclusão
+      return;
+    }
   }
 
   onIntroNext(): void {
@@ -119,9 +130,9 @@ export class CompletarCadastroComponent {
     this.currentStep = 1;
   }
 
-  onStep1Next({ incomes }: IncomePayload): void {
-    console.log('[CompletarCadastro] Step 1 payload recebido:', incomes);
-    this.receitas = incomes.map((income) => ({ ...income }));
+  onStep1Next({ saldoAtual }: { saldoAtual: number }): void {
+    console.log('[CompletarCadastro] Step 1 (saldo atual) payload recebido:', saldoAtual);
+    this.saldoAtual = saldoAtual;
     this.currentStep = 2;
   }
 
@@ -129,9 +140,9 @@ export class CompletarCadastroComponent {
     this.currentStep = 0;
   }
 
-  onStep2Next({ expenses }: ExpensePayload): void {
-    console.log('[CompletarCadastro] Step 2 payload recebido:', expenses);
-    this.despesas = expenses.map((expense) => ({ ...expense }));
+  onStep2Next({ incomes }: IncomePayload): void {
+    console.log('[CompletarCadastro] Step 2 payload recebido:', incomes);
+    this.receitas = incomes.map((income) => ({ ...income }));
     this.currentStep = 3;
   }
 
@@ -139,13 +150,23 @@ export class CompletarCadastroComponent {
     this.currentStep = 1;
   }
 
-  onStep3Next({ startDay }: StartDayPayload): void {
-    this.startDaySelected = startDay;
-    this.enviarOnboarding(startDay);
+  onStep3Next({ expenses }: ExpensePayload): void {
+    console.log('[CompletarCadastro] Step 3 payload recebido:', expenses);
+    this.despesas = expenses.map((expense) => ({ ...expense }));
+    this.currentStep = 4;
   }
 
   onStep3Back(): void {
     this.currentStep = 2;
+  }
+
+  onStep4Next({ startDay }: StartDayPayload): void {
+    this.startDaySelected = startDay;
+    this.enviarOnboarding(startDay);
+  }
+
+  onStep4Back(): void {
+    this.currentStep = 3;
   }
 
   private enviarOnboarding(startDay: string): void {
@@ -156,6 +177,7 @@ export class CompletarCadastroComponent {
 
     const payload: OnboardingRequest = {
       dataInicioControle: this.buildDataInicioControle(startDay),
+      saldoAtual: this.saldoAtual,
       transacoesRecorrentes: [
         ...this.mapToRecorrencia(this.receitas, 'RECEITA'),
         ...this.mapToRecorrencia(this.despesas, 'DESPESA'),
@@ -176,7 +198,7 @@ export class CompletarCadastroComponent {
       .subscribe({
         next: () => {
           console.log('[CompletarCadastro] Onboarding concluído com sucesso');
-          this.currentStep = 4;
+          this.currentStep = 5;
           forkJoin([
             this.authService
               .fetchCurrentUser()
@@ -288,5 +310,9 @@ export class CompletarCadastroComponent {
 
   get presetStartDayForStep(): string {
     return this.startDaySelected;
+  }
+
+  get presetSaldoAtualForStep(): number | null {
+    return this.saldoAtual !== undefined ? this.saldoAtual : null;
   }
 }
