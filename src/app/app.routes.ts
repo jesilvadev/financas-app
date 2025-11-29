@@ -13,6 +13,7 @@ import { guestGuard } from './guards/guest.guard';
 import { ProfileDadosComponent } from './pages/profile/dados/dados.component';
 import { ProfileSegurancaComponent } from './pages/profile/seguranca/seguranca.component';
 import { ProfilePersonalizacaoComponent } from './pages/profile/personalizacao/personalizacao.component';
+import { RecorrentesComponent } from './pages/recorrentes/recorrentes.component';
 
 export const routes: Routes = [
   // Rotas de autenticação (apenas para não autenticados)
@@ -38,6 +39,7 @@ export const routes: Routes = [
       { path: '', component: HomeComponent },
       { path: 'stats', component: StatsComponent },
       { path: 'history', component: HistoryComponent },
+      { path: 'recorrentes', component: RecorrentesComponent },
       { path: 'profile', component: ProfileComponent },
       { path: 'profile/dados', component: ProfileDadosComponent },
       { path: 'profile/seguranca', component: ProfileSegurancaComponent },

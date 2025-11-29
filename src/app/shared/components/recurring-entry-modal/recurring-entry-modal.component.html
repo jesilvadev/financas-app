@@ -1,0 +1,187 @@
+<ng-container *ngIf="open">
+  <div
+    class="fixed inset-0 z-[999] flex items-center justify-center bg-black/50 backdrop-blur-sm px-4"
+    (click)="handleClose()"
+  >
+    <div
+      class="w-full max-w-xs h-[24rem] rounded-3xl bg-layer shadow-2xl ring-1 ring-black/10 overflow-hidden flex flex-col"
+      (click)="$event.stopPropagation()"
+    >
+      <!-- Passo 1: escolher ganho / gasto recorrente (apenas no modo create) -->
+      <ng-container *ngIf="!tipo && mode === 'create'; else formTemplate">
+        <div class="flex flex-1 flex-col px-5 py-5 gap-5">
+          <div class="flex justify-end">
+            <button
+              type="button"
+              aria-label="Fechar modal"
+              class="text-primary text-base leading-none px-1 py-1 mt-1 mr-1 rounded-full transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
+              (click)="handleClose()"
+            >
+              ✕
+            </button>
+          </div>
+
+          <div class="text-center space-y-2">
+            <div class="font-semibold text-lg text-primary">
+              O que você quer configurar?
+            </div>
+            <p class="text-primary font-light text-xs">
+              Escolha se deseja criar um ganho ou um gasto recorrente.
+            </p>
+          </div>
+
+          <div class="flex flex-1 flex-col gap-3">
+            <button
+              type="button"
+              class="flex w-full items-center justify-center h-[63px] rounded-2xl bg-[#BDEECF] px-4 py-3 text-success transition hover:bg-success/25 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-success/40"
+              (click)="selecionarTipo('RECEITA')"
+            >
+              <span class="font-medium flex gap-5 items-center text-sm">
+                Ganho recorrente
+              </span>
+            </button>
+
+            <button
+              type="button"
+              class="flex w-full items-center justify-center h-[63px] rounded-2xl bg-[#F7A2A2] px-4 py-3 text-error transition hover:bg-error/25 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-error/30"
+              (click)="selecionarTipo('DESPESA')"
+            >
+              <span class="font-medium flex gap-5 items-center text-sm">
+                Gasto recorrente
+              </span>
+            </button>
+          </div>
+        </div>
+      </ng-container>
+
+      <!-- Passo 2: formulário (dia, valor, categoria) -->
+      <ng-template #formTemplate>
+        <div class="flex flex-1 flex-col px-5 py-5 gap-5">
+          <!-- Header -->
+          <div class="flex items-center">
+            <div class="w-8"></div>
+            <div
+              class="flex-1 font-semibold text-center"
+              [ngClass]="tipo === 'RECEITA' ? 'text-success' : 'text-error'"
+            >
+              {{
+                tipo === 'RECEITA'
+                  ? (mode === 'edit' ? 'Editar ganho recorrente' : 'Ganho recorrente')
+                  : (mode === 'edit' ? 'Editar gasto recorrente' : 'Gasto recorrente')
+              }}
+            </div>
+            <div class="w-8 flex items-center justify-end">
+              <button
+                type="button"
+                aria-label="Fechar modal"
+                class="text-primary text-base leading-none px-1 py-1 rounded-full transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
+                (click)="handleClose()"
+              >
+                ✕
+              </button>
+            </div>
+          </div>
+
+          <div class="flex-1 space-y-4 overflow-y-auto pr-1">
+            <!-- Dia da recorrência -->
+            <div class="space-y-1">
+              <label class="text-xs text-description block"
+                >Dia da recorrência</label
+              >
+              <div
+                class="h-[50px] rounded-md border-2 border-primary/30 bg-white px-4 py-2 focus-within:border-primary focus-within:ring-0"
+              >
+                <input
+                  type="number"
+                  min="1"
+                  max="31"
+                  class="w-full h-full border-0 bg-transparent text-sm text-black outline-none placeholder:text-disable"
+                  placeholder="Dia do mês (1 a 31)"
+                  [(ngModel)]="diaRecorrencia"
+                />
+              </div>
+            </div>
+
+            <!-- Valor -->
+            <div class="space-y-1">
+              <label class="text-xs text-description block">Valor</label>
+              <div
+                class="h-[50px] rounded-md border-2 border-primary/30 bg-white px-4 py-2 focus-within:border-primary focus-within:ring-0"
+              >
+                <div class="flex h-full items-center gap-3 text-description">
+                  <span>R$</span>
+                  <input
+                    type="text"
+                    inputmode="decimal"
+                    autocomplete="off"
+                    placeholder="0,00"
+                    mask="separator.2"
+                    thousandSeparator="."
+                    decimalMarker=","
+                    [dropSpecialCharacters]="false"
+                    class="w-full border-0 bg-transparent text-sm text-black outline-none placeholder:text-disable"
+                    [(ngModel)]="valorInput"
+                  />
+                </div>
+              </div>
+            </div>
+
+            <!-- Categoria -->
+            <div class="space-y-1">
+              <label class="text-xs text-description block">Categoria</label>
+              <div
+                class="h-[50px] rounded-md border-2 border-primary/30 bg-white px-4 py-2 focus-within:border-primary focus-within:ring-0"
+              >
+                <select
+                  class="w-full h-full border-0 bg-transparent text-sm text-black outline-none placeholder:text-disable"
+                  [(ngModel)]="categoriaId"
+                  [disabled]="availableCategorias.length === 0"
+                >
+                  <option value="">
+                    Selecione
+                  </option>
+                  <option
+                    *ngFor="let cat of availableCategorias"
+                    [value]="cat.id"
+                    class="text-black"
+                  >
+                    {{ cat.nome }}
+                  </option>
+                </select>
+              </div>
+              <p
+                *ngIf="availableCategorias.length === 0"
+                class="text-[11px] text-error"
+              >
+                Nenhuma categoria disponível para este tipo.
+              </p>
+            </div>
+
+            <!-- Erro -->
+            <div
+              *ngIf="errorMessage"
+              class="text-xs text-error bg-error/10 rounded-lg px-3 py-2"
+            >
+              {{ errorMessage }}
+            </div>
+          </div>
+
+          <!-- Botão de ação -->
+          <button
+            type="button"
+            class="h-[50px] w-full items-center justify-center rounded-xl bg-primary px-6 text-sm font-medium text-white transition hover:bg-primary/90 active:scale-95 disabled:pointer-events-none disabled:opacity-50"
+            [disabled]="!isFormValid || saving"
+            (click)="submit()"
+          >
+            <span *ngIf="!saving">
+              {{ mode === 'edit' ? 'Salvar recorrência' : 'Criar recorrência' }}
+            </span>
+            <span *ngIf="saving">
+              Salvando...
+            </span>
+          </button>
+        </div>
+      </ng-template>
+    </div>
+  </div>
+</ng-container>

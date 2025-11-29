@@ -21,4 +21,22 @@
       {{ errorMessage }}
     </div>
   </section>
+
+  <!-- Acesso às transações recorrentes -->
+  <section class="w-full max-w-md mx-auto mt-4">
+    <a
+      [routerLink]="['/recorrentes']"
+      class="flex items-center justify-between rounded-xl bg-white/95 px-5 py-4 shadow-sm hover:shadow-md transition border border-black/5"
+    >
+      <div class="flex flex-col gap-1">
+        <span class="font-semibold text-gray-900">
+          Transações recorrentes
+        </span>
+        <span class="text-xs text-description">
+          Ganhos e gastos que se repetem todo mês
+        </span>
+      </div>
+      <span class="text-primary text-lg font-semibold">›</span>
+    </a>
+  </section>
 </div>

@@ -112,8 +112,14 @@ export class MainLayoutComponent implements OnInit {
 
   private computeShowBottomNav(url: string): boolean {
     const path = (url ?? '').split('?')[0].split('#')[0];
-    // Esconder menu inferior na tela de dados do perfil
-    return !path.startsWith('/profile/dados');
+    // Esconder menu inferior em telas específicas (ex.: dados do perfil, recorrentes)
+    if (path.startsWith('/profile/dados')) {
+      return false;
+    }
+    if (path.startsWith('/recorrentes')) {
+      return false;
+    }
+    return true;
   }
 
   logout(): void {
