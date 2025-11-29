@@ -8,9 +8,9 @@
     <div class="mb-3">
       <p
         class="text-4xl font-bold"
-        [ngClass]="saldoTotal >= 0 ? 'text-success' : 'text-error'"
+        [ngClass]="saldoAtual >= 0 ? 'text-success' : 'text-error'"
       >
-        {{ saldoTotal | currency : "BRL" : "symbol" : "1.2-2" : "pt" }}
+        {{ saldoAtual | currency : "BRL" : "symbol" : "1.2-2" : "pt" }}
       </p>
     </div>
 

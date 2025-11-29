@@ -3,8 +3,7 @@ import { Component, DestroyRef, OnInit, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
-import { Transacao } from '../../models/transacao.model';
-import { TransacaoService } from '../../services/transacao.service';
+import { DashboardService } from '../../services/dashboard.service';
 import { AuthService } from '../../services/auth.service';
 
 @Component({
@@ -14,7 +13,7 @@ import { AuthService } from '../../services/auth.service';
   templateUrl: './home.component.html',
 })
 export class HomeComponent implements OnInit {
-  saldoTotal = 0;
+  saldoAtual = 0;
   totalReceitas = 0;
   totalDespesas = 0;
 
@@ -24,7 +23,7 @@ export class HomeComponent implements OnInit {
   private readonly destroyRef = inject(DestroyRef);
 
   constructor(
-    private readonly transacaoService: TransacaoService,
+    private readonly dashboardService: DashboardService,
     private readonly authService: AuthService
   ) {}
 
@@ -47,22 +46,11 @@ export class HomeComponent implements OnInit {
     this.loading = true;
     this.errorMessage = '';
 
-    this.transacaoService.listarPorUsuario(userId).subscribe({
-      next: (lista: Transacao[]) => {
-        let receitas = 0;
-        let despesas = 0;
-
-        for (const t of lista) {
-          if (t.tipo === 'RECEITA') {
-            receitas += t.valor;
-          } else if (t.tipo === 'DESPESA') {
-            despesas += t.valor;
-          }
-        }
-
-        this.totalReceitas = receitas;
-        this.totalDespesas = despesas;
-        this.saldoTotal = receitas - despesas;
+    this.dashboardService.obterDashboard(userId).subscribe({
+      next: (dashboard) => {
+        this.saldoAtual = dashboard.saldoAtual;
+        this.totalReceitas = dashboard.totalReceitas;
+        this.totalDespesas = dashboard.totalDespesas;
         this.loading = false;
       },
       error: (err) => {
@@ -77,7 +65,7 @@ export class HomeComponent implements OnInit {
   }
 
   private resetResumo(): void {
-    this.saldoTotal = 0;
+    this.saldoAtual = 0;
     this.totalReceitas = 0;
     this.totalDespesas = 0;
   }
