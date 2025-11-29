@@ -1,4 +1,173 @@
-<div class="p-5">
-  <h1 class="text-xl font-semibold text-black">segurança</h1>
-  <!-- conteúdo futuro: alteração de senha, 2FA etc. -->
+<div class="p-6">
+  <!-- Header com voltar -->
+  <div class="flex items-center justify-center mt-6 mb-8 relative">
+    <button
+      type="button"
+      class="absolute left-0 px-1 py-1 rounded-full transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
+      routerLink="/profile"
+      aria-label="Voltar"
+    >
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="28"
+        height="28"
+        viewBox="0 0 24 24"
+        fill="#6B54EC"
+      >
+        <path d="M15.41 7.41 14 6l-6 6 6 6 1.41-1.41L10.83 12z" />
+      </svg>
+    </button>
+    <h1 class="text-center font-semibold text-primary">Categorias</h1>
+  </div>
+
+  <!-- Erro carregamento categorias -->
+  <div
+    *ngIf="categoriasErrorMessage"
+    class="mb-4 text-sm text-error bg-error/10 rounded-lg px-3 py-2"
+  >
+    {{ categoriasErrorMessage }}
+  </div>
+
+  <!-- Criar nova categoria -->
+  <div class="mt-4 grid gap-3">
+    <div>
+      <label class="text-sm text-description mb-1 block"
+        >Nova categoria</label
+      >
+      <app-ui-input
+        [placeholder]="'Ex.: Alimentação, Moradia, Salário'"
+        [(ngModel)]="novaCategoriaNome"
+        [disabled]="creating || loadingCategorias"
+      ></app-ui-input>
+    </div>
+
+    <div class="flex gap-2 mt-1">
+      <button
+        type="button"
+        class="flex-1 h-10 rounded-full text-xs font-semibold border transition"
+        [ngClass]="
+          novaCategoriaTipo === 'RECEITA'
+            ? 'bg-[#e8fff3] border-[#27BE61] text-[#15803d]'
+            : 'bg-white border-black/10 text-description'
+        "
+        (click)="novaCategoriaTipo = 'RECEITA'"
+        [disabled]="creating"
+      >
+        Para ganhos
+      </button>
+      <button
+        type="button"
+        class="flex-1 h-10 rounded-full text-xs font-semibold border transition"
+        [ngClass]="
+          novaCategoriaTipo === 'DESPESA'
+            ? 'bg-[#fff1f2] border-[#fb7185] text-[#b91c1c]'
+            : 'bg-white border-black/10 text-description'
+        "
+        (click)="novaCategoriaTipo = 'DESPESA'"
+        [disabled]="creating"
+      >
+        Para gastos
+      </button>
+    </div>
+
+    <div
+      *ngIf="createErrorMessage"
+      class="text-sm text-error bg-error/10 rounded-lg px-3 py-2"
+    >
+      {{ createErrorMessage }}
+    </div>
+
+    <div class="mt-2">
+      <app-button-primary
+        label="Adicionar categoria"
+        [loading]="creating"
+        loadingText="Adicionando..."
+        [disabled]="!canCreateCategoria"
+        (clicked)="criarCategoria()"
+      ></app-button-primary>
+    </div>
+  </div>
+
+  <!-- Listagem de categorias -->
+  <div class="mt-8 space-y-6">
+    <!-- Categorias de ganhos -->
+    <div>
+      <h2 class="text-sm font-semibold text-description mb-2">
+        Categorias de ganhos
+      </h2>
+      <div *ngIf="loadingCategorias" class="text-xs text-description">
+        Carregando categorias...
+      </div>
+      <div *ngIf="!loadingCategorias && categoriasReceita.length === 0" class="text-xs text-description">
+        Nenhuma categoria de ganho criada ainda.
+      </div>
+      <div class="mt-1 flex flex-wrap gap-2">
+        <div
+          *ngFor="let cat of categoriasReceita"
+          class="inline-flex items-center gap-2 rounded-full bg-white px-3 py-1.5 shadow-sm border border-black/5 max-w-full"
+        >
+          <span class="text-xs text-gray-900 truncate max-w-[140px]">
+            {{ cat.nome }}
+          </span>
+          <button
+            type="button"
+            class="h-5 w-5 inline-flex items-center justify-center rounded-full text-[10px] font-bold text-error hover:bg-error/10 disabled:opacity-50 disabled:pointer-events-none"
+            (click)="solicitarExclusao(cat)"
+            [disabled]="deleting"
+            aria-label="Remover categoria"
+          >
+            ✕
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Categorias de gastos -->
+    <div>
+      <h2 class="text-sm font-semibold text-description mb-2">
+        Categorias de gastos
+      </h2>
+      <div *ngIf="loadingCategorias" class="text-xs text-description">
+        Carregando categorias...
+      </div>
+      <div *ngIf="!loadingCategorias && categoriasDespesa.length === 0" class="text-xs text-description">
+        Nenhuma categoria de gasto criada ainda.
+      </div>
+      <div class="mt-1 flex flex-wrap gap-2">
+        <div
+          *ngFor="let cat of categoriasDespesa"
+          class="inline-flex items-center gap-2 rounded-full bg-white px-3 py-1.5 shadow-sm border border-black/5 max-w-full"
+        >
+          <span class="text-xs text-gray-900 truncate max-w-[140px]">
+            {{ cat.nome }}
+          </span>
+          <button
+            type="button"
+            class="h-5 w-5 inline-flex items-center justify-center rounded-full text-[10px] font-bold text-error hover:bg-error/10 disabled:opacity-50 disabled:pointer-events-none"
+            (click)="solicitarExclusao(cat)"
+            [disabled]="deleting"
+            aria-label="Remover categoria"
+          >
+            ✕
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal confirmar exclusão de categoria -->
+  <app-confirm-modal
+    [open]="isDeleteModalOpen"
+    [title]="'Remover categoria'"
+    [description]="
+      categoriaParaExcluir
+        ? 'Tem certeza que deseja remover a categoria ' + categoriaParaExcluir.nome + '?'
+        : ''
+    "
+    [confirmLabel]="'Sim, remover'"
+    [cancelLabel]="'Cancelar'"
+    [confirming]="deleting"
+    (close)="closeDeleteModal()"
+    (confirm)="confirmarExclusao()"
+  ></app-confirm-modal>
 </div>
