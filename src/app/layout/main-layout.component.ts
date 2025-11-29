@@ -77,7 +77,20 @@ export class MainLayoutComponent implements OnInit {
           parts.length <= 1
             ? rawName
             : `${parts[0]} ${parts[parts.length - 1]}`;
-        this.userInitial = rawName.charAt(0).toUpperCase();
+
+        // Inicial com primeira letra do primeiro e do último nome (ex: "João Silva" -> "JS")
+        if (parts.length === 0) {
+          this.userInitial = '';
+        } else if (parts.length === 1) {
+          const single = parts[0];
+          const first = single.charAt(0);
+          const second = single.slice(1).trim().charAt(0);
+          this.userInitial = (first + (second || '')).toUpperCase();
+        } else {
+          const first = parts[0].charAt(0);
+          const last = parts[parts.length - 1].charAt(0);
+          this.userInitial = (first + last).toUpperCase();
+        }
       });
   }
 
