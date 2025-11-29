@@ -33,6 +33,7 @@ export class MainLayoutComponent implements OnInit {
   userInitial: string = '';
   isAddModalOpen = false;
   isHome: boolean = false;
+  showHeader: boolean = true;
   showBottomNav: boolean = true;
   private readonly destroyRef = inject(DestroyRef);
 
@@ -41,6 +42,7 @@ export class MainLayoutComponent implements OnInit {
   ngOnInit(): void {
     // estado inicial e atualização por navegação
     this.isHome = this.isHomeRoute(this.router.url);
+    this.showHeader = this.computeShowHeader(this.router.url);
     this.showBottomNav = this.computeShowBottomNav(this.router.url);
     this.router.events
       .pipe(
@@ -49,6 +51,7 @@ export class MainLayoutComponent implements OnInit {
       )
       .subscribe((e) => {
         this.isHome = this.isHomeRoute(e.urlAfterRedirects ?? e.url);
+        this.showHeader = this.computeShowHeader(e.urlAfterRedirects ?? e.url);
         this.showBottomNav = this.computeShowBottomNav(
           e.urlAfterRedirects ?? e.url
         );
@@ -81,6 +84,17 @@ export class MainLayoutComponent implements OnInit {
   private isHomeRoute(url: string): boolean {
     const path = (url ?? '').split('?')[0].split('#')[0];
     return path === '/' || path === '';
+  }
+
+  private computeShowHeader(url: string): boolean {
+    const path = (url ?? '').split('?')[0].split('#')[0];
+    return (
+      path === '/' ||
+      path === '' ||
+      path === '/stats' ||
+      path === '/history' ||
+      path === '/profile'
+    );
   }
 
   private computeShowBottomNav(url: string): boolean {

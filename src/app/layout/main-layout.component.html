@@ -1,7 +1,7 @@
 <div class="min-h-svh bg-layer text-black flex flex-col">
   <!-- HEADER -->
   <header
-    *ngIf="isHome"
+    *ngIf="showHeader"
     class="relative bg-primary text-white px-5 pt-12 pb-20 overflow-hidden"
   >
     <div class="mx-auto max-w-md">
@@ -30,9 +30,9 @@
   <main
     class="flex-1 bg-secondary relative z-10"
     [ngClass]="{
-      'rounded-t-3xl': isHome,
-      '-mt-10': isHome,
-      'md:-mt-12': isHome
+      'rounded-t-3xl': showHeader,
+      '-mt-10': showHeader,
+      'md:-mt-12': showHeader
     }"
   >
     <div class="mx-auto max-w-md">
