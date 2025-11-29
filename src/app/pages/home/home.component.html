@@ -1,4 +1,24 @@
-<div class="p-5">
-  <h1 class="text-xl font-semibold text-black">home</h1>
-  <!-- conteúdo futuro da Home -->
+<div class="p-5 font-inter">
+  <!-- Card de saldo -->
+  <section class="w-full max-w-md mx-auto rounded-lg px-5 py-4 mb-6">
+    <div class="flex items-center justify-between mb-3">
+      <h2 class="text-sm font-semibold text-black">Saldo atual</h2>
+    </div>
+
+    <div class="mb-3">
+      <p
+        class="text-4xl font-bold"
+        [ngClass]="saldoTotal >= 0 ? 'text-success' : 'text-error'"
+      >
+        {{ saldoTotal | currency : "BRL" : "symbol" : "1.2-2" : "pt" }}
+      </p>
+    </div>
+
+    <div
+      *ngIf="errorMessage"
+      class="text-[11px] text-error bg-error/10 rounded-lg px-3 py-2"
+    >
+      {{ errorMessage }}
+    </div>
+  </section>
 </div>
