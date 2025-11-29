@@ -74,11 +74,15 @@ export class AddEntryModalComponent implements OnChanges {
     ) {
       const t = this.initialTransacao;
       this.entryType = t.tipo === 'RECEITA' ? 'income' : 'expense';
-      this.amountInput = this.formatCurrencyBr(t.valor);
+      // Formata o valor para o mask processar corretamente
+      this.amountInput = this.formatValueForMask(t.valor);
       this.selectedCategoryId = t.categoriaId;
       this.descricao = t.descricao ?? '';
       this.usuarioId = t.userId;
       this.loadCategorias();
+    } else if (changes['open'] && !this.open) {
+      // Limpa os campos quando o modal é fechado
+      this.reset();
     }
   }
 
@@ -140,10 +144,13 @@ export class AddEntryModalComponent implements OnChanges {
       return;
     }
 
+    const now = new Date();
+    now.setHours(now.getHours() - 3);
+
     const payload: TransacaoRequest = {
       tipo: this.entryType === 'income' ? 'RECEITA' : 'DESPESA',
       valor: parsed,
-      data: new Date().toISOString().split('T')[0],
+      data: now.toISOString(),
       descricao: this.descricao.trim() ? this.descricao.trim() : undefined,
       userId: this.usuarioId,
       categoriaId: this.selectedCategoryId,
@@ -209,9 +216,18 @@ export class AddEntryModalComponent implements OnChanges {
 
   private parseCurrencyBr(formatted: string): number | null {
     if (!formatted) return null;
+    // Remove separadores de milhares e converte vírgula para ponto
     const normalized = formatted.replace(/\./g, '').replace(',', '.');
     const num = Number(normalized);
     return Number.isFinite(num) ? num : null;
+  }
+
+  private formatValueForMask(value: number): string {
+    // Converte o valor numérico para string no formato que o ngx-mask espera
+    // O mask "separator.2" com dropSpecialCharacters=true espera uma string numérica
+    // simples com vírgula para decimais, sem separadores de milhares
+    // Ex: 1000.00 -> "1000,00" (será formatado como "1.000,00" pelo mask)
+    return value.toFixed(2).replace('.', ',');
   }
 
   private formatCurrencyBr(value: number): string {

@@ -105,9 +105,13 @@
             [ngClass]="entryType === 'income' ? 'text-success' : 'text-error'"
           >
             {{
-              entryType === 'income'
-                ? (mode === 'edit' ? 'Editar ganho' : 'Registrar ganho')
-                : (mode === 'edit' ? 'Editar gasto' : 'Registrar gasto')
+              entryType === "income"
+                ? mode === "edit"
+                  ? "Editar ganho"
+                  : "Registrar ganho"
+                : mode === "edit"
+                ? "Editar gasto"
+                : "Registrar gasto"
             }}
           </div>
 
@@ -148,7 +152,8 @@
                   decimalMarker=","
                   [dropSpecialCharacters]="false"
                   class="w-full border-0 bg-transparent text-base text-black outline-none placeholder:text-disable"
-                  [(ngModel)]="amountInput"
+                  [ngModel]="amountInput"
+                  (ngModelChange)="amountInput = $event"
                 />
               </div>
             </div>

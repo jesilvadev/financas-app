@@ -9,6 +9,12 @@ import { Transacao } from '../../models/transacao.model';
 import { Categoria } from '../../models/categoria.model';
 import { TransacaoService } from '../../services/transacao.service';
 import { AuthService } from '../../services/auth.service';
+import { UsuarioResponse } from '../../models/user.model';
+
+// Interface estendida para incluir saldo inicial
+interface TransacaoComSaldoInicial extends Transacao {
+  isSaldoInicial?: boolean;
+}
 
 @Component({
   selector: 'app-history',
@@ -24,6 +30,7 @@ import { AuthService } from '../../services/auth.service';
 export class HistoryComponent implements OnInit {
   transacoes: Transacao[] = [];
   categorias: Categoria[] = [];
+  currentUser: UsuarioResponse | null = null;
 
   filtroTipo: 'TODOS' | 'RECEITA' | 'DESPESA' = 'TODOS';
   filtroCategoriaId: string = '';
@@ -56,6 +63,7 @@ export class HistoryComponent implements OnInit {
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((user) => {
         const userId = user?.id;
+        this.currentUser = user;
         if (!userId) {
           this.transacoes = [];
           return;
@@ -65,27 +73,66 @@ export class HistoryComponent implements OnInit {
       });
   }
 
-  get filteredTransacoes(): Transacao[] {
-    let list = [...this.transacoes];
+  get filteredTransacoes(): TransacaoComSaldoInicial[] {
+    let list: TransacaoComSaldoInicial[] = [...this.transacoes];
 
+    // Adiciona saldo inicial como primeira entrada se existir
+    if (
+      this.currentUser?.saldoInicial != null &&
+      this.currentUser.saldoInicial !== 0
+    ) {
+      const saldoInicial: TransacaoComSaldoInicial = {
+        id: 'saldo-inicial',
+        tipo: 'RECEITA',
+        valor: this.currentUser.saldoInicial,
+        data:
+          this.currentUser.dataInicioControle || this.currentUser.dataCriacao,
+        descricao: null,
+        userId: this.currentUser.id,
+        categoriaId: '',
+        categoriaNome: 'Saldo inicial',
+        isSaldoInicial: true,
+      };
+      list = [saldoInicial, ...list];
+    }
+
+    // Aplica filtros (saldo inicial sempre aparece quando filtro é TODOS ou RECEITA)
     if (this.filtroTipo !== 'TODOS') {
-      list = list.filter((t) => t.tipo === this.filtroTipo);
+      list = list.filter((t) => {
+        if (t.isSaldoInicial) {
+          return this.filtroTipo === 'RECEITA';
+        }
+        return t.tipo === this.filtroTipo;
+      });
     }
     if (this.filtroCategoriaId) {
-      list = list.filter((t) => t.categoriaId === this.filtroCategoriaId);
+      list = list.filter(
+        (t) => !t.isSaldoInicial && t.categoriaId === this.filtroCategoriaId
+      );
     }
     if (this.filtroDataInicio) {
       const start = new Date(this.filtroDataInicio);
-      list = list.filter((t) => new Date(t.data) >= start);
+      list = list.filter((t) => {
+        if (t.isSaldoInicial) return true; // Saldo inicial sempre aparece
+        return new Date(t.data) >= start;
+      });
     }
     if (this.filtroDataFim) {
       const end = new Date(this.filtroDataFim);
       end.setHours(23, 59, 59, 999);
-      list = list.filter((t) => new Date(t.data) <= end);
+      list = list.filter((t) => {
+        if (t.isSaldoInicial) return true; // Saldo inicial sempre aparece
+        return new Date(t.data) <= end;
+      });
     }
-    list.sort(
-      (a, b) => new Date(b.data).getTime() - new Date(a.data).getTime()
-    );
+
+    // Ordena: saldo inicial primeiro, depois por data (mais recente primeiro)
+    list.sort((a, b) => {
+      if (a.isSaldoInicial) return -1;
+      if (b.isSaldoInicial) return 1;
+      return new Date(b.data).getTime() - new Date(a.data).getTime();
+    });
+
     return list;
   }
 
@@ -96,7 +143,7 @@ export class HistoryComponent implements OnInit {
     );
   }
 
-  get pagedTransacoes(): Transacao[] {
+  get pagedTransacoes(): TransacaoComSaldoInicial[] {
     const start = (this.currentPage - 1) * this.pageSize;
     return this.filteredTransacoes.slice(start, start + this.pageSize);
   }
@@ -105,13 +152,17 @@ export class HistoryComponent implements OnInit {
     this.currentPage = 1;
   }
 
-  openEdit(t: Transacao): void {
+  openEdit(t: TransacaoComSaldoInicial): void {
+    // Saldo inicial não pode ser editado
+    if (t.isSaldoInicial) return;
     this.entryModalMode = 'edit';
     this.editingTransacao = t;
     this.isEntryModalOpen = true;
   }
 
-  openDelete(t: Transacao): void {
+  openDelete(t: TransacaoComSaldoInicial): void {
+    // Saldo inicial não pode ser deletado
+    if (t.isSaldoInicial) return;
     this.deletingTransacao = t;
     this.isConfirmDeleteOpen = true;
   }
@@ -168,7 +219,12 @@ export class HistoryComponent implements OnInit {
 
     this.transacaoService.listarPorUsuario(userId).subscribe({
       next: (lista) => {
-        this.transacoes = lista;
+        this.transacoes = lista.sort(
+          (a, b) => new Date(b.data).getTime() - new Date(a.data).getTime()
+        );
+
+        console.log('Transações carregadas (ordenadas):', this.transacoes);
+
         this.loadingTransacoes = false;
       },
       error: (err) => {

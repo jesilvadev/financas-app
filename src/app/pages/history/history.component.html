@@ -68,16 +68,22 @@
             >
               {{ t.categoriaNome }}
             </span>
-            <span class="font-semibold text-gray-900 text-base">
+            <span
+              *ngIf="!t.isSaldoInicial"
+              class="font-semibold text-gray-900 text-base"
+            >
               {{ t.descricao }}
             </span>
             <span class="text-gray-500 text-xs whitespace-nowrap">
-              {{ t.data | date : "dd MMM yyyy  HH:mm" }}
+              <span *ngIf="t.isSaldoInicial">Saldo inicial</span>
+              <span *ngIf="!t.isSaldoInicial">{{
+                t.data | date : "dd MMM yyyy  HH:mm"
+              }}</span>
             </span>
           </div>
         </div>
         <div class="flex flex-col items-end gap-2">
-          <div class="flex gap-2">
+          <div class="flex gap-2" *ngIf="!t.isSaldoInicial">
             <button (click)="openEdit(t)">
               <img
                 src="assets/icons/pen.png"
