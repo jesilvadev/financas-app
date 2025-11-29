@@ -1,14 +1,15 @@
-<div class="min-h-screen w-full px-4 py-6 flex flex-col items-center font-inter">
-
-  <h2 class="text-center text-xl font-bold text-[#6b54ec] mb-12 mt-8">
-    Histórico
-  </h2>
-
+<div
+  class="min-h-screen w-full px-4 py-6 flex flex-col items-center font-inter"
+>
   <div class="flex gap-2 mb-4 w-full max-w-md justify-start">
     <button
       type="button"
       class="px-4 py-1.5 w-24 rounded-lg text-xs font-bold transition"
-      [ngClass]="filtroTipo === 'TODOS' ? 'bg-[#6b54ec] text-white' : 'bg-white text-[#6b54ec]'"
+      [ngClass]="
+        filtroTipo === 'TODOS'
+          ? 'bg-[#6b54ec] text-white'
+          : 'bg-white text-[#6b54ec]'
+      "
       (click)="filtroTipo = 'TODOS'; resetPage()"
     >
       Todas
@@ -16,7 +17,11 @@
     <button
       type="button"
       class="px-4 py-1.5 w-24 rounded-lg text-xs font-bold transition"
-      [ngClass]="filtroTipo === 'RECEITA' ? 'bg-[#27BE61] text-white' : 'bg-white text-[#27BE61]'"
+      [ngClass]="
+        filtroTipo === 'RECEITA'
+          ? 'bg-[#27BE61] text-white'
+          : 'bg-white text-[#27BE61]'
+      "
       (click)="filtroTipo = 'RECEITA'; resetPage()"
     >
       Ganhos
@@ -24,7 +29,11 @@
     <button
       type="button"
       class="px-4 py-1.5 w-24 rounded-lg text-xs font-bold transition"
-      [ngClass]="filtroTipo === 'DESPESA' ? 'bg-[#FF4B4B] text-white' : 'bg-white text-[#FF4B4B]'"
+      [ngClass]="
+        filtroTipo === 'DESPESA'
+          ? 'bg-[#FF4B4B] text-white'
+          : 'bg-white text-[#FF4B4B]'
+      "
       (click)="filtroTipo = 'DESPESA'; resetPage()"
     >
       Gastos
@@ -38,18 +47,24 @@
         class="bg-white rounded-xl px-5 py-4 flex justify-between items-center shadow-sm"
       >
         <div class="flex items-center gap-3">
-          <div [ngClass]="t.tipo === 'DESPESA'
-                          ? 'bg-[#f6a1a1]'
-                          : 'bg-[#5DC486]'"
-               class="w-10 h-10 flex items-center justify-center rounded-[12px]">
-            <span [ngClass]="t.tipo === 'DESPESA'
-                            ? 'text-2xl text-[#f85656] font-bold'
-                            : 'text-2xl text-[#1E8315] font-bold'">
-              {{ t.tipo === 'DESPESA' ? '−' : '+' }}
+          <div
+            [ngClass]="t.tipo === 'DESPESA' ? 'bg-[#f6a1a1]' : 'bg-[#5DC486]'"
+            class="w-10 h-10 flex items-center justify-center rounded-[12px]"
+          >
+            <span
+              [ngClass]="
+                t.tipo === 'DESPESA'
+                  ? 'text-2xl text-[#f85656] font-bold'
+                  : 'text-2xl text-[#1E8315] font-bold'
+              "
+            >
+              {{ t.tipo === "DESPESA" ? "−" : "+" }}
             </span>
           </div>
           <div class="flex flex-col">
-            <span class="font-semibold text-gray-900 text-base">{{ t.descricao }}</span>
+            <span class="font-semibold text-gray-900 text-base">{{
+              t.descricao
+            }}</span>
             <span class="text-gray-500 text-xs whitespace-nowrap">
               {{ t.data | date : "dd MMM yyyy  HH:mm" }}
             </span>
@@ -58,10 +73,16 @@
         <div class="flex flex-col items-end gap-2">
           <div class="flex gap-2">
             <button (click)="openEdit(t)">
-              <img src="assets/icons/pen.png" class="w-5 h-5 opacity-80 hover:opacity-100 transition">
+              <img
+                src="assets/icons/pen.png"
+                class="w-5 h-5 opacity-80 hover:opacity-100 transition"
+              />
             </button>
             <button (click)="openDelete(t)">
-              <img src="assets/icons/trashCan.png" class="w-5 h-5 opacity-80 hover:opacity-100 transition">
+              <img
+                src="assets/icons/trashCan.png"
+                class="w-5 h-5 opacity-80 hover:opacity-100 transition"
+              />
             </button>
           </div>
           <span class="font-bold text-gray-900 text-lg">

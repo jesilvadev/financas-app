@@ -45,7 +45,7 @@ export class ProfileDadosComponent implements OnInit {
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((user: UsuarioResponse | null) => {
         const full = (user?.nome ?? '').trim();
-        this.nome = full;
+        this.nome = this.formatName(full);
         this.email = user?.email ?? '';
         this.originalNome = this.nome;
         this.originalEmail = this.email;
@@ -68,16 +68,21 @@ export class ProfileDadosComponent implements OnInit {
     const userId = this.authService.currentUserValue?.id;
     if (!userId) return;
 
+    const nomeNormalizado = this.formatName(this.nome.trim());
+    const emailNormalizado = this.email.trim();
+
     this.saving = true;
     this.errorMessage = '';
 
     this.usuarioService
-      .atualizar(userId, { nome: this.nome.trim(), email: this.email.trim() })
+      .atualizar(userId, { nome: nomeNormalizado, email: emailNormalizado })
       .subscribe({
         next: () => {
           // Atualiza estado local e AuthService
-          this.originalNome = this.nome.trim();
-          this.originalEmail = this.email.trim();
+          this.nome = nomeNormalizado;
+          this.email = emailNormalizado;
+          this.originalNome = nomeNormalizado;
+          this.originalEmail = emailNormalizado;
           this.authService.fetchCurrentUser().subscribe({
             complete: () => {
               this.saving = false;
@@ -104,5 +109,18 @@ export class ProfileDadosComponent implements OnInit {
     this.email = this.originalEmail;
     this.isEditing = false;
     this.errorMessage = '';
+  }
+
+  private formatName(value: string): string {
+    const trimmed = (value ?? '').trim();
+    if (!trimmed) return '';
+
+    // Deixa a primeira letra de CADA palavra maiúscula e o resto minúsculo
+    return trimmed
+      .toLowerCase()
+      .split(/\s+/)
+      .filter(Boolean)
+      .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+      .join(' ');
   }
 }

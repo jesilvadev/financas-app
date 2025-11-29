@@ -1,4 +1,117 @@
-<div class="p-5">
-  <h1 class="text-xl font-semibold text-black">segurança</h1>
-  <!-- conteúdo futuro: alteração de senha, 2FA etc. -->
+<div class="p-6">
+  <!-- Header com voltar -->
+  <div class="flex items-center justify-center mt-6 mb-8 relative">
+    <button
+      type="button"
+      class="absolute left-0 px-1 py-1 rounded-full transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
+      routerLink="/profile"
+      aria-label="Voltar"
+    >
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="28"
+        height="28"
+        viewBox="0 0 24 24"
+        fill="#6B54EC"
+      >
+        <path d="M15.41 7.41 14 6l-6 6 6 6 1.41-1.41L10.83 12z" />
+      </svg>
+    </button>
+    <h1 class="text-center font-semibold text-primary">Segurança</h1>
+  </div>
+
+  <!-- Alteração de senha -->
+  <div class="mt-4 grid gap-3">
+    <div>
+      <label class="text-sm text-description mb-1 block">Senha atual</label>
+      <app-ui-input
+        [type]="'password'"
+        [placeholder]="'Digite sua senha atual'"
+        [(ngModel)]="senhaAtual"
+        [disabled]="savingSenha"
+        [autocomplete]="'current-password'"
+      ></app-ui-input>
+    </div>
+
+    <div>
+      <label class="text-sm text-description mb-1 block">Nova senha</label>
+      <app-ui-input
+        [type]="'password'"
+        [placeholder]="'Crie uma nova senha'"
+        [(ngModel)]="novaSenha"
+        [disabled]="savingSenha"
+        [autocomplete]="'new-password'"
+      ></app-ui-input>
+    </div>
+
+    <div>
+      <label class="text-sm text-description mb-1 block"
+        >Confirmar nova senha</label
+      >
+      <app-ui-input
+        [type]="'password'"
+        [placeholder]="'Repita a nova senha'"
+        [(ngModel)]="confirmarSenha"
+        [disabled]="savingSenha"
+        [autocomplete]="'new-password'"
+      ></app-ui-input>
+    </div>
+
+    <div
+      *ngIf="senhaErrorMessage"
+      class="text-sm text-error bg-error/10 rounded-lg px-3 py-2"
+    >
+      {{ senhaErrorMessage }}
+    </div>
+
+    <div
+      *ngIf="senhaSuccessMessage"
+      class="text-sm text-green-700 bg-green-100 rounded-lg px-3 py-2"
+    >
+      {{ senhaSuccessMessage }}
+    </div>
+
+    <div class="mt-4">
+      <app-button-primary
+        label="Atualizar senha"
+        [loading]="savingSenha"
+        loadingText="Atualizando..."
+        [disabled]="!canChangePassword"
+        (clicked)="alterarSenha()"
+      ></app-button-primary>
+    </div>
+  </div>
+
+  <!-- Exclusão de conta -->
+  <div class="space-y-3 mt-8">
+    <div
+      *ngIf="deleteErrorMessage"
+      class="text-sm text-error bg-error/10 rounded-lg px-3 py-2"
+    >
+      {{ deleteErrorMessage }}
+    </div>
+
+    <button
+      type="button"
+      class="mt-2 h-[56px] w-full rounded-xl border border-error text-error text-sm font-semibold flex items-center justify-center transition hover:bg-error/5 active:scale-95 disabled:opacity-50 disabled:pointer-events-none"
+      (click)="openDeleteModal()"
+      [disabled]="deleting"
+    >
+      Excluir minha conta
+    </button>
+  </div>
+
+  <!-- Modal confirmar exclusão -->
+  <app-confirm-modal
+    [open]="isDeleteModalOpen"
+    [title]="'Excluir conta'"
+    [description]="
+      'Tem certeza que deseja excluir sua conta? Esta ação é permanente e não poderá ser desfeita.'
+    "
+    [confirmLabel]="'Sim, excluir'"
+    [cancelLabel]="'Cancelar'"
+    [confirming]="deleting"
+    (close)="closeDeleteModal()"
+    (confirm)="confirmarExclusao()"
+  ></app-confirm-modal>
 </div>
