@@ -39,6 +39,13 @@
         Esqueceu sua senha?
       </a>
 
+      <div
+        *ngIf="errorMessage"
+        class="text-sm text-error bg-error/10 rounded-lg px-3 py-2"
+      >
+        {{ errorMessage }}
+      </div>
+
       <app-button-primary
         type="submit"
         [loading]="isLoading"

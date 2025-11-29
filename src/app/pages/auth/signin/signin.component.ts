@@ -60,8 +60,13 @@ export class SigninComponent {
         },
         error: (error) => {
           console.error('Erro no login:', error);
+          // Tenta pegar a mensagem do corpo da resposta da API
+          const apiMessage = error?.error?.message;
+          // Se não tiver, tenta a mensagem padrão do erro HTTP
+          const httpMessage = error?.message;
+          // Fallback para mensagem genérica
           this.errorMessage =
-            error?.error?.message || error?.message || 'Erro ao fazer login';
+            apiMessage || httpMessage || 'Erro ao fazer login';
         },
       });
   }
