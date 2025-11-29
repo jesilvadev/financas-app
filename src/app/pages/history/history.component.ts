@@ -1,10 +1,14 @@
 import { CommonModule } from '@angular/common';
 import { Component, DestroyRef, OnInit, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+
 import { AddEntryModalComponent } from '../../shared/components/add-entry-modal/add-entry-modal.component';
 import { ConfirmModalComponent } from '../../shared/components/confirm-modal/confirm-modal.component';
 import { Transacao } from '../../models/transacao.model';
 import { Categoria } from '../../models/categoria.model';
+import { TransacaoService } from '../../services/transacao.service';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-history',
@@ -36,36 +40,29 @@ export class HistoryComponent implements OnInit {
   isConfirmDeleteOpen = false;
   deletingTransacao: Transacao | null = null;
   confirmingDelete = false;
+  loadingTransacoes = false;
+  loadErrorMessage = '';
+
+  private readonly destroyRef = inject(DestroyRef);
+  private lastUserId: string | null = null;
+
+  constructor(
+    private readonly transacaoService: TransacaoService,
+    private readonly authService: AuthService
+  ) {}
 
   ngOnInit(): void {
-    // SIMULAÇÃO DE DADOS (Sujeito a remoção)
-    this.transacoes = [
-      {
-        id: '1',
-        userId: 'usuario-demo',
-        tipo: 'RECEITA',
-        descricao: 'Salário',
-        valor: 2500,
-        data: new Date().toISOString(),
-        categoriaId: '1',
-        categoriaNome: 'Trabalho',
-      },
-      {
-        id: '2',
-        userId: 'usuario-demo',
-        tipo: 'DESPESA',
-        descricao: 'Supermercado',
-        valor: 350,
-        data: new Date().toISOString(),
-        categoriaId: '2',
-        categoriaNome: 'Alimentação',
-      }
-    ];
-    this.categorias = [
-      { id: '1', nome: 'Trabalho', tipo: 'RECEITA', userId: 'usuario-demo' },
-      { id: '2', nome: 'Alimentação', tipo: 'DESPESA', userId: 'usuario-demo' }
-    ];
-
+    this.authService.currentUser$
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((user) => {
+        const userId = user?.id;
+        if (!userId) {
+          this.transacoes = [];
+          return;
+        }
+        this.lastUserId = userId;
+        this.loadTransacoes(userId);
+      });
   }
 
   get filteredTransacoes(): Transacao[] {
@@ -117,5 +114,69 @@ export class HistoryComponent implements OnInit {
   openDelete(t: Transacao): void {
     this.deletingTransacao = t;
     this.isConfirmDeleteOpen = true;
+  }
+
+  // callbacks do modal de edição
+  handleEntryModalClose(): void {
+    this.isEntryModalOpen = false;
+    this.editingTransacao = null;
+    this.entryModalMode = 'create';
+  }
+
+  handleEntryModalConfirm(updated: Transacao): void {
+    // Recarrega da API para garantir categoriaNome atualizado
+    if (this.lastUserId) {
+      this.loadTransacoes(this.lastUserId);
+    } else {
+      // fallback: atualiza somente em memória
+      this.transacoes = this.transacoes.map((t) =>
+        t.id === updated.id ? updated : t
+      );
+    }
+  }
+
+  // callbacks do modal de exclusão
+  handleDeleteModalClose(): void {
+    if (this.confirmingDelete) return;
+    this.isConfirmDeleteOpen = false;
+    this.deletingTransacao = null;
+  }
+
+  confirmDelete(): void {
+    if (!this.deletingTransacao || this.confirmingDelete) return;
+
+    const id = this.deletingTransacao.id;
+    this.confirmingDelete = true;
+
+    this.transacaoService.excluir(id).subscribe({
+      next: () => {
+        this.transacoes = this.transacoes.filter((t) => t.id !== id);
+        this.confirmingDelete = false;
+        this.isConfirmDeleteOpen = false;
+        this.deletingTransacao = null;
+      },
+      error: (err) => {
+        console.error('Erro ao excluir transação', err);
+        this.confirmingDelete = false;
+      },
+    });
+  }
+
+  private loadTransacoes(userId: string): void {
+    this.loadingTransacoes = true;
+    this.loadErrorMessage = '';
+
+    this.transacaoService.listarPorUsuario(userId).subscribe({
+      next: (lista) => {
+        this.transacoes = lista;
+        this.loadingTransacoes = false;
+      },
+      error: (err) => {
+        console.error('Erro ao carregar transações', err);
+        this.loadingTransacoes = false;
+        this.loadErrorMessage =
+          err?.error?.message || err?.message || 'Erro ao carregar histórico';
+      },
+    });
   }
 }

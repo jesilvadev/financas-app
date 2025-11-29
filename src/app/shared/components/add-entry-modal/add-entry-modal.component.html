@@ -77,36 +77,42 @@
 
     <ng-template #formTemplate>
       <div class="flex flex-1 flex-col px-5 py-5 gap-5">
-        <div class="flex items-center justify-between">
-          <button
-            type="button"
-            aria-label="Voltar"
-            class="px-1 py-1 rounded-full transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
-            (click)="backToTypeSelection()"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="24"
-              height="24"
-              viewBox="0 0 24 24"
-              fill="#6B54EC"
+        <div class="flex items-center">
+          <!-- Espaço / botão voltar (criar) -->
+          <div class="w-8 flex items-center">
+            <button
+              *ngIf="mode === 'create'"
+              type="button"
+              aria-label="Voltar"
+              class="px-1 py-1 rounded-full transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
+              (click)="backToTypeSelection()"
             >
-              <path d="M15.41 7.41 14 6l-6 6 6 6 1.41-1.41L10.83 12z" />
-            </svg>
-          </button>
-          <div
-            class="{{
-              entryType === 'income' ? 'text-success' : 'text-error'
-            }} font-semibold"
-          >
-            {{ entryType === "income" ? "Registrar ganho" : "Registrar gasto" }}
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="#6B54EC"
+              >
+                <path d="M15.41 7.41 14 6l-6 6 6 6 1.41-1.41L10.83 12z" />
+              </svg>
+            </button>
           </div>
-          <button
-            type="button"
-            aria-label="Fechar modal"
-            class="px-1 py-1 rounded-full transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
-            (click)="handleClose()"
+
+          <!-- Título centralizado -->
+          <div
+            class="flex-1 font-semibold text-center"
+            [ngClass]="entryType === 'income' ? 'text-success' : 'text-error'"
           >
+            {{
+              entryType === 'income'
+                ? (mode === 'edit' ? 'Editar ganho' : 'Registrar ganho')
+                : (mode === 'edit' ? 'Editar gasto' : 'Registrar gasto')
+            }}
+          </div>
+
+          <!-- Botão fechar alinhado à direita -->
+          <div class="w-8 flex items-center justify-end">
             <button
               type="button"
               aria-label="Fechar modal"
@@ -115,7 +121,7 @@
             >
               ✕
             </button>
-          </button>
+          </div>
         </div>
 
         <div class="flex-1 space-y-6 overflow-y-auto pr-1">

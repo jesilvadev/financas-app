@@ -61,12 +61,18 @@
               {{ t.tipo === "DESPESA" ? "−" : "+" }}
             </span>
           </div>
-          <div class="flex flex-col">
-            <span class="font-semibold text-gray-900 text-base">{{
-              t.descricao
-            }}</span>
+          <div class="flex flex-col gap-1">
+            <span
+              *ngIf="t.categoriaNome"
+              class="text-black font-semibold text-base"
+            >
+              {{ t.categoriaNome }}
+            </span>
+            <span class="font-semibold text-gray-900 text-base">
+              {{ t.descricao }}
+            </span>
             <span class="text-gray-500 text-xs whitespace-nowrap">
-              {{ t.data | date : "dd MMM yyyy  HH:mm" }}
+              {{ t.data | date : "dd MMM yyyy  HH:mm" }}
             </span>
           </div>
         </div>
@@ -97,4 +103,27 @@
       </div>
     </ng-template>
   </div>
+
+  <!-- Modal de edição (valor e categoria) -->
+  <app-add-entry-modal
+    [open]="isEntryModalOpen"
+    [mode]="entryModalMode"
+    [initialTransacao]="editingTransacao"
+    (close)="handleEntryModalClose()"
+    (confirm)="handleEntryModalConfirm($event)"
+  ></app-add-entry-modal>
+
+  <!-- Modal de confirmação de exclusão -->
+  <app-confirm-modal
+    [open]="isConfirmDeleteOpen"
+    [title]="'Excluir transação'"
+    [description]="
+      'Tem certeza que deseja excluir esta transação? Esta ação não poderá ser desfeita.'
+    "
+    [confirmLabel]="'Excluir'"
+    [cancelLabel]="'Cancelar'"
+    [confirming]="confirmingDelete"
+    (close)="handleDeleteModalClose()"
+    (confirm)="confirmDelete()"
+  ></app-confirm-modal>
 </div>
