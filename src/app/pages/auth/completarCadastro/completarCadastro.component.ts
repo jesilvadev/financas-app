@@ -16,7 +16,7 @@ import { AuthService } from '../../../services/auth.service';
 import { CategoriaService } from '../../../services/categoria.service';
 import { Categoria } from '../../../models/categoria.model';
 import { Step4Component } from './step4/step4.component';
-import { DisplayAlertUnauthComponent } from '../../../shared/components/display-alert/display-alert-unauth.component';
+import { DisplayAlertUnauthComponent } from '../../../shared/components/display-alert-unauth/display-alert-unauth.component';
 
 interface IncomePayload {
   incomes: RecorrenciaFormEntry[];
@@ -135,7 +135,10 @@ export class CompletarCadastroComponent {
   }
 
   onStep1Next({ saldoAtual }: { saldoAtual: number }): void {
-    console.log('[CompletarCadastro] Step 1 (saldo atual) payload recebido:', saldoAtual);
+    console.log(
+      '[CompletarCadastro] Step 1 (saldo atual) payload recebido:',
+      saldoAtual
+    );
     this.saldoAtual = saldoAtual;
     this.currentStep = 2;
   }

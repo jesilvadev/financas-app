@@ -12,7 +12,7 @@ import {
   AuthRegisterRequest,
 } from '../../../models/auth.model';
 import { AlertService } from '../../../services/alert.service';
-import { DisplayAlertUnauthComponent } from '../../../shared/components/display-alert/display-alert-unauth.component';
+import { DisplayAlertUnauthComponent } from '../../../shared/components/display-alert-unauth/display-alert-unauth.component';
 
 interface Step1Payload {
   nome: string;

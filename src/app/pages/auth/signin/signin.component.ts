@@ -9,7 +9,7 @@ import { AuthLoginRequest, AuthResponse } from '../../../models/auth.model';
 import { UiInputComponent } from '../../../shared/components/ui-input/ui-input.component';
 import { ButtonPrimaryComponent } from '../../../shared/components/button-primary/button-primary.component';
 import { MatIconModule } from '@angular/material/icon';
-import { DisplayAlertUnauthComponent } from '../../../shared/components/display-alert/display-alert-unauth.component';
+import { DisplayAlertUnauthComponent } from '../../../shared/components/display-alert-unauth/display-alert-unauth.component';
 
 @Component({
   selector: 'app-signin',
@@ -34,10 +34,7 @@ export class SigninComponent {
   @ViewChild(DisplayAlertUnauthComponent)
   authAlert?: DisplayAlertUnauthComponent;
 
-  constructor(
-    private authService: AuthService,
-    private router: Router
-  ) {}
+  constructor(private authService: AuthService, private router: Router) {}
 
   togglePasswordVisibility(): void {
     this.showPassword = !this.showPassword;
@@ -71,8 +68,7 @@ export class SigninComponent {
           // Se não tiver, tenta a mensagem padrão do erro HTTP
           const httpMessage = error?.message;
           // Fallback para mensagem genérica
-          const mensagem =
-            apiMessage || httpMessage || 'Erro ao fazer login';
+          const mensagem = apiMessage || httpMessage || 'Erro ao fazer login';
           this.authAlert?.abrir(mensagem, 'error');
         },
       });
