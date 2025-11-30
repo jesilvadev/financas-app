@@ -1,6 +1,5 @@
 import { Component, Input, signal } from '@angular/core';
 import { NgIf, CommonModule } from '@angular/common';
-import { AlertService } from '../../../services/alert.service';
 
 @Component({
   selector: 'app-display-alert',
@@ -9,7 +8,8 @@ import { AlertService } from '../../../services/alert.service';
   templateUrl: './display-alert.component.html',
   styleUrls: ['./display-alert.component.scss'],
   host: {
-    class: 'pointer-events-none z-50',
+    class:
+      'fixed inset-0 flex items-start justify-center pointer-events-none z-50',
   },
 })
 export class DisplayAlertComponent {
@@ -22,8 +22,6 @@ export class DisplayAlertComponent {
   progressKey = 0;
   private timer?: any;
 
-  constructor(private readonly alertService: AlertService) {}
-
   abrir(
     mensagem: string,
     tipo: 'error' | 'success' | 'info' | 'warning' = 'info',
@@ -33,18 +31,15 @@ export class DisplayAlertComponent {
     this.tipo = tipo;
     this.currentDuration = duracao ?? this.duracao;
     this.visible.set(true);
-    this.alertService.setVisible(true);
     this.progressKey = Date.now();
     if (this.timer) clearTimeout(this.timer);
     this.timer = setTimeout(() => {
       this.visible.set(false);
-      this.alertService.setVisible(false);
     }, this.currentDuration);
   }
 
   fechar() {
     if (this.timer) clearTimeout(this.timer);
     this.visible.set(false);
-    this.alertService.setVisible(false);
   }
 }
