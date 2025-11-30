@@ -11,6 +11,7 @@ import { CategoriaService } from '../../services/categoria.service';
 import { AuthService } from '../../services/auth.service';
 import { UsuarioResponse } from '../../models/user.model';
 import { RouterLink } from '@angular/router';
+import { AlertService } from '../../services/alert.service';
 
 @Component({
   selector: 'app-recorrentes',
@@ -34,7 +35,6 @@ export class RecorrentesComponent implements OnInit {
   categoriasDespesa: Categoria[] = [];
 
   loading = false;
-  errorMessage = '';
 
   // exclusão
   isDeleteModalOpen = false;
@@ -52,7 +52,8 @@ export class RecorrentesComponent implements OnInit {
   constructor(
     private readonly recorrenteService: TransacaoRecorrenteService,
     private readonly categoriaService: CategoriaService,
-    private readonly authService: AuthService
+    private readonly authService: AuthService,
+    private readonly alertService: AlertService
   ) {}
 
   ngOnInit(): void {
@@ -155,7 +156,6 @@ export class RecorrentesComponent implements OnInit {
 
   private carregarRecorrentes(userId: string): void {
     this.loading = true;
-    this.errorMessage = '';
 
     this.recorrenteService.listarPorUsuario(userId).subscribe({
       next: (lista) => {
@@ -165,10 +165,11 @@ export class RecorrentesComponent implements OnInit {
       },
       error: (err) => {
         console.error('Erro ao carregar recorrências', err);
-        this.errorMessage =
+        const mensagem =
           err?.error?.message ||
           err?.message ||
           'Erro ao carregar transações recorrentes.';
+        this.alertService.showError(mensagem);
         this.loading = false;
       },
     });
@@ -202,7 +203,6 @@ export class RecorrentesComponent implements OnInit {
     this.recorrentesDespesa = [];
     this.categoriasReceita = [];
     this.categoriasDespesa = [];
-    this.errorMessage = '';
   }
 }
 

@@ -16,6 +16,7 @@ import { AuthService } from '../../../services/auth.service';
 import { CategoriaService } from '../../../services/categoria.service';
 import { Categoria } from '../../../models/categoria.model';
 import { Step4Component } from './step4/step4.component';
+import { AlertService } from '../../../services/alert.service';
 
 interface IncomePayload {
   incomes: RecorrenciaFormEntry[];
@@ -52,7 +53,6 @@ interface RecorrenciaFormEntry {
 })
 export class CompletarCadastroComponent {
   currentStep = 0;
-  errorMessage = '';
   isLoading = false;
 
   private usuarioId: string | null = null;
@@ -70,7 +70,8 @@ export class CompletarCadastroComponent {
     private readonly router: Router,
     private readonly onboardingService: OnboardingService,
     private readonly authService: AuthService,
-    private readonly categoriaService: CategoriaService
+    private readonly categoriaService: CategoriaService,
+    private readonly alertService: AlertService
   ) {
     const user = this.authService.currentUserValue;
 
@@ -171,7 +172,7 @@ export class CompletarCadastroComponent {
 
   private enviarOnboarding(startDay: string): void {
     if (!this.usuarioId) {
-      this.errorMessage = 'Usuário não identificado.';
+      this.alertService.showError('Usuário não identificado.');
       return;
     }
 
@@ -190,7 +191,6 @@ export class CompletarCadastroComponent {
     });
 
     this.isLoading = true;
-    this.errorMessage = '';
 
     this.onboardingService
       .enviarOnboarding(payload, this.usuarioId)
@@ -214,10 +214,11 @@ export class CompletarCadastroComponent {
             usuarioId: this.usuarioId,
             payload,
           });
-          this.errorMessage =
+          const mensagem =
             error?.error?.message ||
             error?.message ||
             'Erro ao concluir cadastro';
+          this.alertService.showError(mensagem);
         },
       });
   }

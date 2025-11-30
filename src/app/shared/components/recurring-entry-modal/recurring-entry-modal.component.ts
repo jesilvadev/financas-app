@@ -20,6 +20,7 @@ import { Categoria } from '../../../models/categoria.model';
 import { CategoriaService } from '../../../services/categoria.service';
 import { TransacaoRecorrenteService } from '../../../services/transacaoRecorrente.service';
 import { AuthService } from '../../../services/auth.service';
+import { AlertService } from '../../../services/alert.service';
 
 type RecurringMode = 'create' | 'edit';
 
@@ -44,7 +45,6 @@ export class RecurringEntryModalComponent implements OnChanges {
   diaRecorrencia: number | null = null;
 
   saving = false;
-  errorMessage = '';
 
   categorias: Categoria[] = [];
   private usuarioId: string | null = null;
@@ -53,7 +53,8 @@ export class RecurringEntryModalComponent implements OnChanges {
   constructor(
     private readonly categoriaService: CategoriaService,
     private readonly recorrenteService: TransacaoRecorrenteService,
-    private readonly authService: AuthService
+    private readonly authService: AuthService,
+    private readonly alertService: AlertService
   ) {
     this.authService.currentUser$
       .pipe(takeUntilDestroyed())
@@ -115,7 +116,6 @@ export class RecurringEntryModalComponent implements OnChanges {
   selecionarTipo(tipo: TipoTransacao): void {
     this.tipo = tipo;
     this.categoriaId = '';
-    this.errorMessage = '';
   }
 
   handleClose(): void {
@@ -140,7 +140,6 @@ export class RecurringEntryModalComponent implements OnChanges {
     };
 
     this.saving = true;
-    this.errorMessage = '';
 
     if (this.mode === 'edit' && this.initialRecorrente) {
       this.recorrenteService
@@ -154,10 +153,11 @@ export class RecurringEntryModalComponent implements OnChanges {
           },
           error: (error) => {
             console.error('Erro ao atualizar recorrência', error);
-            this.errorMessage =
+            const mensagem =
               error?.error?.message ||
               error?.message ||
               'Erro ao atualizar recorrência';
+            this.alertService.showError(mensagem);
             this.saving = false;
           },
         });
@@ -171,10 +171,11 @@ export class RecurringEntryModalComponent implements OnChanges {
         },
         error: (error) => {
           console.error('Erro ao criar recorrência', error);
-          this.errorMessage =
+          const mensagem =
             error?.error?.message ||
             error?.message ||
             'Erro ao criar recorrência';
+          this.alertService.showError(mensagem);
           this.saving = false;
         },
       });
@@ -193,10 +194,11 @@ export class RecurringEntryModalComponent implements OnChanges {
       },
       error: (error) => {
         console.error('Erro ao carregar categorias', error);
-        this.errorMessage =
+        const mensagem =
           error?.error?.message ||
           error?.message ||
           'Erro ao carregar categorias';
+        this.alertService.showError(mensagem);
       },
     });
   }
@@ -206,7 +208,6 @@ export class RecurringEntryModalComponent implements OnChanges {
     this.valorInput = '';
     this.categoriaId = '';
     this.diaRecorrencia = null;
-    this.errorMessage = '';
     this.saving = false;
   }
 

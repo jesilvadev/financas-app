@@ -36,10 +36,6 @@
   </header>
 
   <div class="w-full max-w-md flex flex-col gap-6 mt-6">
-    <div *ngIf="errorMessage" class="flex flex-col gap-2 text-sm">
-      <p>{{ errorMessage }}</p>
-    </div>
-
     <app-step1
       *ngIf="currentStep === 1"
       (next)="onStep1Next($event)"

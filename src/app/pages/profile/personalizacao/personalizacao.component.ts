@@ -12,6 +12,7 @@ import { TipoTransacao } from '../../../models/tipoTransacao.enum';
 import { CategoriaService } from '../../../services/categoria.service';
 import { AuthService } from '../../../services/auth.service';
 import { UsuarioResponse } from '../../../models/user.model';
+import { AlertService } from '../../../services/alert.service';
 
 @Component({
   selector: 'app-profile-personalizacao',
@@ -51,7 +52,8 @@ export class ProfilePersonalizacaoComponent implements OnInit {
 
   constructor(
     private readonly categoriaService: CategoriaService,
-    private readonly authService: AuthService
+    private readonly authService: AuthService,
+    private readonly alertService: AlertService
   ) {}
 
   ngOnInit(): void {
@@ -79,6 +81,7 @@ export class ProfilePersonalizacaoComponent implements OnInit {
         this.loadingCategorias = false;
         this.categoriasErrorMessage =
           err?.error?.message || err?.message || 'Erro ao carregar categorias.';
+        this.alertService.showError(this.categoriasErrorMessage);
       },
     });
   }
@@ -115,6 +118,7 @@ export class ProfilePersonalizacaoComponent implements OnInit {
         this.creating = false;
         this.createErrorMessage =
           err?.error?.message || err?.message || 'Erro ao criar categoria.';
+        this.alertService.showError(this.createErrorMessage);
       },
     });
   }
@@ -131,6 +135,7 @@ export class ProfilePersonalizacaoComponent implements OnInit {
     if (!this.podeExcluir(categoria)) {
       this.deleteErrorMessage =
         'Categorias padrão do sistema não podem ser excluídas.';
+      this.alertService.showError(this.deleteErrorMessage);
       return;
     }
     this.categoriaParaExcluir = categoria;
@@ -168,6 +173,7 @@ export class ProfilePersonalizacaoComponent implements OnInit {
         this.deleting = false;
         this.deleteErrorMessage =
           err?.error?.message || err?.message || 'Erro ao excluir categoria.';
+        this.alertService.showError(this.deleteErrorMessage);
       },
     });
   }

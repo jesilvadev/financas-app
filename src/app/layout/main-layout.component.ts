@@ -12,6 +12,8 @@ import { AuthService } from '../services/auth.service';
 import { UsuarioResponse } from '../models/user.model';
 import { AddEntryModalComponent } from '../shared/components/add-entry-modal/add-entry-modal.component';
 import { Transacao } from '../models/transacao.model';
+import { AlertService } from '../services/alert.service';
+import { LoadingService } from '../services/loading.service';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { filter } from 'rxjs/operators';
 
@@ -37,7 +39,12 @@ export class MainLayoutComponent implements OnInit {
   showBottomNav: boolean = true;
   private readonly destroyRef = inject(DestroyRef);
 
-  constructor(private authService: AuthService, private router: Router) {}
+  constructor(
+    private authService: AuthService,
+    private router: Router,
+    private readonly alertService: AlertService,
+    private readonly loadingService: LoadingService
+  ) {}
 
   ngOnInit(): void {
     // estado inicial e atualização por navegação
@@ -138,5 +145,11 @@ export class MainLayoutComponent implements OnInit {
   handleAddEntry(transacao: Transacao): void {
     console.log('Nova movimentação registrada:', transacao);
     this.closeAddModal();
+    const tipoLabel = transacao.tipo === 'RECEITA' ? 'Ganho' : 'Gasto';
+    this.loadingService.show(`Registrando ${tipoLabel.toLowerCase()}...`);
+    setTimeout(() => {
+      this.loadingService.hide();
+      this.alertService.showSuccess(`${tipoLabel} registrado com sucesso!`);
+    }, 2000);
   }
 }

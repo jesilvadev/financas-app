@@ -9,6 +9,7 @@ import { AuthLoginRequest, AuthResponse } from '../../../models/auth.model';
 import { UiInputComponent } from '../../../shared/components/ui-input/ui-input.component';
 import { ButtonPrimaryComponent } from '../../../shared/components/button-primary/button-primary.component';
 import { MatIconModule } from '@angular/material/icon';
+import { AlertService } from '../../../services/alert.service';
 
 @Component({
   selector: 'app-signin',
@@ -28,9 +29,12 @@ export class SigninComponent {
   password: string = '';
   showPassword: boolean = false;
   isLoading: boolean = false;
-  errorMessage: string = '';
 
-  constructor(private authService: AuthService, private router: Router) {}
+  constructor(
+    private authService: AuthService,
+    private router: Router,
+    private readonly alertService: AlertService
+  ) {}
 
   togglePasswordVisibility(): void {
     this.showPassword = !this.showPassword;
@@ -38,12 +42,11 @@ export class SigninComponent {
 
   onSubmit(): void {
     if (!this.email || !this.password) {
-      this.errorMessage = 'Por favor, preencha todos os campos';
+      this.alertService.showError('Por favor, preencha todos os campos');
       return;
     }
 
     this.isLoading = true;
-    this.errorMessage = '';
 
     const payload: AuthLoginRequest = {
       email: this.email.trim(),
@@ -65,8 +68,9 @@ export class SigninComponent {
           // Se não tiver, tenta a mensagem padrão do erro HTTP
           const httpMessage = error?.message;
           // Fallback para mensagem genérica
-          this.errorMessage =
+          const mensagem =
             apiMessage || httpMessage || 'Erro ao fazer login';
+          this.alertService.showError(mensagem);
         },
       });
   }

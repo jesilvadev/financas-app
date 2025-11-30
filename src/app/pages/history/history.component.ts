@@ -9,6 +9,8 @@ import { Transacao } from '../../models/transacao.model';
 import { Categoria } from '../../models/categoria.model';
 import { TransacaoService } from '../../services/transacao.service';
 import { AuthService } from '../../services/auth.service';
+import { AlertService } from '../../services/alert.service';
+import { LoadingService } from '../../services/loading.service';
 import { UsuarioResponse } from '../../models/user.model';
 
 // Interface estendida para incluir saldo inicial
@@ -55,7 +57,9 @@ export class HistoryComponent implements OnInit {
 
   constructor(
     private readonly transacaoService: TransacaoService,
-    private readonly authService: AuthService
+    private readonly authService: AuthService,
+    private readonly alertService: AlertService,
+    private readonly loadingService: LoadingService
   ) {}
 
   ngOnInit(): void {
@@ -175,6 +179,7 @@ export class HistoryComponent implements OnInit {
   }
 
   handleEntryModalConfirm(updated: Transacao): void {
+    const isEdit = this.entryModalMode === 'edit';
     // Recarrega da API para garantir categoriaNome atualizado
     if (this.lastUserId) {
       this.loadTransacoes(this.lastUserId);
@@ -184,6 +189,24 @@ export class HistoryComponent implements OnInit {
         t.id === updated.id ? updated : t
       );
     }
+
+    this.isEntryModalOpen = false;
+    this.editingTransacao = null;
+    this.entryModalMode = 'create';
+
+    const tipoLabel = updated.tipo === 'RECEITA' ? 'Ganho' : 'Gasto';
+    const loadingMessage = isEdit
+      ? `Atualizando ${tipoLabel.toLowerCase()}...`
+      : `Registrando ${tipoLabel.toLowerCase()}...`;
+    const successMessage = isEdit
+      ? `${tipoLabel} atualizado com sucesso!`
+      : `${tipoLabel} registrado com sucesso!`;
+
+    this.loadingService.show(loadingMessage);
+    setTimeout(() => {
+      this.loadingService.hide();
+      this.alertService.showSuccess(successMessage);
+    }, 2000);
   }
 
   // callbacks do modal de exclusão
@@ -232,6 +255,7 @@ export class HistoryComponent implements OnInit {
         this.loadingTransacoes = false;
         this.loadErrorMessage =
           err?.error?.message || err?.message || 'Erro ao carregar histórico';
+        this.alertService.showError(this.loadErrorMessage);
       },
     });
   }

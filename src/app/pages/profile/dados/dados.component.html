@@ -40,13 +40,6 @@
       ></app-ui-input>
     </div>
 
-    <div
-      *ngIf="errorMessage"
-      class="text-sm text-error bg-error/10 rounded-lg px-3 py-2"
-    >
-      {{ errorMessage }}
-    </div>
-
     <ng-container *ngIf="!isEditing; else editingActions">
       <div class="mt-4">
         <app-button-primary

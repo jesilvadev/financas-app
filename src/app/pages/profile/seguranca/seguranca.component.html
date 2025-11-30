@@ -73,19 +73,7 @@
       {{ senhaValidationMessage }}
     </div>
 
-    <div
-      *ngIf="senhaErrorMessage"
-      class="text-sm text-error bg-error/10 rounded-lg px-3 py-2"
-    >
-      {{ senhaErrorMessage }}
-    </div>
-
-    <div
-      *ngIf="senhaSuccessMessage"
-      class="text-sm text-green-700 bg-green-100 rounded-lg px-3 py-2"
-    >
-      {{ senhaSuccessMessage }}
-    </div>
+    <!-- Mensagens de erro/sucesso são exibidas via DisplayAlert global -->
 
     <div class="mt-4">
       <app-button-primary
@@ -112,13 +100,6 @@
 
   <!-- Exclusão de conta -->
   <div class="space-y-3 mt-8">
-    <div
-      *ngIf="deleteErrorMessage"
-      class="text-sm text-error bg-error/10 rounded-lg px-3 py-2"
-    >
-      {{ deleteErrorMessage }}
-    </div>
-
     <button
       type="button"
       class="mt-2 h-[56px] w-full rounded-xl border border-error text-error text-sm font-semibold flex items-center justify-center transition hover:bg-error/5 active:scale-95 disabled:opacity-50 disabled:pointer-events-none"

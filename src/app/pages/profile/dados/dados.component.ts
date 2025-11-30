@@ -10,6 +10,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { UpdatePerfilRequest } from '../../../models/perfil.model';
 import { UsuarioResponse } from '../../../models/user.model';
 import { RouterLink } from '@angular/router';
+import { AlertService } from '../../../services/alert.service';
 
 @Component({
   selector: 'app-profile-dados',
@@ -34,13 +35,13 @@ export class ProfileDadosComponent implements OnInit {
 
   loading = false;
   saving = false;
-  errorMessage = '';
   isEditing = false;
   isConfirmModalOpen = false;
 
   constructor(
     private readonly authService: AuthService,
-    private readonly perfilService: PerfilService
+    private readonly perfilService: PerfilService,
+    private readonly alertService: AlertService
   ) {}
 
   ngOnInit(): void {
@@ -69,7 +70,6 @@ export class ProfileDadosComponent implements OnInit {
 
   openConfirmModal(): void {
     if (!this.canSave) return;
-    this.errorMessage = '';
     this.isConfirmModalOpen = true;
   }
 
@@ -83,6 +83,7 @@ export class ProfileDadosComponent implements OnInit {
     const userId = this.authService.currentUserValue?.id;
     if (!userId) {
       this.isConfirmModalOpen = false;
+      this.alertService.showError('Não foi possível identificar o usuário.');
       return;
     }
 
@@ -90,7 +91,6 @@ export class ProfileDadosComponent implements OnInit {
     const emailNormalizado = this.email.trim();
 
     this.saving = true;
-    this.errorMessage = '';
 
     const payload: UpdatePerfilRequest = {
       nome: nomeNormalizado,
@@ -113,8 +113,9 @@ export class ProfileDadosComponent implements OnInit {
         });
       },
       error: (err) => {
-        this.errorMessage =
+        const mensagem =
           err?.error?.message || err?.message || 'Erro ao salvar dados';
+        this.alertService.showError(mensagem);
         this.saving = false;
         this.isConfirmModalOpen = false;
       },
@@ -131,7 +132,6 @@ export class ProfileDadosComponent implements OnInit {
     this.nome = this.originalNome;
     this.email = this.originalEmail;
     this.isEditing = false;
-    this.errorMessage = '';
   }
 
   private formatName(value: string): string {

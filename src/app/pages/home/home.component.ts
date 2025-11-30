@@ -5,6 +5,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 import { DashboardService } from '../../services/dashboard.service';
 import { AuthService } from '../../services/auth.service';
+import { AlertService } from '../../services/alert.service';
 import { MatIcon } from '@angular/material/icon';
 
 @Component({
@@ -19,13 +20,13 @@ export class HomeComponent implements OnInit {
   totalDespesas = 0;
 
   loading = false;
-  errorMessage = '';
 
   private readonly destroyRef = inject(DestroyRef);
 
   constructor(
     private readonly dashboardService: DashboardService,
-    private readonly authService: AuthService
+    private readonly authService: AuthService,
+    private readonly alertService: AlertService
   ) {}
 
   ngOnInit(): void {
@@ -45,7 +46,6 @@ export class HomeComponent implements OnInit {
 
   private carregarResumo(userId: string): void {
     this.loading = true;
-    this.errorMessage = '';
 
     this.dashboardService.obterDashboard(userId).subscribe({
       next: (dashboard) => {
@@ -56,10 +56,11 @@ export class HomeComponent implements OnInit {
       },
       error: (err) => {
         this.resetResumo();
-        this.errorMessage =
+        const mensagem =
           err?.error?.message ||
           err?.message ||
           'Erro ao carregar saldo e movimentações.';
+        this.alertService.showError(mensagem);
         this.loading = false;
       },
     });

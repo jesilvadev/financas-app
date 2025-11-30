@@ -20,21 +20,7 @@
     <h1 class="text-center font-semibold text-primary">Categorias</h1>
   </div>
 
-  <!-- Erro carregamento categorias -->
-  <div
-    *ngIf="categoriasErrorMessage"
-    class="mb-4 text-sm text-error bg-error/10 rounded-lg px-3 py-2"
-  >
-    {{ categoriasErrorMessage }}
-  </div>
-
-  <!-- Erro exclusão de categorias -->
-  <div
-    *ngIf="deleteErrorMessage"
-    class="mb-4 text-sm text-error bg-error/10 rounded-lg px-3 py-2"
-  >
-    {{ deleteErrorMessage }}
-  </div>
+  <!-- Erros são exibidos via DisplayAlert global -->
 
   <!-- Criar nova categoria -->
   <div class="mt-4 grid gap-3">
@@ -74,13 +60,6 @@
       >
         Para gastos
       </button>
-    </div>
-
-    <div
-      *ngIf="createErrorMessage"
-      class="text-sm text-error bg-error/10 rounded-lg px-3 py-2"
-    >
-      {{ createErrorMessage }}
     </div>
 
     <div class="mt-2">

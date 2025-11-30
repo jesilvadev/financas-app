@@ -17,6 +17,7 @@ import { CategoriaService } from '../../../services/categoria.service';
 import { TransacaoService } from '../../../services/transacao.service';
 import { AuthService } from '../../../services/auth.service';
 import { TipoTransacao } from '../../../models/tipoTransacao.enum';
+import { AlertService } from '../../../services/alert.service';
 
 type EntryType = 'income' | 'expense';
 
@@ -39,7 +40,6 @@ export class AddEntryModalComponent implements OnChanges {
   selectedCategoryId = '';
   descricao = '';
   isSubmitting = false;
-  errorMessage = '';
 
   categorias: Categoria[] = [];
   private usuarioId: string | null = null;
@@ -48,7 +48,8 @@ export class AddEntryModalComponent implements OnChanges {
   constructor(
     private readonly categoriaService: CategoriaService,
     private readonly transacaoService: TransacaoService,
-    private readonly authService: AuthService
+    private readonly authService: AuthService,
+    private readonly alertService: AlertService
   ) {
     this.authService.currentUser$
       .pipe(takeUntilDestroyed())
@@ -108,7 +109,6 @@ export class AddEntryModalComponent implements OnChanges {
     this.entryType = type;
     this.selectedCategoryId = '';
     this.descricao = '';
-    this.errorMessage = '';
     this.loadCategorias();
   }
 
@@ -117,7 +117,6 @@ export class AddEntryModalComponent implements OnChanges {
     this.amountInput = '';
     this.selectedCategoryId = '';
     this.descricao = '';
-    this.errorMessage = '';
     this.isSubmitting = false;
   }
 
@@ -125,7 +124,6 @@ export class AddEntryModalComponent implements OnChanges {
     this.entryType = null;
     this.selectedCategoryId = '';
     this.descricao = '';
-    this.errorMessage = '';
   }
 
   handleClose(): void {
@@ -157,7 +155,6 @@ export class AddEntryModalComponent implements OnChanges {
     };
 
     this.isSubmitting = true;
-    this.errorMessage = '';
 
     if (this.mode === 'edit' && this.initialTransacao) {
       this.transacaoService
@@ -171,8 +168,9 @@ export class AddEntryModalComponent implements OnChanges {
           },
           error: (error) => {
             console.error('Erro ao atualizar transação', error);
-            this.errorMessage =
+            const mensagem =
               error?.error?.message || error?.message || 'Erro ao atualizar';
+            this.alertService.showError(mensagem);
             this.isSubmitting = false;
           },
         });
@@ -186,8 +184,9 @@ export class AddEntryModalComponent implements OnChanges {
         },
         error: (error) => {
           console.error('Erro ao registrar transação', error);
-          this.errorMessage =
+          const mensagem =
             error?.error?.message || error?.message || 'Erro ao registrar';
+          this.alertService.showError(mensagem);
           this.isSubmitting = false;
         },
       });
@@ -206,10 +205,11 @@ export class AddEntryModalComponent implements OnChanges {
       },
       error: (error) => {
         console.error('Erro ao carregar categorias', error);
-        this.errorMessage =
+        const mensagem =
           error?.error?.message ||
           error?.message ||
           'Erro ao carregar categorias';
+        this.alertService.showError(mensagem);
       },
     });
   }

@@ -9,6 +9,7 @@ import { ConfirmModalComponent } from '../../../shared/components/confirm-modal/
 import { AuthService } from '../../../services/auth.service';
 import { PerfilService } from '../../../services/perfil.service';
 import { UpdateSenhaRequest } from '../../../models/perfil.model';
+import { AlertService } from '../../../services/alert.service';
 
 @Component({
   selector: 'app-profile-seguranca',
@@ -41,7 +42,8 @@ export class ProfileSegurancaComponent {
   constructor(
     private readonly authService: AuthService,
     private readonly perfilService: PerfilService,
-    private readonly router: Router
+    private readonly router: Router,
+    private readonly alertService: AlertService
   ) {}
 
   get senhaAtualVazia(): boolean {
@@ -126,7 +128,9 @@ export class ProfileSegurancaComponent {
 
     const userId = this.authService.currentUserValue?.id;
     if (!userId) {
-      this.senhaErrorMessage = 'Não foi possível identificar o usuário.';
+      const mensagem = 'Não foi possível identificar o usuário.';
+      this.senhaErrorMessage = mensagem;
+      this.alertService.showError(mensagem);
       this.isSenhaModalOpen = false;
       return;
     }
@@ -175,6 +179,10 @@ export class ProfileSegurancaComponent {
         } else {
           this.senhaErrorMessage = 'Erro ao alterar senha. Tente novamente.';
         }
+
+        if (this.senhaErrorMessage) {
+          this.alertService.showError(this.senhaErrorMessage);
+        }
       },
     });
   }
@@ -204,6 +212,7 @@ export class ProfileSegurancaComponent {
     const userId = this.authService.currentUserValue?.id;
     if (!userId) {
       this.deleteErrorMessage = 'Não foi possível identificar o usuário.';
+      this.alertService.showError(this.deleteErrorMessage);
       return;
     }
 
@@ -223,6 +232,7 @@ export class ProfileSegurancaComponent {
         this.deleting = false;
         this.deleteErrorMessage =
           err?.error?.message || err?.message || 'Erro ao excluir conta.';
+        this.alertService.showError(this.deleteErrorMessage);
       },
     });
   }
