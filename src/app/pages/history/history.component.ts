@@ -75,6 +75,14 @@ export class HistoryComponent implements OnInit {
         this.lastUserId = userId;
         this.loadTransacoes(userId);
       });
+
+    this.transacaoService.transacoesAtualizadas$
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(() => {
+        if (this.lastUserId) {
+          this.loadTransacoes(this.lastUserId);
+        }
+      });
   }
 
   get filteredTransacoes(): TransacaoComSaldoInicial[] {

@@ -6,6 +6,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { DashboardService } from '../../services/dashboard.service';
 import { AuthService } from '../../services/auth.service';
 import { AlertService } from '../../services/alert.service';
+import { TransacaoService } from '../../services/transacao.service';
 import { MatIcon } from '@angular/material/icon';
 
 @Component({
@@ -22,11 +23,13 @@ export class HomeComponent implements OnInit {
   loading = false;
 
   private readonly destroyRef = inject(DestroyRef);
+  private currentUserId: string | null = null;
 
   constructor(
     private readonly dashboardService: DashboardService,
     private readonly authService: AuthService,
-    private readonly alertService: AlertService
+    private readonly alertService: AlertService,
+    private readonly transacaoService: TransacaoService
   ) {}
 
   ngOnInit(): void {
@@ -34,13 +37,22 @@ export class HomeComponent implements OnInit {
     this.authService.currentUser$
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((user) => {
-        const userId = user?.id;
+        const userId = user?.id ?? null;
+        this.currentUserId = userId;
         if (!userId) {
           this.resetResumo();
           this.loading = false;
           return;
         }
         this.carregarResumo(userId);
+      });
+
+    this.transacaoService.transacoesAtualizadas$
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(() => {
+        if (this.currentUserId) {
+          this.carregarResumo(this.currentUserId);
+        }
       });
   }
 

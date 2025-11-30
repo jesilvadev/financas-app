@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, Subject, tap } from 'rxjs';
 
 import { Transacao, TransacaoRequest } from '../models/transacao.model';
 import { environment } from '../../environments/environment.local';
@@ -11,6 +11,10 @@ import { environment } from '../../environments/environment.local';
 export class TransacaoService {
   private readonly baseUrl = `${environment.apiBaseUrl}transacao`;
 
+  private readonly transacoesAtualizadasSubject = new Subject<void>();
+  readonly transacoesAtualizadas$ =
+    this.transacoesAtualizadasSubject.asObservable();
+
   constructor(private readonly http: HttpClient) {}
 
   listarPorUsuario(usuarioId: string): Observable<Transacao[]> {
@@ -20,7 +24,11 @@ export class TransacaoService {
   }
 
   criar(payload: TransacaoRequest): Observable<Transacao> {
-    return this.http.post<Transacao>(this.baseUrl, payload);
+    return this.http.post<Transacao>(this.baseUrl, payload).pipe(
+      tap(() => {
+        this.transacoesAtualizadasSubject.next();
+      })
+    );
   }
 
   buscarPorId(id: string): Observable<Transacao> {
@@ -28,10 +36,18 @@ export class TransacaoService {
   }
 
   atualizar(id: string, payload: TransacaoRequest): Observable<Transacao> {
-    return this.http.put<Transacao>(`${this.baseUrl}/${id}`, payload);
+    return this.http.put<Transacao>(`${this.baseUrl}/${id}`, payload).pipe(
+      tap(() => {
+        this.transacoesAtualizadasSubject.next();
+      })
+    );
   }
 
   excluir(id: string): Observable<void> {
-    return this.http.delete<void>(`${this.baseUrl}/${id}`);
+    return this.http.delete<void>(`${this.baseUrl}/${id}`).pipe(
+      tap(() => {
+        this.transacoesAtualizadasSubject.next();
+      })
+    );
   }
 }
