@@ -12,6 +12,7 @@ import { AuthService } from '../../services/auth.service';
 import { AlertService } from '../../services/alert.service';
 import { LoadingService } from '../../services/loading.service';
 import { UsuarioResponse } from '../../models/user.model';
+import { MatIcon } from '@angular/material/icon';
 
 // Interface estendida para incluir saldo inicial
 interface TransacaoComSaldoInicial extends Transacao {
@@ -26,6 +27,7 @@ interface TransacaoComSaldoInicial extends Transacao {
     FormsModule,
     AddEntryModalComponent,
     ConfirmModalComponent,
+    MatIcon,
   ],
   templateUrl: './history.component.html',
 })
@@ -90,7 +92,7 @@ export class HistoryComponent implements OnInit {
   get filteredTransacoes(): TransacaoComSaldoInicial[] {
     let list: TransacaoComSaldoInicial[] = [...this.transacoes];
 
-    // Adiciona saldo inicial como primeira entrada se existir
+    // Adiciona saldo inicial se existir
     if (
       this.currentUser?.saldoInicial != null &&
       this.currentUser.saldoInicial !== 0
@@ -140,12 +142,10 @@ export class HistoryComponent implements OnInit {
       });
     }
 
-    // Ordena: saldo inicial primeiro, depois por data (mais recente primeiro)
-    list.sort((a, b) => {
-      if (a.isSaldoInicial) return -1;
-      if (b.isSaldoInicial) return 1;
-      return new Date(b.data).getTime() - new Date(a.data).getTime();
-    });
+    // Ordena apenas por data (mais recente primeiro)
+    list.sort(
+      (a, b) => new Date(b.data).getTime() - new Date(a.data).getTime()
+    );
 
     return list;
   }
@@ -175,6 +175,11 @@ export class HistoryComponent implements OnInit {
   get pagedTransacoes(): TransacaoComSaldoInicial[] {
     const start = (this.currentPage - 1) * this.pageSize;
     return this.filteredTransacoes.slice(start, start + this.pageSize);
+  }
+
+  get placeholders(): number[] {
+    const missing = Math.max(0, this.pageSize - this.pagedTransacoes.length);
+    return Array.from({ length: missing });
   }
 
   resetPage(): void {
@@ -283,9 +288,7 @@ export class HistoryComponent implements OnInit {
         console.error('Erro ao excluir transação', err);
         this.confirmingDelete = false;
         const mensagem =
-          err?.error?.message ||
-          err?.message ||
-          'Erro ao excluir transação.';
+          err?.error?.message || err?.message || 'Erro ao excluir transação.';
         this.alertService.showError(mensagem);
       },
     });

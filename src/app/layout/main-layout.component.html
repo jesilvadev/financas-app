@@ -2,7 +2,7 @@
   <!-- HEADER -->
   <header
     *ngIf="showHeader"
-    class="relative bg-primary text-white px-5 pt-16 pb-20 overflow-hidden"
+    class="sticky top-0 bg-primary text-white px-5 pt-16 pb-20 overflow-hidden z-0"
   >
     <div class="mx-auto max-w-md relative z-10">
       <!-- Linha usuário + ações -->
@@ -68,7 +68,7 @@
       'md:-mt-12': showHeader
     }"
   >
-    <div class="mx-auto max-w-md">
+    <div class="mx-auto max-w-md pb-24">
       <router-outlet></router-outlet>
     </div>
   </main>

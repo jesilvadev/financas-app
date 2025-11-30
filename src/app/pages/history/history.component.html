@@ -1,27 +1,21 @@
 <div
-  class="min-h-screen w-full px-4 py-6 flex flex-col items-center font-inter"
+  class="min-h-full w-full px-4 py-4 flex flex-col items-center font-inter"
 >
-  <div class="w-full max-w-md space-y-1">
-    <!-- Cabeçalho -->
-    <header class="flex items-center justify-between px-2">
-      <div>
-        <h1 class="text-xl font-semibold text-primary">Histórico</h1>
+  <div class="w-full max-w-md space-y-3">
+    <!-- Cabeçalho + filtros rápidos -->
+    <header
+      class="flex items-center justify-between px-2 gap-3"
+      aria-label="Cabeçalho do histórico e filtros rápidos"
+    >
+      <div class="flex-1 min-w-0">
+        <h1 class="text-xl font-semibold text-primary truncate">Histórico</h1>
       </div>
-      <!-- <div class="text-right">
-        <span class="text-[11px] text-primary block">Transações</span>
-        <span class="text-sm font-semibold text-black">
-          {{ totalItems }}
-        </span>
-      </div> -->
-    </header>
-
-    <!-- Filtros -->
-    <section class="bg-secondary rounded-2xl px-4 py-3 space-y-3">
-      <!-- Filtro rápido por tipo -->
-      <div class="grid grid-cols-3 gap-2">
+      <div
+        class="inline-flex items-center gap-1 bg-secondary rounded-full px-1 py-1"
+      >
         <button
           type="button"
-          class="px-3 py-2 rounded-full text-[11px] font-semibold border transition active:scale-95"
+          class="px-3 py-1 rounded-full text-[10px] font-semibold border transition active:scale-95"
           [ngClass]="
             filtroTipo === 'TODOS'
               ? 'bg-[#6b54ec] text-white border-[#6b54ec]'
@@ -33,11 +27,11 @@
         </button>
         <button
           type="button"
-          class="px-3 py-2 rounded-full text-[11px] font-semibold border transition active:scale-95"
+          class="px-3 py-1 rounded-full text-[10px] font-semibold border transition active:scale-95"
           [ngClass]="
             filtroTipo === 'RECEITA'
               ? 'bg-[#27BE61] text-white border-[#27BE61]'
-              : 'bg-white text-[#27BE61] border-[#27BE61]/20'
+              : 'bg-white text-[#27BE61]'
           "
           (click)="filtroTipo = 'RECEITA'; resetPage()"
         >
@@ -45,18 +39,18 @@
         </button>
         <button
           type="button"
-          class="px-3 py-2 rounded-full text-[11px] font-semibold border transition active:scale-95"
+          class="px-3 py-1 rounded-full text-[10px] font-semibold border transition active:scale-95"
           [ngClass]="
             filtroTipo === 'DESPESA'
               ? 'bg-[#FF4B4B] text-white border-[#FF4B4B]'
-              : 'bg-white text-[#FF4B4B] border-[#FF4B4B]/20'
+              : 'bg-white text-[#FF4B4B]'
           "
           (click)="filtroTipo = 'DESPESA'; resetPage()"
         >
           Gastos
         </button>
       </div>
-    </section>
+    </header>
 
     <!-- Conteúdo -->
     <section class="space-y-3">
@@ -79,23 +73,41 @@
           <div class="space-y-3">
             <article
               *ngFor="let t of pagedTransacoes"
-              class="bg-white rounded-xl px-4 py-3 flex items-center justify-between shadow-sm border border-black/5 active:scale-[0.98] transition"
+              class="rounded-xl px-4 py-3 flex items-center h-20 justify-between active:scale-[0.98] transition border"
+              [ngClass]="
+                t.isSaldoInicial
+                  ? 'bg-secondary border-primary'
+                  : 'bg-white border-black/5'
+              "
             >
               <div class="flex items-center gap-3 min-w-0">
                 <div
                   [ngClass]="
-                    t.tipo === 'DESPESA' ? 'bg-[#f6a1a1]' : 'bg-[#5DC486]'
+                    t.isSaldoInicial
+                      ? 'bg-primary/10'
+                      : t.tipo === 'DESPESA'
+                      ? 'bg-[#f6a1a1]'
+                      : 'bg-[#5DC486]'
                   "
                   class="w-10 h-10 flex items-center justify-center rounded-[12px]"
                 >
                   <span
                     [ngClass]="
-                      t.tipo === 'DESPESA'
+                      t.isSaldoInicial
+                        ? 'text-xs font-semibold text-primary flex items-center'
+                        : t.tipo === 'DESPESA'
                         ? 'text-2xl text-[#f85656] font-bold'
                         : 'text-2xl text-[#1E8315] font-bold'
                     "
                   >
-                    {{ t.tipo === "DESPESA" ? "−" : "+" }}
+                    <ng-container *ngIf="t.isSaldoInicial">
+                      <mat-icon class="text-primary mr-1"
+                        >account_balance_wallet</mat-icon
+                      >
+                    </ng-container>
+                    {{
+                      t.isSaldoInicial ? "" : t.tipo === "DESPESA" ? "−" : "+"
+                    }}
                   </span>
                 </div>
                 <div class="flex flex-col gap-0.5 min-w-0">
@@ -111,16 +123,21 @@
                   >
                     {{ t.descricao }}
                   </span>
-                  <span class="text-description text-[11px] whitespace-nowrap">
-                    <span *ngIf="t.isSaldoInicial">Saldo inicial</span>
-                    <span *ngIf="!t.isSaldoInicial">{{
-                      t.data | date : "dd MMM yyyy  HH:mm"
-                    }}</span>
+                  <span
+                    class="text-description text-[11px] whitespace-nowrap"
+                    *ngIf="!t.isSaldoInicial"
+                  >
+                    {{ t.data | date : "dd MMM yyyy  HH:mm" }}
                   </span>
                 </div>
               </div>
               <div class="flex flex-col items-end gap-1 ml-3">
-                <span class="font-bold text-gray-900 text-base">
+                <span
+                  class="font-bold text-base"
+                  [ngClass]="
+                    t.isSaldoInicial ? 'text-primary' : 'text-gray-900'
+                  "
+                >
                   {{ t.valor | currency : "BRL" : "symbol" : "1.2-2" : "pt" }}
                 </span>
                 <div class="flex items-center gap-2" *ngIf="!t.isSaldoInicial">
@@ -147,13 +164,13 @@
                 </div>
               </div>
             </article>
+
+            <!-- Espaçadores para manter altura como se sempre houvesse 5 itens -->
+            <div *ngFor="let _ of placeholders" class="h-20"></div>
           </div>
 
           <!-- Paginação -->
-          <div
-            *ngIf="totalItems > pageSize"
-            class="pt-2 border-t border-gray-100 space-y-2"
-          >
+          <div *ngIf="totalItems > pageSize" class="pt-2 space-y-2">
             <div
               class="flex items-center justify-between text-[11px] text-description"
             >
