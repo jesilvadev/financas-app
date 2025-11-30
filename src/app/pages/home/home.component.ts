@@ -5,11 +5,12 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 import { DashboardService } from '../../services/dashboard.service';
 import { AuthService } from '../../services/auth.service';
+import { MatIcon } from '@angular/material/icon';
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule, RouterLink, MatIcon],
   templateUrl: './home.component.html',
 })
 export class HomeComponent implements OnInit {

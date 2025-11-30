@@ -2,7 +2,7 @@
   <!-- Card de saldo -->
   <section class="w-full max-w-md mx-auto rounded-lg px-5 py-4 mb-6">
     <div class="flex items-center justify-between mb-3">
-      <h2 class="text-sm font-semibold text-black">Saldo atual</h2>
+      <h2 class="text-base font-semibold text-black">Saldo atual</h2>
     </div>
 
     <div class="mb-3">
@@ -26,17 +26,12 @@
   <section class="w-full max-w-md mx-auto mt-4">
     <a
       [routerLink]="['/recorrentes']"
-      class="flex items-center justify-between rounded-xl bg-white/95 px-5 py-4 shadow-sm hover:shadow-md transition border border-black/5"
+      class="flex items-center justify-between rounded-xl bg-primary pl-6 pr-2 py-4 shadow-sm hover:shadow-md transition border border-black/5"
     >
-      <div class="flex flex-col gap-1">
-        <span class="font-semibold text-gray-900">
-          Transações recorrentes
-        </span>
-        <span class="text-xs text-description">
-          Ganhos e gastos que se repetem todo mês
-        </span>
+      <div class="flex">
+        <span class="font-semibold text-white"> Transações recorrentes </span>
       </div>
-      <span class="text-primary text-lg font-semibold">›</span>
+      <mat-icon class="text-base text-white">arrow_forward_ios</mat-icon>
     </a>
   </section>
 </div>
