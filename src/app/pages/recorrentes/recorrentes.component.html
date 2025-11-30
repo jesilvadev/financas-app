@@ -29,10 +29,10 @@
   <!-- Conteúdo rolável -->
   <div class="flex-1 overflow-y-auto">
     <!-- Ação para abrir modal -->
-    <section class="max-w-md mx-auto mt-4 mb-4">
+    <section class="max-w-md mx-auto mt-4 mb-4 px-2">
       <button
         type="button"
-        class="h-[50px] w-full items-center justify-center rounded-xl bg-primary px-6 text-sm font-medium text-white transition hover:bg-primary/90 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
+        class="h-[50px] w-full flex items-center justify-center rounded-xl bg-primary px-6 text-sm font-medium text-white transition hover:bg-primary/90 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
         (click)="abrirNovoRecorrente()"
       >
         Nova transação recorrente
@@ -40,111 +40,160 @@
     </section>
 
     <!-- Listagem -->
-    <section class="space-y-6 max-w-md mx-auto mb-6">
+    <section class="space-y-6 max-w-md mx-auto mb-6 px-2">
       <!-- Receitas recorrentes -->
-      <div>
-        <h3 class="text-sm font-semibold text-description mb-2">
-          Ganhos recorrentes
-        </h3>
-        <div *ngIf="loading" class="text-xs text-description">
+      <div class="space-y-3">
+        <h3 class="text-sm text-description mb-1">Ganhos recorrentes</h3>
+
+        <div *ngIf="loading" class="text-center text-xs text-description py-4">
           Carregando transações recorrentes...
         </div>
-        <div
-          *ngIf="!loading && recorrentesReceita.length === 0"
-          class="text-xs text-description"
-        >
-          Nenhum ganho recorrente cadastrado.
-        </div>
-        <div class="space-y-2 mt-1">
-          <div
-            *ngFor="let r of recorrentesReceita"
-            class="flex items-center justify-between rounded-xl bg-white px-4 py-3 shadow-sm border border-black/5"
+
+        <ng-container *ngIf="!loading">
+          <ng-container
+            *ngIf="recorrentesReceita.length > 0; else semRecorrentesReceita"
           >
-            <div class="flex flex-col gap-0.5">
-              <span class="text-sm font-semibold text-gray-900">
-                {{ r.categoriaNome }}
-              </span>
-              <span class="text-xs text-description">
-                Todo dia {{ r.diaRecorrencia }} ·
-                {{ r.valor | currency : "BRL" : "symbol" : "1.2-2" : "pt" }}
-              </span>
-              <span *ngIf="r.descricao" class="text-[11px] text-description">
-                {{ r.descricao }}
-              </span>
+            <div class="space-y-3">
+              <article
+                *ngFor="let r of recorrentesReceita"
+                class="rounded-xl px-4 py-3 flex items-center h-20 justify-between active:scale-[0.98] transition border bg-white border-black/5"
+              >
+                <div class="flex items-center gap-3 min-w-0">
+                  <div
+                    class="w-10 h-10 flex items-center justify-center rounded-[12px] bg-[#5DC486]"
+                  >
+                    <span class="text-2xl text-[#1E8315] font-bold"> + </span>
+                  </div>
+                  <div class="flex flex-col gap-0.5 min-w-0">
+                    <span class="text-black font-semibold text-sm truncate">
+                      {{ r.categoriaNome }}
+                    </span>
+
+                    <span
+                      class="text-description text-[11px] whitespace-nowrap"
+                    >
+                      Todo dia {{ r.diaRecorrencia }}
+                    </span>
+                  </div>
+                </div>
+                <div class="flex flex-col items-end gap-1 ml-3">
+                  <span class="font-bold text-base text-gray-900">
+                    {{ r.valor | currency : "BRL" : "symbol" : "1.2-2" : "pt" }}
+                  </span>
+                  <div class="flex items-center gap-2">
+                    <button
+                      type="button"
+                      class="p-1 rounded-full hover:bg-gray-100 active:scale-95 transition"
+                      (click)="abrirEdicaoRecorrente(r)"
+                      aria-label="Editar recorrência"
+                    >
+                      <img
+                        src="assets/icons/pen.png"
+                        class="w-4 h-4 opacity-80"
+                      />
+                    </button>
+                    <button
+                      type="button"
+                      class="p-1 rounded-full hover:bg-gray-100 active:scale-95 transition"
+                      (click)="solicitarExclusao(r)"
+                      aria-label="Excluir recorrência"
+                    >
+                      <img
+                        src="assets/icons/trashCan.png"
+                        class="w-4 h-4 opacity-80"
+                      />
+                    </button>
+                  </div>
+                </div>
+              </article>
             </div>
-            <div class="flex flex-col items-end gap-1">
-              <div class="flex gap-2">
-                <button
-                  type="button"
-                  class="text-xs text-primary font-semibold"
-                  (click)="abrirEdicaoRecorrente(r)"
-                >
-                  Editar
-                </button>
-                <button
-                  type="button"
-                  class="text-xs text-error font-semibold"
-                  (click)="solicitarExclusao(r)"
-                >
-                  Excluir
-                </button>
-              </div>
-            </div>
+          </ng-container>
+        </ng-container>
+
+        <ng-template #semRecorrentesReceita>
+          <div
+            class="text-center py-8 text-description font-semibold text-sm bg-white rounded-2xl border border-dashed border-gray-200"
+          >
+            Nenhum ganho recorrente cadastrado.
           </div>
-        </div>
+        </ng-template>
       </div>
 
       <!-- Despesas recorrentes -->
-      <div>
-        <h3 class="text-sm font-semibold text-description mb-2">
-          Gastos recorrentes
-        </h3>
-        <div *ngIf="loading" class="text-xs text-description">
+      <div class="space-y-3">
+        <h3 class="text-sm text-description mb-1">Gastos recorrentes</h3>
+
+        <div *ngIf="loading" class="text-center text-xs text-description py-4">
           Carregando transações recorrentes...
         </div>
-        <div
-          *ngIf="!loading && recorrentesDespesa.length === 0"
-          class="text-xs text-description"
-        >
-          Nenhum gasto recorrente cadastrado.
-        </div>
-        <div class="space-y-2 mt-1">
-          <div
-            *ngFor="let r of recorrentesDespesa"
-            class="flex items-center justify-between rounded-xl bg-white px-4 py-3 shadow-sm border border-black/5"
+
+        <ng-container *ngIf="!loading">
+          <ng-container
+            *ngIf="recorrentesDespesa.length > 0; else semRecorrentesDespesa"
           >
-            <div class="flex flex-col gap-0.5">
-              <span class="text-sm font-semibold text-gray-900">
-                {{ r.categoriaNome }}
-              </span>
-              <span class="text-xs text-description">
-                Todo dia {{ r.diaRecorrencia }} ·
-                {{ r.valor | currency : "BRL" : "symbol" : "1.2-2" : "pt" }}
-              </span>
-              <span *ngIf="r.descricao" class="text-[11px] text-description">
-                {{ r.descricao }}
-              </span>
+            <div class="space-y-3">
+              <article
+                *ngFor="let r of recorrentesDespesa"
+                class="rounded-xl px-4 py-3 flex items-center h-20 justify-between active:scale-[0.98] transition border bg-white border-black/5"
+              >
+                <div class="flex items-center gap-3 min-w-0">
+                  <div
+                    class="w-10 h-10 flex items-center justify-center rounded-[12px] bg-[#f6a1a1]"
+                  >
+                    <span class="text-2xl text-[#f85656] font-bold"> − </span>
+                  </div>
+                  <div class="flex flex-col gap-0.5 min-w-0">
+                    <span class="text-black font-semibold text-sm truncate">
+                      {{ r.categoriaNome }}
+                    </span>
+                    <span
+                      class="text-description text-[11px] whitespace-nowrap"
+                    >
+                      Todo dia {{ r.diaRecorrencia }}
+                    </span>
+                  </div>
+                </div>
+                <div class="flex flex-col items-end gap-1 ml-3">
+                  <span class="font-bold text-base text-gray-900">
+                    {{ r.valor | currency : "BRL" : "symbol" : "1.2-2" : "pt" }}
+                  </span>
+                  <div class="flex items-center gap-2">
+                    <button
+                      type="button"
+                      class="p-1 rounded-full hover:bg-gray-100 active:scale-95 transition"
+                      (click)="abrirEdicaoRecorrente(r)"
+                      aria-label="Editar recorrência"
+                    >
+                      <img
+                        src="assets/icons/pen.png"
+                        class="w-4 h-4 opacity-80"
+                      />
+                    </button>
+                    <button
+                      type="button"
+                      class="p-1 rounded-full hover:bg-gray-100 active:scale-95 transition"
+                      (click)="solicitarExclusao(r)"
+                      aria-label="Excluir recorrência"
+                    >
+                      <img
+                        src="assets/icons/trashCan.png"
+                        class="w-4 h-4 opacity-80"
+                      />
+                    </button>
+                  </div>
+                </div>
+              </article>
             </div>
-            <div class="flex flex-col items-end gap-1">
-              <div class="flex gap-2">
-                <button
-                  type="button"
-                  class="text-xs text-primary font-semibold"
-                  (click)="abrirEdicaoRecorrente(r)"
-                >
-                  Editar
-                </button>
-                <button
-                  type="button"
-                  class="text-xs text-error font-semibold"
-                  (click)="solicitarExclusao(r)"
-                >
-                  Excluir
-                </button>
-              </div>
-            </div>
+          </ng-container>
+        </ng-container>
+
+        <ng-template #semRecorrentesDespesa>
+          <div
+            class="text-center py-8 text-description font-semibold text-sm bg-white rounded-2xl border border-dashed border-gray-200"
+          >
+            Nenhum gasto recorrente cadastrado.
           </div>
-        </div>
+        </ng-template>
       </div>
     </section>
 

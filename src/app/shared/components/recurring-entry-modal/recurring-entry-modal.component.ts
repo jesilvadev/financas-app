@@ -45,6 +45,7 @@ export class RecurringEntryModalComponent implements OnChanges {
   diaRecorrencia: number | null = null;
 
   saving = false;
+  formStep: 1 | 2 = 1;
 
   categorias: Categoria[] = [];
   private usuarioId: string | null = null;
@@ -97,6 +98,25 @@ export class RecurringEntryModalComponent implements OnChanges {
     return this.categorias.filter((c) => c.tipo === this.tipo);
   }
 
+  selecionarTipo(tipo: TipoTransacao): void {
+    this.tipo = tipo;
+    this.categoriaId = '';
+    this.formStep = 1;
+  }
+
+  backToTypeSelection(): void {
+    this.tipo = null;
+    this.categoriaId = '';
+    this.diaRecorrencia = null;
+    this.formStep = 1;
+  }
+
+  get isDayStepValid(): boolean {
+    if (!this.usuarioId || !this.tipo) return false;
+    const dia = this.diaRecorrencia;
+    return dia !== null && Number.isInteger(dia) && dia >= 1 && dia <= 31;
+  }
+
   get isFormValid(): boolean {
     if (!this.usuarioId || !this.tipo) return false;
     const parsed = this.parseCurrencyBr(this.valorInput);
@@ -113,9 +133,9 @@ export class RecurringEntryModalComponent implements OnChanges {
     );
   }
 
-  selecionarTipo(tipo: TipoTransacao): void {
-    this.tipo = tipo;
-    this.categoriaId = '';
+  goToDetailsStep(): void {
+    if (!this.isDayStepValid) return;
+    this.formStep = 2;
   }
 
   handleClose(): void {

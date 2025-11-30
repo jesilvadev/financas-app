@@ -4,7 +4,7 @@
     (click)="handleClose()"
   >
     <div
-      class="w-full max-w-xs h-[24rem] rounded-3xl bg-layer shadow-2xl ring-1 ring-black/10 overflow-hidden flex flex-col"
+      class="w-full max-w-xs h-[22.5rem] rounded-3xl bg-layer shadow-2xl ring-1 ring-black/10 overflow-hidden flex flex-col"
       (click)="$event.stopPropagation()"
     >
       <!-- Passo 1: escolher ganho / gasto recorrente (apenas no modo create) -->
@@ -25,7 +25,7 @@
             <div class="font-semibold text-lg text-primary">
               O que você quer configurar?
             </div>
-            <p class="text-primary font-light text-xs">
+            <p class="text-primary font-light">
               Escolha se deseja criar um ganho ou um gasto recorrente.
             </p>
           </div>
@@ -36,7 +36,18 @@
               class="flex w-full items-center justify-center h-[63px] rounded-2xl bg-[#BDEECF] px-4 py-3 text-success transition hover:bg-success/25 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-success/40"
               (click)="selecionarTipo('RECEITA')"
             >
-              <span class="font-medium flex gap-5 items-center text-sm">
+              <span class="font-medium flex gap-5 items-center">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  height="24px"
+                  viewBox="0 -960 960 960"
+                  width="24px"
+                  fill="currentColor"
+                >
+                  <path
+                    d="M440-280h80v-160h160v-80H520v-160h-80v160H280v80h160v160Zm40 200q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q134 0 227-93t93-227q0-134-93-227t-227-93q-134 0-227 93t-93 227q0 134 93 227t227 93Zm0-320Z"
+                  />
+                </svg>
                 Ganho recorrente
               </span>
             </button>
@@ -46,7 +57,18 @@
               class="flex w-full items-center justify-center h-[63px] rounded-2xl bg-[#F7A2A2] px-4 py-3 text-error transition hover:bg-error/25 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-error/30"
               (click)="selecionarTipo('DESPESA')"
             >
-              <span class="font-medium flex gap-5 items-center text-sm">
+              <span class="font-medium flex gap-5 items-center">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  height="24px"
+                  viewBox="0 -960 960 960"
+                  width="24px"
+                  fill="currentColor"
+                >
+                  <path
+                    d="M280-440h400v-80H280v80ZM480-80q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q134 0 227-93t93-227q0-134-93-227t-227-93q-134 0-227 93t-93 227q0 134 93 227t227 93Zm0-320Z"
+                  />
+                </svg>
                 Gasto recorrente
               </span>
             </button>
@@ -54,20 +76,43 @@
         </div>
       </ng-container>
 
-      <!-- Passo 2: formulário (dia, valor, categoria) -->
+      <!-- Passo 2 e 3: formulário (dia, depois valor + categoria) -->
       <ng-template #formTemplate>
         <div class="flex flex-1 flex-col px-5 py-5 gap-5">
           <!-- Header -->
           <div class="flex items-center">
-            <div class="w-8"></div>
+            <!-- Espaço / botão voltar (criar) -->
+            <div class="w-8 flex items-center">
+              <button
+                *ngIf="mode === 'create'"
+                type="button"
+                aria-label="Voltar"
+                class="px-1 py-1 rounded-full transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
+                (click)="backToTypeSelection()"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="#6B54EC"
+                >
+                  <path d="M15.41 7.41 14 6l-6 6 6 6 1.41-1.41L10.83 12z" />
+                </svg>
+              </button>
+            </div>
             <div
               class="flex-1 font-semibold text-center"
               [ngClass]="tipo === 'RECEITA' ? 'text-success' : 'text-error'"
             >
               {{
-                tipo === 'RECEITA'
-                  ? (mode === 'edit' ? 'Editar ganho recorrente' : 'Ganho recorrente')
-                  : (mode === 'edit' ? 'Editar gasto recorrente' : 'Gasto recorrente')
+                tipo === "RECEITA"
+                  ? mode === "edit"
+                    ? "Editar ganho recorrente"
+                    : "Ganho recorrente"
+                  : mode === "edit"
+                  ? "Editar gasto recorrente"
+                  : "Gasto recorrente"
               }}
             </div>
             <div class="w-8 flex items-center justify-end">
@@ -82,97 +127,119 @@
             </div>
           </div>
 
-          <div class="flex-1 space-y-4 overflow-y-auto pr-1">
-            <!-- Dia da recorrência -->
-            <div class="space-y-1">
-              <label class="text-xs text-description block"
-                >Dia da recorrência</label
-              >
-              <div
-                class="h-[50px] rounded-md border-2 border-primary/30 bg-white px-4 py-2 focus-within:border-primary focus-within:ring-0"
-              >
-                <input
-                  type="number"
-                  min="1"
-                  max="31"
-                  class="w-full h-full border-0 bg-transparent text-sm text-black outline-none placeholder:text-disable"
-                  placeholder="Dia do mês (1 a 31)"
-                  [(ngModel)]="diaRecorrencia"
-                />
-              </div>
-            </div>
-
-            <!-- Valor -->
-            <div class="space-y-1">
-              <label class="text-xs text-description block">Valor</label>
-              <div
-                class="h-[50px] rounded-md border-2 border-primary/30 bg-white px-4 py-2 focus-within:border-primary focus-within:ring-0"
-              >
-                <div class="flex h-full items-center gap-3 text-description">
-                  <span>R$</span>
+          <div class="flex-1 space-y-6 overflow-y-auto pr-1">
+            <!-- Passo 2 (create): Dia da recorrência -->
+            <ng-container *ngIf="mode === 'create' && formStep === 1">
+              <div class="space-y-2">
+                <div
+                  class="h-[63px] rounded-md border-2 border-primary/30 bg-white px-4 py-3 focus-within:border-primary focus-within:ring-0"
+                >
                   <input
-                    type="text"
-                    inputmode="decimal"
-                    autocomplete="off"
-                    placeholder="0,00"
-                    mask="separator.2"
-                    thousandSeparator="."
-                    decimalMarker=","
-                    [dropSpecialCharacters]="false"
-                    class="w-full border-0 bg-transparent text-sm text-black outline-none placeholder:text-disable"
-                    [(ngModel)]="valorInput"
+                    type="number"
+                    min="1"
+                    max="31"
+                    class="w-full h-full border-0 bg-transparent text-base text-black outline-none placeholder:text-disable"
+                    placeholder="Dia do mês (1 a 31)"
+                    [(ngModel)]="diaRecorrencia"
                   />
                 </div>
               </div>
-            </div>
+            </ng-container>
 
-            <!-- Categoria -->
-            <div class="space-y-1">
-              <label class="text-xs text-description block">Categoria</label>
-              <div
-                class="h-[50px] rounded-md border-2 border-primary/30 bg-white px-4 py-2 focus-within:border-primary focus-within:ring-0"
-              >
-                <select
-                  class="w-full h-full border-0 bg-transparent text-sm text-black outline-none placeholder:text-disable"
-                  [(ngModel)]="categoriaId"
-                  [disabled]="availableCategorias.length === 0"
+            <!-- Passo 3 (create) ou edição: Valor + categoria -->
+            <ng-container
+              *ngIf="mode === 'edit' || (mode === 'create' && formStep === 2)"
+            >
+              <!-- Valor -->
+              <div class="space-y-2">
+                <div
+                  class="h-[63px] rounded-md border-2 border-primary/30 bg-white px-4 py-3 focus-within:border-primary focus-within:ring-0"
                 >
-                  <option value="">
-                    Selecione
-                  </option>
-                  <option
-                    *ngFor="let cat of availableCategorias"
-                    [value]="cat.id"
-                    class="text-black"
-                  >
-                    {{ cat.nome }}
-                  </option>
-                </select>
+                  <div class="flex h-full items-center gap-3 text-description">
+                    <span>R$</span>
+                    <input
+                      type="text"
+                      inputmode="decimal"
+                      autocomplete="off"
+                      placeholder="0,00"
+                      mask="separator.2"
+                      thousandSeparator="."
+                      decimalMarker=","
+                      [dropSpecialCharacters]="false"
+                      class="w-full border-0 bg-transparent text-base text-black outline-none placeholder:text-disable"
+                      [(ngModel)]="valorInput"
+                    />
+                  </div>
+                </div>
               </div>
-              <p
-                *ngIf="availableCategorias.length === 0"
-                class="text-[11px] text-error"
-              >
-                Nenhuma categoria disponível para este tipo.
-              </p>
-            </div>
 
+              <!-- Categoria -->
+              <div class="space-y-2">
+                <div
+                  class="h-[63px] rounded-md border-2 border-primary/30 bg-white px-4 py-3 focus-within:border-primary focus-within:ring-0"
+                >
+                  <select
+                    class="w-full h-full border-0 bg-transparent text-black outline-none placeholder:text-disable"
+                    [(ngModel)]="categoriaId"
+                    [disabled]="availableCategorias.length === 0"
+                  >
+                    <option value="">Categoria</option>
+                    <option
+                      *ngFor="let cat of availableCategorias"
+                      [value]="cat.id"
+                      class="text-black"
+                    >
+                      {{ cat.nome }}
+                    </option>
+                  </select>
+                </div>
+                <p
+                  *ngIf="availableCategorias.length === 0"
+                  class="text-xs text-error"
+                >
+                  Nenhuma categoria disponível para este tipo.
+                </p>
+              </div>
+            </ng-container>
           </div>
 
-          <!-- Botão de ação -->
-          <button
-            type="button"
-            class="h-[50px] w-full items-center justify-center rounded-xl bg-primary px-6 text-sm font-medium text-white transition hover:bg-primary/90 active:scale-95 disabled:pointer-events-none disabled:opacity-50"
-            [disabled]="!isFormValid || saving"
-            (click)="submit()"
-          >
-            <span *ngIf="!saving">
-              {{ mode === 'edit' ? 'Salvar recorrência' : 'Criar recorrência' }}
-            </span>
-            <span *ngIf="saving">
-              Salvando...
-            </span>
-          </button>
+          <!-- Botões de ação -->
+          <!-- Create: próximo no passo do dia / confirmar no passo de valor + categoria -->
+          <ng-container *ngIf="mode === 'create'">
+            <button
+              *ngIf="formStep === 1"
+              type="button"
+              class="h-[63px] w-full items-center justify-center rounded-xl bg-primary px-6 text-base font-medium text-white transition hover:bg-primary/90 active:scale-95 disabled:pointer-events-none disabled:opacity-50"
+              [disabled]="!isDayStepValid"
+              (click)="goToDetailsStep()"
+            >
+              Próximo
+            </button>
+
+            <button
+              *ngIf="formStep === 2"
+              type="button"
+              class="h-[63px] w-full items-center justify-center rounded-xl bg-primary px-6 text-base font-medium text-white transition hover:bg-primary/90 active:scale-95 disabled:pointer-events-none disabled:opacity-50"
+              [disabled]="!isFormValid || saving"
+              (click)="submit()"
+            >
+              <span *ngIf="!saving">Cadastrar</span>
+              <span *ngIf="saving">Salvando...</span>
+            </button>
+          </ng-container>
+
+          <!-- Edit: um único botão de salvar -->
+          <ng-container *ngIf="mode === 'edit'">
+            <button
+              type="button"
+              class="h-[63px] w-full items-center justify-center rounded-xl bg-primary px-6 text-base font-medium text-white transition hover:bg-primary/90 active:scale-95 disabled:pointer-events-none disabled:opacity-50"
+              [disabled]="!isFormValid || saving"
+              (click)="submit()"
+            >
+              <span *ngIf="!saving">Salvar recorrência</span>
+              <span *ngIf="saving">Salvando...</span>
+            </button>
+          </ng-container>
         </div>
       </ng-template>
     </div>
