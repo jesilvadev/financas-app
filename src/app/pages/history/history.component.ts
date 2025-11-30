@@ -39,7 +39,9 @@ export class HistoryComponent implements OnInit {
   filtroDataInicio: string = '';
   filtroDataFim: string = '';
 
-  pageSize = 10;
+  showAdvancedFilters = false;
+
+  pageSize = 5;
   currentPage = 1;
 
   isEntryModalOpen = false;
@@ -155,6 +157,21 @@ export class HistoryComponent implements OnInit {
     );
   }
 
+  get totalItems(): number {
+    return this.filteredTransacoes.length;
+  }
+
+  get pageStart(): number {
+    if (!this.totalItems) return 0;
+    return (this.currentPage - 1) * this.pageSize + 1;
+  }
+
+  get pageEnd(): number {
+    if (!this.totalItems) return 0;
+    const end = this.currentPage * this.pageSize;
+    return end > this.totalItems ? this.totalItems : end;
+  }
+
   get pagedTransacoes(): TransacaoComSaldoInicial[] {
     const start = (this.currentPage - 1) * this.pageSize;
     return this.filteredTransacoes.slice(start, start + this.pageSize);
@@ -162,6 +179,27 @@ export class HistoryComponent implements OnInit {
 
   resetPage(): void {
     this.currentPage = 1;
+  }
+
+  toggleAdvancedFilters(): void {
+    this.showAdvancedFilters = !this.showAdvancedFilters;
+  }
+
+  goToPage(page: number): void {
+    const clamped = Math.max(1, Math.min(page, this.totalPages));
+    this.currentPage = clamped;
+  }
+
+  previousPage(): void {
+    if (this.currentPage > 1) {
+      this.currentPage -= 1;
+    }
+  }
+
+  nextPage(): void {
+    if (this.currentPage < this.totalPages) {
+      this.currentPage += 1;
+    }
   }
 
   openEdit(t: TransacaoComSaldoInicial): void {
@@ -236,6 +274,10 @@ export class HistoryComponent implements OnInit {
         this.confirmingDelete = false;
         this.isConfirmDeleteOpen = false;
         this.deletingTransacao = null;
+
+        if (this.currentPage > this.totalPages) {
+          this.currentPage = this.totalPages;
+        }
       },
       error: (err) => {
         console.error('Erro ao excluir transação', err);
