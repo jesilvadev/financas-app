@@ -1,4 +1,4 @@
-import { Component, ViewChild } from '@angular/core';
+import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { catchError, finalize, forkJoin, of, switchMap, timer } from 'rxjs';
@@ -12,7 +12,6 @@ import {
   AuthRegisterRequest,
 } from '../../../models/auth.model';
 import { AlertService } from '../../../services/alert.service';
-import { DisplayAlertUnauthComponent } from '../../../shared/components/display-alert-unauth/display-alert-unauth.component';
 
 interface Step1Payload {
   nome: string;
@@ -31,7 +30,6 @@ interface Step2Payload {
     Step1Component,
     Step2Component,
     Step3Component,
-    DisplayAlertUnauthComponent,
   ],
   templateUrl: './signup.component.html',
 })
@@ -49,8 +47,6 @@ export class SignupComponent {
     private router: Router,
     private readonly alertService: AlertService
   ) {}
-
-  @ViewChild('authAlert') authAlert?: DisplayAlertUnauthComponent;
 
   headerBack(): void {
     if (this.currentStep === 1) {
@@ -90,7 +86,7 @@ export class SignupComponent {
         console.error('Erro no cadastro:', error);
         const mensagem =
           error?.error?.message || error?.message || 'Erro ao criar conta';
-        this.authAlert?.abrir(mensagem, 'error');
+        this.alertService.showError(mensagem);
         // Volta para a step 2 em caso de erro
         this.currentStep = 2;
         return of(null);

@@ -1,4 +1,4 @@
-import { Component, ViewChild } from '@angular/core';
+import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
@@ -9,7 +9,7 @@ import { AuthLoginRequest, AuthResponse } from '../../../models/auth.model';
 import { UiInputComponent } from '../../../shared/components/ui-input/ui-input.component';
 import { ButtonPrimaryComponent } from '../../../shared/components/button-primary/button-primary.component';
 import { MatIconModule } from '@angular/material/icon';
-import { DisplayAlertUnauthComponent } from '../../../shared/components/display-alert-unauth/display-alert-unauth.component';
+import { AlertService } from '../../../services/alert.service';
 
 @Component({
   selector: 'app-signin',
@@ -21,7 +21,6 @@ import { DisplayAlertUnauthComponent } from '../../../shared/components/display-
     UiInputComponent,
     ButtonPrimaryComponent,
     MatIconModule,
-    DisplayAlertUnauthComponent,
   ],
   templateUrl: './signin.component.html',
 })
@@ -31,10 +30,11 @@ export class SigninComponent {
   showPassword: boolean = false;
   isLoading: boolean = false;
 
-  @ViewChild(DisplayAlertUnauthComponent)
-  authAlert?: DisplayAlertUnauthComponent;
-
-  constructor(private authService: AuthService, private router: Router) {}
+  constructor(
+    private authService: AuthService,
+    private router: Router,
+    private readonly alertService: AlertService
+  ) {}
 
   togglePasswordVisibility(): void {
     this.showPassword = !this.showPassword;
@@ -42,7 +42,7 @@ export class SigninComponent {
 
   onSubmit(): void {
     if (!this.email || !this.password) {
-      this.authAlert?.abrir('Por favor, preencha todos os campos', 'error');
+      this.alertService.showError('Por favor, preencha todos os campos');
       return;
     }
 
@@ -69,7 +69,7 @@ export class SigninComponent {
           const httpMessage = error?.message;
           // Fallback para mensagem genérica
           const mensagem = apiMessage || httpMessage || 'Erro ao fazer login';
-          this.authAlert?.abrir(mensagem, 'error');
+          this.alertService.showError(mensagem);
         },
       });
   }

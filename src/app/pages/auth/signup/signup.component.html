@@ -1,7 +1,6 @@
 <section
   class="min-h-screen flex flex-col items-center bg-secondary text-primary p-6"
 >
-  <app-display-alert-unauth #authAlert></app-display-alert-unauth>
   <!-- Header fixo seguindo padrão do onboarding (oculto na step 3) -->
   <header
     *ngIf="currentStep < 3"
@@ -37,7 +36,6 @@
   </header>
 
   <div class="w-full max-w-md flex flex-col gap-6 mt-6">
-    <app-display-alert-unauth #authAlert></app-display-alert-unauth>
     <app-step1
       *ngIf="currentStep === 1"
       (next)="onStep1Next($event)"

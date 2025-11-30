@@ -154,6 +154,7 @@ export class ProfileSegurancaComponent {
         this.senhaSuccessMessage = 'Senha alterada com sucesso!';
         this.senhaErrorMessage = '';
         this.isSenhaModalOpen = false;
+        this.alertService.showSuccess(this.senhaSuccessMessage);
       },
       error: (err) => {
         this.savingSenha = false;

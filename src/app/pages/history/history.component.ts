@@ -240,6 +240,11 @@ export class HistoryComponent implements OnInit {
       error: (err) => {
         console.error('Erro ao excluir transação', err);
         this.confirmingDelete = false;
+        const mensagem =
+          err?.error?.message ||
+          err?.message ||
+          'Erro ao excluir transação.';
+        this.alertService.showError(mensagem);
       },
     });
   }

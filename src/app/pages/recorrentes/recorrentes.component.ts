@@ -113,6 +113,7 @@ export class RecorrentesComponent implements OnInit {
           err?.error?.message ||
           err?.message ||
           'Erro ao excluir recorrência.';
+        this.alertService.showError(this.deleteErrorMessage);
       },
     });
   }
@@ -150,6 +151,11 @@ export class RecorrentesComponent implements OnInit {
       },
       error: (err) => {
         console.error('Erro ao carregar categorias', err);
+        const mensagem =
+          err?.error?.message ||
+          err?.message ||
+          'Erro ao carregar categorias.';
+        this.alertService.showError(mensagem);
       },
     });
   }
