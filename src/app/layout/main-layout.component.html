@@ -2,7 +2,7 @@
   <!-- HEADER -->
   <header
     *ngIf="showHeader"
-    class="relative bg-primary text-white px-5 pt-12 pb-20 overflow-hidden"
+    class="relative bg-primary text-white px-5 pt-16 pb-20 overflow-hidden"
   >
     <div class="mx-auto max-w-md relative z-10">
       <!-- Linha usuário + ações -->
@@ -14,8 +14,8 @@
             <span>{{ userInitial }}</span>
           </div>
           <div class="flex flex-col">
-            <span class="text-xs font-light text-white/80">Olá,</span>
-            <span class="text-base font-semibold truncate max-w-[180px]">
+            <span class="text-sm font-light text-white/80">Olá,</span>
+            <span class="text-xl font-semibold truncate max-w-[180px]">
               {{ userName || "Usuário" }}
             </span>
           </div>
@@ -24,7 +24,11 @@
         <!-- Ícone de notificação -->
         <button
           type="button"
-          class="relative inline-flex h-9 w-9 items-center justify-center rounded-full bg-white/10 hover:bg-white/20 transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/40"
+          class="notification-btn relative inline-flex h-9 w-9 items-center justify-center rounded-full hover:bg-white/20 transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/40"
+          [class.notification-btn--active]="hasActiveAlert"
+          [ngClass]="
+            hasActiveAlert ? 'bg-white text-primary' : 'bg-white/10 text-white'
+          "
           aria-label="Notificações"
         >
           <svg

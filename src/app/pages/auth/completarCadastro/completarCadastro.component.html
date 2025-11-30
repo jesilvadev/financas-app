@@ -54,6 +54,7 @@
   </header>
 
   <div class="w-full max-w-md flex flex-col gap-6 mt-6">
+    <app-display-alert-unauth></app-display-alert-unauth>
     <app-completar-cadastro-intro
       *ngIf="currentStep === 0"
       (next)="onIntroNext()"

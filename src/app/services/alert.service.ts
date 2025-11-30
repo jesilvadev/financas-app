@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { BehaviorSubject } from 'rxjs';
 import { DisplayAlertComponent } from '../shared/components/display-alert/display-alert.component';
 
 @Injectable({
@@ -7,8 +8,15 @@ import { DisplayAlertComponent } from '../shared/components/display-alert/displa
 export class AlertService {
   private alertComponent?: DisplayAlertComponent;
 
+  private readonly visibleSubject = new BehaviorSubject<boolean>(false);
+  readonly visible$ = this.visibleSubject.asObservable();
+
   register(alert: DisplayAlertComponent) {
     this.alertComponent = alert;
+  }
+
+  setVisible(visible: boolean) {
+    this.visibleSubject.next(visible);
   }
 
   show(
@@ -35,5 +43,4 @@ export class AlertService {
     this.show(message, 'warning', duration);
   }
 }
-
 

@@ -1,18 +1,14 @@
 import { Component, Input, signal } from '@angular/core';
-import { NgIf, CommonModule } from '@angular/common';
-import { AlertService } from '../../../services/alert.service';
+import { CommonModule, NgIf } from '@angular/common';
 
 @Component({
-  selector: 'app-display-alert',
+  selector: 'app-display-alert-unauth',
   standalone: true,
-  imports: [NgIf, CommonModule],
-  templateUrl: './display-alert.component.html',
-  styleUrls: ['./display-alert.component.scss'],
-  host: {
-    class: 'pointer-events-none z-50',
-  },
+  imports: [CommonModule, NgIf],
+  templateUrl: './display-alert-unauth.component.html',
+  styleUrls: ['./display-alert-unauth.component.scss'],
 })
-export class DisplayAlertComponent {
+export class DisplayAlertUnauthComponent {
   @Input() mensagem = '';
   @Input() tipo: 'error' | 'success' | 'info' | 'warning' = 'info';
   @Input() duracao = 4000;
@@ -21,8 +17,6 @@ export class DisplayAlertComponent {
   currentDuration = this.duracao;
   progressKey = 0;
   private timer?: any;
-
-  constructor(private readonly alertService: AlertService) {}
 
   abrir(
     mensagem: string,
@@ -33,18 +27,17 @@ export class DisplayAlertComponent {
     this.tipo = tipo;
     this.currentDuration = duracao ?? this.duracao;
     this.visible.set(true);
-    this.alertService.setVisible(true);
     this.progressKey = Date.now();
     if (this.timer) clearTimeout(this.timer);
     this.timer = setTimeout(() => {
       this.visible.set(false);
-      this.alertService.setVisible(false);
     }, this.currentDuration);
   }
 
   fechar() {
     if (this.timer) clearTimeout(this.timer);
     this.visible.set(false);
-    this.alertService.setVisible(false);
   }
 }
+
+

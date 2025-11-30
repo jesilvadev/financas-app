@@ -1,6 +1,8 @@
 <section class="min-h-screen flex items-center justify-center bg-secondary p-6">
-  <div class="w-full max-w-xs bg-transparent flex flex-col items-center gap-14">
+  <div class="w-full max-w-xs bg-transparent flex flex-col items-center gap-10">
     <h1 class="text-5xl font-bold text-primary">Entrar</h1>
+
+    <app-display-alert-unauth></app-display-alert-unauth>
 
     <form class="w-full flex flex-col gap-4" (ngSubmit)="onSubmit()">
       <app-ui-input

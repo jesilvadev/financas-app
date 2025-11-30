@@ -29,6 +29,7 @@ import { filter } from 'rxjs/operators';
     AddEntryModalComponent,
   ],
   templateUrl: './main-layout.component.html',
+  styleUrls: ['./main-layout.component.scss'],
 })
 export class MainLayoutComponent implements OnInit {
   userName: string = '';
@@ -37,6 +38,7 @@ export class MainLayoutComponent implements OnInit {
   isHome: boolean = false;
   showHeader: boolean = true;
   showBottomNav: boolean = true;
+  hasActiveAlert = false;
   private readonly destroyRef = inject(DestroyRef);
 
   constructor(
@@ -98,6 +100,12 @@ export class MainLayoutComponent implements OnInit {
           const last = parts[parts.length - 1].charAt(0);
           this.userInitial = (first + last).toUpperCase();
         }
+      });
+
+    this.alertService.visible$
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((visible) => {
+        this.hasActiveAlert = visible;
       });
   }
 

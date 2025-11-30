@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { catchError, finalize, forkJoin, of, timer } from 'rxjs';
@@ -16,7 +16,7 @@ import { AuthService } from '../../../services/auth.service';
 import { CategoriaService } from '../../../services/categoria.service';
 import { Categoria } from '../../../models/categoria.model';
 import { Step4Component } from './step4/step4.component';
-import { AlertService } from '../../../services/alert.service';
+import { DisplayAlertUnauthComponent } from '../../../shared/components/display-alert/display-alert-unauth.component';
 
 interface IncomePayload {
   incomes: RecorrenciaFormEntry[];
@@ -48,6 +48,7 @@ interface RecorrenciaFormEntry {
     Step3Component,
     Step4Component,
     ConclusaoComponent,
+    DisplayAlertUnauthComponent,
   ],
   templateUrl: './completarCadastro.component.html',
 })
@@ -66,12 +67,14 @@ export class CompletarCadastroComponent {
   categoriasLoading = false;
   categoriasError = '';
 
+  @ViewChild(DisplayAlertUnauthComponent)
+  authAlert?: DisplayAlertUnauthComponent;
+
   constructor(
     private readonly router: Router,
     private readonly onboardingService: OnboardingService,
     private readonly authService: AuthService,
-    private readonly categoriaService: CategoriaService,
-    private readonly alertService: AlertService
+    private readonly categoriaService: CategoriaService
   ) {
     const user = this.authService.currentUserValue;
 
@@ -172,7 +175,7 @@ export class CompletarCadastroComponent {
 
   private enviarOnboarding(startDay: string): void {
     if (!this.usuarioId) {
-      this.alertService.showError('Usuário não identificado.');
+      this.authAlert?.abrir('Usuário não identificado.', 'error');
       return;
     }
 
@@ -218,7 +221,7 @@ export class CompletarCadastroComponent {
             error?.error?.message ||
             error?.message ||
             'Erro ao concluir cadastro';
-          this.alertService.showError(mensagem);
+          this.authAlert?.abrir(mensagem, 'error');
         },
       });
   }
