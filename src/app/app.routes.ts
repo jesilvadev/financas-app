@@ -32,6 +32,12 @@ export const routes: Routes = [
     canActivate: [authGuard],
   },
 
+  {
+    path: 'notifications',
+    component: NotificationsComponent,
+    canActivate: [authGuard],
+  },
+
   // Rotas principais com layout (apenas para autenticados)
   {
     path: '',
@@ -42,7 +48,6 @@ export const routes: Routes = [
       { path: 'stats', component: StatsComponent },
       { path: 'history', component: HistoryComponent },
       { path: 'recorrentes', component: RecorrentesComponent },
-      { path: 'notifications', component: NotificationsComponent },
       { path: 'profile', component: ProfileComponent },
       { path: 'profile/dados', component: ProfileDadosComponent },
       { path: 'profile/seguranca', component: ProfileSegurancaComponent },

@@ -14,8 +14,10 @@ import { AddEntryModalComponent } from '../shared/components/add-entry-modal/add
 import { Transacao } from '../models/transacao.model';
 import { AlertService } from '../services/alert.service';
 import { LoadingService } from '../services/loading.service';
+import { NotificationService } from '../services/notification.service';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { filter } from 'rxjs/operators';
+import { interval, switchMap, startWith, of, EMPTY } from 'rxjs';
 
 @Component({
   selector: 'app-main-layout',
@@ -39,13 +41,15 @@ export class MainLayoutComponent implements OnInit {
   showHeader: boolean = true;
   showBottomNav: boolean = true;
   hasActiveAlert = false;
+  unreadNotificationsCount = 0;
   private readonly destroyRef = inject(DestroyRef);
 
   constructor(
     private authService: AuthService,
     private router: Router,
     private readonly alertService: AlertService,
-    private readonly loadingService: LoadingService
+    private readonly loadingService: LoadingService,
+    private readonly notificationService: NotificationService
   ) {}
 
   ngOnInit(): void {
@@ -64,6 +68,11 @@ export class MainLayoutComponent implements OnInit {
         this.showBottomNav = this.computeShowBottomNav(
           e.urlAfterRedirects ?? e.url
         );
+        // Atualizar contador quando sair da página de notificações
+        const path = (e.urlAfterRedirects ?? e.url).split('?')[0].split('#')[0];
+        if (path !== '/notifications') {
+          this.atualizarContadorNotificacoes();
+        }
       });
 
     this.authService.currentUser$
@@ -107,6 +116,32 @@ export class MainLayoutComponent implements OnInit {
       .subscribe((visible) => {
         this.hasActiveAlert = visible;
       });
+
+    // Carregar contador de notificações não vistas e atualizar a cada 30 segundos
+    this.authService.currentUser$
+      .pipe(
+        switchMap((user) => {
+          if (!user) {
+            this.unreadNotificationsCount = 0;
+            return EMPTY;
+          }
+          // Atualizar imediatamente e depois a cada 30 segundos
+          return interval(30000).pipe(
+            startWith(0),
+            switchMap(() => this.notificationService.contarAlertasNaoVistos())
+          );
+        }),
+        takeUntilDestroyed(this.destroyRef)
+      )
+      .subscribe({
+        next: (count) => {
+          this.unreadNotificationsCount = count;
+        },
+        error: (error) => {
+          console.error('Erro ao carregar contador de notificações:', error);
+          this.unreadNotificationsCount = 0;
+        },
+      });
   }
 
   private isHomeRoute(url: string): boolean {
@@ -121,7 +156,8 @@ export class MainLayoutComponent implements OnInit {
       path === '' ||
       path === '/stats' ||
       path === '/history' ||
-      path === '/profile'
+      path === '/profile' ||
+      path === '/notifications'
     );
   }
 
@@ -163,5 +199,17 @@ export class MainLayoutComponent implements OnInit {
 
   navigateToNotifications(): void {
     this.router.navigate(['/notifications']);
+  }
+
+  private atualizarContadorNotificacoes(): void {
+    // Método simples para atualizar o contador sem criar nova subscription
+    this.notificationService.contarAlertasNaoVistos().subscribe({
+      next: (count) => {
+        this.unreadNotificationsCount = count;
+      },
+      error: (error) => {
+        console.error('Erro ao atualizar contador:', error);
+      },
+    });
   }
 }
