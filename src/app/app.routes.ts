@@ -14,6 +14,8 @@ import { ProfileDadosComponent } from './pages/profile/dados/dados.component';
 import { ProfileSegurancaComponent } from './pages/profile/seguranca/seguranca.component';
 import { ProfilePersonalizacaoComponent } from './pages/profile/personalizacao/personalizacao.component';
 import { RecorrentesComponent } from './pages/recorrentes/recorrentes.component';
+import { NotificationsComponent } from './pages/notifications/notifications.component';
+import { ProfileAlertasComponent } from './pages/profile/alertas/alertas.component';
 
 export const routes: Routes = [
   // Rotas de autenticação (apenas para não autenticados)
@@ -40,9 +42,11 @@ export const routes: Routes = [
       { path: 'stats', component: StatsComponent },
       { path: 'history', component: HistoryComponent },
       { path: 'recorrentes', component: RecorrentesComponent },
+      { path: 'notifications', component: NotificationsComponent },
       { path: 'profile', component: ProfileComponent },
       { path: 'profile/dados', component: ProfileDadosComponent },
       { path: 'profile/seguranca', component: ProfileSegurancaComponent },
+      { path: 'profile/alertas', component: ProfileAlertasComponent },
       {
         path: 'profile/personalizacao',
         component: ProfilePersonalizacaoComponent,
