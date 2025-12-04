@@ -160,4 +160,8 @@ export class MainLayoutComponent implements OnInit {
       this.alertService.showSuccess(`${tipoLabel} registrado com sucesso!`);
     }, 2000);
   }
+
+  navigateToNotifications(): void {
+    this.router.navigate(['/notifications']);
+  }
 }
