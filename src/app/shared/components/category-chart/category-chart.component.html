@@ -1,0 +1,33 @@
+<div class="w-full">
+  <h3 class="text-sm font-semibold text-gray-700 mb-4" *ngIf="title">
+    {{ title }}
+  </h3>
+
+  <div *ngIf="gastos.length === 0" class="text-center py-8 text-description text-sm">
+    Nenhum gasto encontrado neste período.
+  </div>
+
+  <div *ngIf="gastos.length > 0" class="space-y-3">
+    <div *ngFor="let gasto of gastos; let i = index" class="space-y-1">
+      <div class="flex items-center justify-between text-xs mb-1">
+        <span class="text-gray-700 font-medium truncate max-w-[60%]">
+          {{ gasto.categoria }}
+        </span>
+        <div class="flex items-center gap-2">
+          <span class="text-gray-600">{{ gasto.porcentagem | number : "1.0-0" }}%</span>
+          <span class="text-gray-900 font-semibold">
+            {{ gasto.valor | currency : "BRL" : "symbol" : "1.0-0" : "pt" }}
+          </span>
+        </div>
+      </div>
+      <div class="w-full h-3 bg-gray-200 rounded-full overflow-hidden">
+        <div
+          class="h-full rounded-full transition-all duration-300"
+          [style.width.%]="getBarWidth(gasto.valor)"
+          [style.background-color]="getColor(i)"
+        ></div>
+      </div>
+    </div>
+  </div>
+</div>
+
