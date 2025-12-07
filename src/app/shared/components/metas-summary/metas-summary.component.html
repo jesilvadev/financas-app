@@ -1,0 +1,32 @@
+<div class="w-full">
+  <h3 class="text-sm font-semibold text-gray-700 mb-4" *ngIf="title">
+    {{ title }}
+  </h3>
+
+  <div
+    *ngIf="metas.length === 0"
+    class="text-center py-8 text-description text-sm"
+  >
+    Nenhuma meta encontrada.
+  </div>
+
+  <div *ngIf="metas.length > 0" class="space-y-3">
+    <div *ngFor="let meta of metas" class="space-y-2">
+      <div class="flex items-center justify-between text-xs mb-1">
+        <span class="text-gray-700 font-medium truncate max-w-[60%]">
+          {{ meta.nome }}
+        </span>
+        <span class="text-gray-900 font-semibold">
+          {{ meta.porcentagem | number : "1.0-0" }}%
+        </span>
+      </div>
+      <div class="w-full h-2 bg-gray-200 rounded-full overflow-hidden">
+        <div
+          class="h-full rounded-full transition-all duration-300"
+          [style.width.%]="getProgressWidth(meta.porcentagem)"
+          [style.background-color]="getProgressColor(meta.porcentagem)"
+        ></div>
+      </div>
+    </div>
+  </div>
+</div>
