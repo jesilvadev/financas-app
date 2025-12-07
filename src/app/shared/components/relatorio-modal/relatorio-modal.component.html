@@ -1,0 +1,73 @@
+<div
+  *ngIf="open"
+  class="fixed inset-0 z-[999] flex items-center justify-center bg-black/50 backdrop-blur-sm px-4"
+  (click)="handleBackdropClick()"
+>
+  <div
+    class="w-full max-w-xs rounded-3xl bg-layer shadow-2xl ring-1 ring-black/10 overflow-hidden flex flex-col"
+    (click)="$event.stopPropagation()"
+  >
+    <div class="flex flex-1 flex-col px-5 py-5 gap-5">
+      <div class="flex items-center">
+        <div class="flex-1 font-semibold text-center text-primary">
+          Gerar Relatório
+        </div>
+        <div class="w-8 flex items-center justify-end">
+          <button
+            type="button"
+            aria-label="Fechar modal"
+            class="text-primary text-base leading-none px-1 py-1 rounded-full transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
+            (click)="handleClose()"
+          >
+            ✕
+          </button>
+        </div>
+      </div>
+
+      <div class="flex-1 space-y-6 overflow-y-auto pr-1">
+        <div class="space-y-2">
+          <label class="text-xs text-description">Mês</label>
+          <div
+            class="h-[63px] rounded-md border-2 border-primary/30 bg-white px-4 py-3 focus-within:border-primary focus-within:ring-0"
+          >
+            <select
+              class="w-full h-full border-0 bg-transparent text-black outline-none"
+              [(ngModel)]="mes"
+            >
+              <option *ngFor="let m of meses" [value]="m.value">
+                {{ m.label }}
+              </option>
+            </select>
+          </div>
+        </div>
+
+        <div class="space-y-2">
+          <label class="text-xs text-description">Ano</label>
+          <div
+            class="h-[63px] rounded-md border-2 border-primary/30 bg-white px-4 py-3 focus-within:border-primary focus-within:ring-0"
+          >
+            <select
+              class="w-full h-full border-0 bg-transparent text-black outline-none"
+              [(ngModel)]="ano"
+            >
+              <option *ngFor="let a of anos" [value]="a">
+                {{ a }}
+              </option>
+            </select>
+          </div>
+        </div>
+
+        <button
+          type="button"
+          class="h-[63px] w-full items-center justify-center rounded-xl bg-primary px-6 text-base font-medium text-white transition hover:bg-primary/90 active:scale-95 disabled:pointer-events-none disabled:opacity-50"
+          [disabled]="isSubmitting"
+          (click)="submit()"
+        >
+          <span *ngIf="!isSubmitting">Gerar Relatório</span>
+          <span *ngIf="isSubmitting">Gerando...</span>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
