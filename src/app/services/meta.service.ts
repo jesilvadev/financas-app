@@ -33,6 +33,18 @@ export class MetaService {
   }
 
   adicionarAporte(request: AporteRequest): Observable<MetaResponse> {
-    return this.http.post<MetaResponse>(`${this.baseUrl}/${request.idMeta}/aportes`, request);
+    return this.http.post<MetaResponse>(
+      `${this.baseUrl}/${request.idMeta}/aportes`,
+      request
+    );
+  }
+
+  removerAporte(request: AporteRequest): Observable<MetaResponse> {
+    return this.http.delete<MetaResponse>(
+      `${this.baseUrl}/${request.idMeta}/aportes`,
+      {
+        body: request,
+      }
+    );
   }
 }

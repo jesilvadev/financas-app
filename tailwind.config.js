@@ -9,8 +9,8 @@ module.exports = {
       },
       colors: {
         // Paleta principal
-        primary: "#6B54EC",
-        secondary: "#BFCBFF",
+        primary: "#242a69",
+        secondary: "#9099c1",
 
         // Tons neutros e utilitários
         layer: "#FFFFFF",
@@ -20,7 +20,7 @@ module.exports = {
         white: "#FFFFFF",
 
         // Paleta de feedback / alerts
-        success: "#1E8315", // Verde
+        success: "#5FB948", // Verde
         warning: "#FACC15", // Amarelo
         info: "#3B82F6", // Azul
         error: "#CD3131", // Vermelho

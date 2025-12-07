@@ -25,13 +25,13 @@ export class CategoryChartComponent {
   getColors(): string[] {
     return [
       '#6B54EC',
-      '#9EAAFE',
-      '#27BE61',
-      '#FF4B4B',
-      '#FACC15',
+      '#b90093',
+      '#5FB948',
+      '#006c05',
       '#3B82F6',
+      '#FACC15',
+      '#c59e00',
       '#EF4444',
-      '#22C55E',
     ];
   }
 

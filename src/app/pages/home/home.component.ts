@@ -170,12 +170,12 @@ export class HomeComponent implements OnInit {
     // Cores para os gráficos
     const cores = [
       '#6B54EC',
-      '#9EAAFE',
-      '#27BE61',
-      '#22C55E',
+      '#b90093',
+      '#5FB948',
+      '#006c05',
       '#3B82F6',
       '#FACC15',
-      '#FF4B4B',
+      '#c59e00',
       '#EF4444',
     ];
 

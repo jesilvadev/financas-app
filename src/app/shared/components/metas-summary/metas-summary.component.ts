@@ -13,8 +13,8 @@ export class MetasSummaryComponent {
   @Input() title: string = 'Metas';
 
   getProgressColor(porcentagem: number): string {
-    if (porcentagem >= 100) return '#27BE61'; // Verde - concluída
-    if (porcentagem >= 75) return '#22C55E'; // Verde claro
+    if (porcentagem >= 100) return '#5FB948'; // Verde - concluída
+    if (porcentagem >= 75) return '#5FB948'; // Verde claro
     if (porcentagem >= 50) return '#FACC15'; // Amarelo
     if (porcentagem >= 25) return '#FF4B4B'; // Vermelho claro
     return '#EF4444'; // Vermelho
