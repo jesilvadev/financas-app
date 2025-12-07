@@ -154,7 +154,7 @@ export class MainLayoutComponent implements OnInit {
     return (
       path === '/' ||
       path === '' ||
-      path === '/stats' ||
+      path === '/metas' ||
       path === '/history' ||
       path === '/profile' ||
       path === '/notifications'

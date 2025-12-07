@@ -1,0 +1,269 @@
+<div
+  class="min-h-full w-full px-4 py-4 flex flex-col items-center font-inter"
+>
+  <div class="w-full max-w-md space-y-3">
+    <!-- Cabeçalho + filtros rápidos -->
+    <header
+      class="flex items-center justify-between px-2 gap-3"
+      aria-label="Cabeçalho de metas e filtros rápidos"
+    >
+      <div class="flex-1 min-w-0">
+        <h1 class="text-xl font-semibold text-primary truncate">Metas</h1>
+      </div>
+      <div
+        class="inline-flex items-center gap-1 bg-secondary rounded-full px-1 py-1"
+      >
+        <button
+          type="button"
+          class="px-3 py-1 rounded-full text-[10px] font-semibold border transition active:scale-95"
+          [ngClass]="
+            filtroStatus === 'TODAS'
+              ? 'bg-[#6b54ec] text-white border-[#6b54ec]'
+              : 'bg-white text-[#6b54ec] border-[#6b54ec]/20'
+          "
+          (click)="filtroStatus = 'TODAS'; resetPage()"
+        >
+          Todas
+        </button>
+        <button
+          type="button"
+          class="px-3 py-1 rounded-full text-[10px] font-semibold border transition active:scale-95"
+          [ngClass]="
+            filtroStatus === 'EM_ANDAMENTO'
+              ? 'bg-[#27BE61] text-white border-[#27BE61]'
+              : 'bg-white text-[#27BE61]'
+          "
+          (click)="filtroStatus = 'EM_ANDAMENTO'; resetPage()"
+        >
+          Em Andamento
+        </button>
+        <button
+          type="button"
+          class="px-3 py-1 rounded-full text-[10px] font-semibold border transition active:scale-95"
+          [ngClass]="
+            filtroStatus === 'CONCLUIDAS'
+              ? 'bg-[#FF4B4B] text-white border-[#FF4B4B]'
+              : 'bg-white text-[#FF4B4B]'
+          "
+          (click)="filtroStatus = 'CONCLUIDAS'; resetPage()"
+        >
+          Concluídas
+        </button>
+      </div>
+    </header>
+
+    <!-- Botão criar meta -->
+    <div class="px-2">
+      <button
+        type="button"
+        class="w-full h-12 rounded-xl bg-primary text-white font-semibold text-sm transition hover:bg-primary/90 active:scale-95 flex items-center justify-center gap-2"
+        (click)="openCreateMetaModal()"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          height="20px"
+          viewBox="0 -960 960 960"
+          width="20px"
+          fill="currentColor"
+        >
+          <path
+            d="M440-280h80v-160h160v-80H520v-160h-80v160H280v80h160v160Zm40 200q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q134 0 227-93t93-227q0-134-93-227t-227-93q-134 0-227 93t-93 227q0 134 93 227t227 93Zm0-320Z"
+          />
+        </svg>
+        Nova Meta
+      </button>
+    </div>
+
+    <!-- Conteúdo -->
+    <section class="space-y-3">
+      <div
+        *ngIf="loadingMetas"
+        class="text-center text-xs text-description py-4"
+      >
+        Carregando metas...
+      </div>
+
+      <div
+        *ngIf="!loadingMetas && loadErrorMessage"
+        class="text-center text-xs text-red-500 bg-red-50 border border-red-100 rounded-xl px-3 py-3"
+      >
+        {{ loadErrorMessage }}
+      </div>
+
+      <ng-container *ngIf="!loadingMetas">
+        <ng-container *ngIf="pagedMetas.length > 0; else semMetas">
+          <div class="space-y-3">
+            <article
+              *ngFor="let meta of pagedMetas"
+              class="rounded-xl px-4 py-4 flex flex-col gap-3 active:scale-[0.98] transition border bg-white border-black/5"
+            >
+              <div class="flex items-center justify-between">
+                <div class="flex items-center gap-3 min-w-0 flex-1">
+                  <div
+                    [ngClass]="
+                      meta.concluida
+                        ? 'bg-[#5DC486]'
+                        : 'bg-primary/10'
+                    "
+                    class="w-10 h-10 flex items-center justify-center rounded-[12px]"
+                  >
+                    <mat-icon
+                      [ngClass]="
+                        meta.concluida
+                          ? 'text-[#1E8315]'
+                          : 'text-primary'
+                      "
+                      class="text-xl"
+                    >
+                      {{ meta.concluida ? 'check_circle' : 'flag' }}
+                    </mat-icon>
+                  </div>
+                  <div class="flex flex-col gap-0.5 min-w-0 flex-1">
+                    <span class="text-black font-semibold text-sm truncate">
+                      {{ meta.nome }}
+                    </span>
+                    <span class="text-description text-[11px]">
+                      Meta: {{ formatDate(meta.dataAlvo) }}
+                    </span>
+                    <span
+                      *ngIf="!meta.concluida"
+                      class="text-description text-[11px]"
+                    >
+                      {{
+                        getDaysUntilTarget(meta) >= 0
+                          ? getDaysUntilTarget(meta) + " dias restantes"
+                          : "Prazo vencido"
+                      }}
+                    </span>
+                  </div>
+                </div>
+                <div class="flex flex-col items-end gap-1 ml-3">
+                  <span class="font-bold text-base text-gray-900">
+                    {{ meta.valorAtual | currency : "BRL" : "symbol" : "1.2-2" : "pt" }}
+                  </span>
+                  <span class="text-xs text-description">
+                    de {{ meta.valorAlvo | currency : "BRL" : "symbol" : "1.2-2" : "pt" }}
+                  </span>
+                </div>
+              </div>
+
+              <!-- Barra de progresso -->
+              <div class="w-full">
+                <div class="w-full h-2 bg-gray-200 rounded-full overflow-hidden">
+                  <div
+                    class="h-full transition-all duration-300 rounded-full"
+                    [ngClass]="
+                      meta.concluida
+                        ? 'bg-[#27BE61]'
+                        : 'bg-primary'
+                    "
+                    [style.width.%]="getProgressPercentage(meta)"
+                  ></div>
+                </div>
+                <div class="text-xs text-description mt-1 text-right">
+                  {{ getProgressPercentage(meta) | number : "1.0-0" }}% concluído
+                </div>
+              </div>
+
+              <!-- Botão de aporte -->
+              <div class="flex justify-end" *ngIf="!meta.concluida">
+                <button
+                  type="button"
+                  class="px-4 py-2 rounded-lg bg-primary/10 text-primary font-semibold text-xs transition hover:bg-primary/20 active:scale-95"
+                  (click)="openAporteModal(meta)"
+                >
+                  Fazer Aporte
+                </button>
+              </div>
+            </article>
+
+            <!-- Espaçadores para manter altura como se sempre houvesse 5 itens -->
+            <div *ngFor="let _ of placeholders" class="h-32"></div>
+          </div>
+
+          <!-- Paginação -->
+          <div *ngIf="totalItems > pageSize" class="pt-2 space-y-2">
+            <div
+              class="flex items-center justify-between text-[11px] text-description"
+            >
+              <span>
+                Mostrando
+                <strong class="text-gray-700">{{ pageStart }}</strong>
+                –
+                <strong class="text-gray-700">{{ pageEnd }}</strong>
+                de
+                <strong class="text-gray-700">{{ totalItems }}</strong>
+              </span>
+              <span>Página {{ currentPage }} de {{ totalPages }}</span>
+            </div>
+            <div class="flex items-center justify-end gap-2">
+              <button
+                type="button"
+                class="h-8 w-8 flex items-center justify-center rounded-full border border-gray-300 text-gray-600 bg-white disabled:opacity-40 disabled:cursor-not-allowed active:scale-95 transition"
+                (click)="previousPage()"
+                [disabled]="currentPage === 1"
+                aria-label="Página anterior"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  class="h-4 w-4"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <polyline points="15 18 9 12 15 6" />
+                </svg>
+              </button>
+              <button
+                type="button"
+                class="h-8 w-8 flex items-center justify-center rounded-full border border-[#6b54ec] text-white bg-[#6b54ec] disabled:opacity-40 disabled:cursor-not-allowed active:scale-95 transition"
+                (click)="nextPage()"
+                [disabled]="currentPage === totalPages"
+                aria-label="Próxima página"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  class="h-4 w-4"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <polyline points="9 18 15 12 9 6" />
+                </svg>
+              </button>
+            </div>
+          </div>
+        </ng-container>
+      </ng-container>
+
+      <ng-template #semMetas>
+        <div
+          class="text-center py-12 text-description font-semibold text-base bg-white rounded-2xl border border-dashed border-gray-200"
+        >
+          Nenhuma meta encontrada.
+        </div>
+      </ng-template>
+    </section>
+  </div>
+
+  <!-- Modal de criar meta -->
+  <app-create-meta-modal
+    [open]="isCreateMetaModalOpen"
+    (close)="handleCreateMetaModalClose()"
+    (confirm)="handleCreateMetaModalConfirm($event)"
+  ></app-create-meta-modal>
+
+  <!-- Modal de aporte -->
+  <app-add-aporte-modal
+    [open]="isAporteModalOpen"
+    [meta]="selectedMetaForAporte"
+    (close)="handleAporteModalClose()"
+    (confirm)="handleAporteModalConfirm($event)"
+  ></app-add-aporte-modal>
+</div>
