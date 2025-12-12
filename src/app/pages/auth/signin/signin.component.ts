@@ -29,6 +29,8 @@ export class SigninComponent {
   password: string = '';
   showPassword: boolean = false;
   isLoading: boolean = false;
+  emailError: string | null = null;
+  passwordError: string | null = null;
 
   constructor(
     private authService: AuthService,
@@ -41,15 +43,29 @@ export class SigninComponent {
   }
 
   onSubmit(): void {
-    if (!this.email || !this.password) {
-      this.alertService.showError('Por favor, preencha todos os campos');
+    this.emailError = null;
+    this.passwordError = null;
+
+    const trimmedEmail = this.email.trim();
+
+    if (!trimmedEmail) {
+      this.emailError = 'Informe seu e-mail.';
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(trimmedEmail)) {
+      this.emailError = 'Informe um e-mail válido.';
+    }
+
+    if (!this.password) {
+      this.passwordError = 'Informe sua senha.';
+    }
+
+    if (this.emailError || this.passwordError) {
       return;
     }
 
     this.isLoading = true;
 
     const payload: AuthLoginRequest = {
-      email: this.email.trim(),
+      email: trimmedEmail,
       senha: this.password,
     };
 

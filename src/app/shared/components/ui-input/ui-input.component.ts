@@ -32,6 +32,7 @@ export class UiInputComponent implements ControlValueAccessor {
   @Input() inputMode?: string;
   @Input() autocomplete?: string;
   @Input() disabled = false;
+  @Input() error: string | null = null;
 
   // Visual add-ons
   @Input() prefix?: string; // Ex.: "R$"

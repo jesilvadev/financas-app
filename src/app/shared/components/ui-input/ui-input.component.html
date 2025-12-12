@@ -1,39 +1,52 @@
-<div
-  class="h-[63px] rounded-lg border-2 border-primary/30 bg-white px-4 py-3 focus-within:border-primary focus-within:ring-0"
-  [class.opacity-50]="disabled"
-  [class.pointer-events-none]="disabled"
->
-  <div class="flex h-full items-center gap-3 text-description">
-    <span *ngIf="prefix">{{ prefix }}</span>
-    <ng-container *ngIf="useMask; else plainInput">
-      <input
-        [type]="type"
-        class="w-full h-full border-0 bg-transparent text-base text-black outline-none placeholder:text-disable"
-        [attr.inputmode]="inputMode || null"
-        [attr.autocomplete]="autocomplete || null"
-        [placeholder]="placeholder"
-        [disabled]="disabled"
-        [value]="value"
-        (input)="onInput($event)"
-        (blur)="onTouched()"
-        [mask]="mask"
-        [thousandSeparator]="thousandSeparator"
-        [decimalMarker]="decimalMarker"
-        [dropSpecialCharacters]="dropSpecialCharacters"
-      />
-    </ng-container>
-    <ng-template #plainInput>
-      <input
-        [type]="type"
-        class="w-full h-full border-0 bg-transparent text-base text-black outline-none placeholder:text-disable"
-        [attr.inputmode]="inputMode || null"
-        [attr.autocomplete]="autocomplete || null"
-        [placeholder]="placeholder"
-        [disabled]="disabled"
-        [value]="value"
-        (input)="onInput($event)"
-        (blur)="onTouched()"
-      />
-    </ng-template>
+<div class="w-full relative">
+  <div
+    class="h-[63px] rounded-lg border-2 bg-white px-4 py-3 focus-within:border-primary focus-within:ring-0"
+    [ngClass]="{
+      'border-primary/30': !error,
+      'border-error': !!error,
+      'opacity-50': disabled,
+      'pointer-events-none': disabled
+    }"
+  >
+    <div class="flex h-full items-center gap-3 text-description">
+      <span *ngIf="prefix">{{ prefix }}</span>
+      <ng-container *ngIf="useMask; else plainInput">
+        <input
+          [type]="type"
+          class="w-full h-full border-0 bg-transparent text-base text-black outline-none placeholder:text-disable"
+          [attr.inputmode]="inputMode || null"
+          [attr.autocomplete]="autocomplete || null"
+          [placeholder]="placeholder"
+          [disabled]="disabled"
+          [value]="value"
+          (input)="onInput($event)"
+          (blur)="onTouched()"
+          [mask]="mask"
+          [thousandSeparator]="thousandSeparator"
+          [decimalMarker]="decimalMarker"
+          [dropSpecialCharacters]="dropSpecialCharacters"
+        />
+      </ng-container>
+      <ng-template #plainInput>
+        <input
+          [type]="type"
+          class="w-full h-full border-0 bg-transparent text-base text-black outline-none placeholder:text-disable"
+          [attr.inputmode]="inputMode || null"
+          [attr.autocomplete]="autocomplete || null"
+          [placeholder]="placeholder"
+          [disabled]="disabled"
+          [value]="value"
+          (input)="onInput($event)"
+          (blur)="onTouched()"
+        />
+      </ng-template>
+    </div>
   </div>
+
+  <p
+    class="absolute left-1 -bottom-4 text-xs text-error px-0"
+    [class.invisible]="!error"
+  >
+    {{ error }}
+  </p>
 </div>

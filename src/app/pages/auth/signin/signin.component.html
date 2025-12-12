@@ -1,8 +1,8 @@
 <section class="min-h-screen flex items-center justify-center bg-secondary p-6">
-  <div class="w-full max-w-xs bg-transparent flex flex-col items-center gap-10">
+  <div class="w-full max-w-md bg-transparent flex flex-col items-center gap-10">
     <h1 class="text-5xl font-bold text-primary">Entrar</h1>
 
-    <form class="w-full flex flex-col gap-4" (ngSubmit)="onSubmit()">
+    <form class="w-full flex flex-col gap-6" (ngSubmit)="onSubmit()">
       <app-ui-input
         id="email"
         name="email"
@@ -10,6 +10,7 @@
         type="email"
         placeholder="E-mail"
         autocomplete="email"
+        [error]="emailError"
       />
 
       <div class="relative w-full">
@@ -20,6 +21,7 @@
           [(ngModel)]="password"
           placeholder="Senha"
           autocomplete="current-password"
+          [error]="passwordError"
         />
         <button
           type="button"
