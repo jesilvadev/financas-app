@@ -12,6 +12,7 @@
       type="email"
       placeholder="E-mail"
       autocomplete="email"
+      [error]="emailError"
     />
 
     <div class="relative w-full">
@@ -21,6 +22,7 @@
         [type]="showPassword ? 'text' : 'password'"
         placeholder="Senha"
         autocomplete="new-password"
+        [error]="senhaError"
       />
       <button
         type="button"
@@ -42,6 +44,7 @@
           [type]="showConfirmPassword ? 'text' : 'password'"
           placeholder="Confirmar Senha"
           autocomplete="new-password"
+          [error]="confirmarSenhaError"
         />
         <button
           type="button"
@@ -57,17 +60,12 @@
     </div>
 
     <app-button-primary
+      class="mt-2"
       type="submit"
       label="Confirmar"
       loadingText="Confirmando..."
       [loading]="isLoading"
-      [disabled]="
-        isLoading ||
-        !email ||
-        !senha ||
-        !confirmarSenha ||
-        senha !== confirmarSenha
-      "
+      [disabled]="isLoading"
     />
   </form>
 </section>
