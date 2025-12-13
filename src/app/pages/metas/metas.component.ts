@@ -7,6 +7,8 @@ import { ButtonPrimaryComponent } from '../../shared/components/button-primary/b
 
 import { CreateMetaModalComponent } from '../../shared/components/create-meta-modal/create-meta-modal.component';
 import { AddAporteModalComponent } from '../../shared/components/add-aporte-modal/add-aporte-modal.component';
+import { RemoveAporteModalComponent } from '../../shared/components/remove-aporte-modal/remove-aporte-modal.component';
+import { ConfirmModalComponent } from '../../shared/components/confirm-modal/confirm-modal.component';
 import { MetaResponse, MetaRequest, AporteRequest } from '../../models/meta.model';
 import { MetaService } from '../../services/meta.service';
 import { AuthService } from '../../services/auth.service';
@@ -24,6 +26,8 @@ import { UsuarioResponse } from '../../models/user.model';
     ButtonPrimaryComponent,
     CreateMetaModalComponent,
     AddAporteModalComponent,
+    RemoveAporteModalComponent,
+    ConfirmModalComponent,
   ],
   templateUrl: './metas.component.html',
 })
@@ -38,12 +42,18 @@ export class MetasComponent implements OnInit {
 
   isCreateMetaModalOpen = false;
   isAporteModalOpen = false;
+  isRemoveAporteModalOpen = false;
+  isConfirmDeleteMetaOpen = false;
   selectedMetaForAporte: MetaResponse | null = null;
+  selectedMetaForRemoveAporte: MetaResponse | null = null;
+  metaToDelete: MetaResponse | null = null;
 
   loadingMetas = false;
   loadErrorMessage = '';
   creatingMeta = false;
   addingAporte = false;
+  removingAporte = false;
+  deletingMeta = false;
 
   private readonly destroyRef = inject(DestroyRef);
   private lastUserId: string | null = null;
@@ -203,6 +213,90 @@ export class MetasComponent implements OnInit {
     });
   }
 
+  openRemoveAporteModal(meta: MetaResponse): void {
+    // Só abre se houver aportes para remover
+    if (meta.aportes && meta.aportes.length > 0) {
+      this.selectedMetaForRemoveAporte = meta;
+      this.isRemoveAporteModalOpen = true;
+    }
+  }
+
+  handleRemoveAporteModalClose(): void {
+    this.isRemoveAporteModalOpen = false;
+    this.selectedMetaForRemoveAporte = null;
+  }
+
+  handleRemoveAporteModalConfirm(request: AporteRequest): void {
+    if (this.removingAporte) return;
+
+    this.removingAporte = true;
+    this.loadingService.show('Removendo aporte...');
+
+    this.metaService.removerAporte(request).subscribe({
+      next: () => {
+        this.loadingService.hide();
+        this.alertService.showSuccess('Aporte removido com sucesso!');
+        this.removingAporte = false;
+        this.isRemoveAporteModalOpen = false;
+        this.selectedMetaForRemoveAporte = null;
+        this.loadMetas();
+      },
+      error: (err) => {
+        console.error('Erro ao remover aporte', err);
+        this.loadingService.hide();
+        this.removingAporte = false;
+        const mensagem =
+          err?.error?.message || err?.message || 'Erro ao remover aporte.';
+        this.alertService.showError(mensagem);
+      },
+    });
+  }
+
+  handleRemoveAporteModalDeleteMeta(metaId: string): void {
+    // Fecha o modal de remover aporte
+    this.isRemoveAporteModalOpen = false;
+    this.selectedMetaForRemoveAporte = null;
+
+    // Encontra a meta para exibir no modal de confirmação
+    const meta = this.metas.find((m) => m.id === metaId);
+    if (meta) {
+      this.metaToDelete = meta;
+      this.isConfirmDeleteMetaOpen = true;
+    }
+  }
+
+  handleConfirmDeleteMetaClose(): void {
+    if (this.deletingMeta) return;
+    this.isConfirmDeleteMetaOpen = false;
+    this.metaToDelete = null;
+  }
+
+  confirmDeleteMeta(): void {
+    if (!this.metaToDelete || this.deletingMeta) return;
+
+    this.deletingMeta = true;
+    this.loadingService.show('Excluindo meta...');
+
+    this.metaService.excluirMeta(this.metaToDelete.id).subscribe({
+      next: () => {
+        this.loadingService.hide();
+        this.alertService.showSuccess('Meta excluída com sucesso!');
+        this.deletingMeta = false;
+        this.isConfirmDeleteMetaOpen = false;
+        this.metaToDelete = null;
+        this.loadMetas();
+      },
+      error: (err) => {
+        console.error('Erro ao excluir meta', err);
+        this.loadingService.hide();
+        this.deletingMeta = false;
+        const mensagem =
+          err?.error?.message || err?.message || 'Erro ao excluir meta.';
+        this.alertService.showError(mensagem);
+      },
+    });
+  }
+
   private loadMetas(): void {
     this.loadingMetas = true;
     this.loadErrorMessage = '';
@@ -255,5 +349,12 @@ export class MetasComponent implements OnInit {
       month: 'short',
       year: 'numeric',
     });
+  }
+
+  getDeleteMetaDescription(): string {
+    if (this.metaToDelete) {
+      return `Tem certeza que deseja excluir a meta "${this.metaToDelete.nome}"? Esta ação não poderá ser desfeita.`;
+    }
+    return 'Tem certeza que deseja excluir esta meta? Esta ação não poderá ser desfeita.';
   }
 }

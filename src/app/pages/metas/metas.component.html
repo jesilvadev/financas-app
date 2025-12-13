@@ -147,18 +147,30 @@
               </div>
 
               <!-- Aporte -->
-              <div class="flex justify-end mt-3">
-                <!-- Quando não concluída: botão de aporte -->
-                <button
-                  *ngIf="!meta.concluida; else metaConcluida"
-                  type="button"
-                  (click)="openAporteModal(meta)"
-                  class="px-4 py-2 rounded-lg bg-primary text-white text-xs font-semibold active:scale-95 transition"
-                >
-                  Fazer aporte
-                </button>
+              <div class="flex items-center justify-between mt-3">
+                <!-- Quando não concluída: ícone de remover aporte e botão de aporte -->
+                <ng-container *ngIf="!meta.concluida; else metaConcluida">
+                  <button
+                    *ngIf="meta.aportes && meta.aportes.length > 0"
+                    type="button"
+                    (click)="openRemoveAporteModal(meta)"
+                    class="p-2.5 rounded-lg text-error hover:bg-error/10 active:scale-95 transition "
+                    aria-label="Remover aporte"
+                  >
+                    <mat-icon class="text-xl">delete</mat-icon>
+                  </button>
+                  <div *ngIf="!(meta.aportes && meta.aportes.length > 0)"></div>
+                  <button
+                    type="button"
+                    (click)="openAporteModal(meta)"
+                    class="px-4 py-2 rounded-lg bg-primary text-white text-xs font-semibold active:scale-95 transition"
+                  >
+                    Fazer aporte
+                  </button>
+                </ng-container>
                 <!-- Quando concluída: selo ocupando o lugar do botão -->
                 <ng-template #metaConcluida>
+                  <div></div>
                   <div
                     class="px-4 py-2 rounded-lg bg-success/10 text-success text-xs font-semibold"
                   >
@@ -224,4 +236,24 @@
     (close)="handleAporteModalClose()"
     (confirm)="handleAporteModalConfirm($event)"
   />
+
+  <app-remove-aporte-modal
+    [open]="isRemoveAporteModalOpen"
+    [meta]="selectedMetaForRemoveAporte"
+    (close)="handleRemoveAporteModalClose()"
+    (confirm)="handleRemoveAporteModalConfirm($event)"
+    (deleteMeta)="handleRemoveAporteModalDeleteMeta($event)"
+  />
+
+  <!-- Modal de confirmação de exclusão de meta -->
+  <app-confirm-modal
+    [open]="isConfirmDeleteMetaOpen"
+    [title]="'Excluir meta'"
+    [description]="getDeleteMetaDescription()"
+    [confirmLabel]="'Excluir'"
+    [cancelLabel]="'Cancelar'"
+    [confirming]="deletingMeta"
+    (close)="handleConfirmDeleteMetaClose()"
+    (confirm)="confirmDeleteMeta()"
+  ></app-confirm-modal>
 </div>
