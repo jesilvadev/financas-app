@@ -174,7 +174,16 @@ export class HistoryComponent implements OnInit {
 
   get pagedTransacoes(): TransacaoComSaldoInicial[] {
     const start = (this.currentPage - 1) * this.pageSize;
-    return this.filteredTransacoes.slice(start, start + this.pageSize);
+    const page = this.filteredTransacoes.slice(start, start + this.pageSize);
+
+    // Garante que o saldo inicial, quando presente nessa página, apareça sempre como primeiro card
+    const saldoIndex = page.findIndex((t) => t.isSaldoInicial);
+    if (saldoIndex > 0) {
+      const [saldo] = page.splice(saldoIndex, 1);
+      page.unshift(saldo);
+    }
+
+    return page;
   }
 
   get placeholders(): number[] {

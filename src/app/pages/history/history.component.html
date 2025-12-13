@@ -1,25 +1,18 @@
-<div
-  class="min-h-full w-full px-4 py-4 flex flex-col items-center font-inter"
->
+<div class="min-h-full w-full px-4 py-4 flex flex-col items-center font-inter">
   <div class="w-full max-w-md space-y-3">
-    <!-- Cabeçalho + filtros rápidos -->
+    <!-- Cabeçalho + filtros rápidos (padrão metas) -->
     <header
-      class="flex items-center justify-between px-2 gap-3"
+      class="flex items-center justify-end gap-3"
       aria-label="Cabeçalho do histórico e filtros rápidos"
     >
-      <div class="flex-1 min-w-0">
-        <h1 class="text-xl font-semibold text-primary truncate">Histórico</h1>
-      </div>
-      <div
-        class="inline-flex items-center gap-1 bg-secondary rounded-full px-1 py-1"
-      >
+      <div class="flex items-center gap-2 bg-gray-50 rounded-full px-1 py-1">
         <button
           type="button"
-          class="px-3 py-1 rounded-full text-[10px] font-semibold border transition active:scale-95"
+          class="px-3 py-1 rounded-full text-[11px] font-medium border transition-colors duration-150 active:scale-95"
           [ngClass]="
             filtroTipo === 'TODOS'
-              ? 'bg-[#6b54ec] text-white border-[#6b54ec]'
-              : 'bg-white text-[#6b54ec] border-[#6b54ec]/20'
+              ? 'bg-primary text-white border-primary'
+              : 'bg-white text-description border-transparent'
           "
           (click)="filtroTipo = 'TODOS'; resetPage()"
         >
@@ -27,11 +20,11 @@
         </button>
         <button
           type="button"
-          class="px-3 py-1 rounded-full text-[10px] font-semibold border transition active:scale-95"
+          class="px-3 py-1 rounded-full text-[11px] font-medium border transition-colors duration-150 active:scale-95"
           [ngClass]="
             filtroTipo === 'RECEITA'
-              ? 'bg-[#27BE61] text-white border-[#27BE61]'
-              : 'bg-white text-[#27BE61]'
+              ? 'bg-[#27BE61]/10 text-[#27BE61] border-[#27BE61]/40'
+              : 'bg-white text-description border-transparent'
           "
           (click)="filtroTipo = 'RECEITA'; resetPage()"
         >
@@ -39,11 +32,11 @@
         </button>
         <button
           type="button"
-          class="px-3 py-1 rounded-full text-[10px] font-semibold border transition active:scale-95"
+          class="px-3 py-1 rounded-full text-[11px] font-medium border transition-colors duration-150 active:scale-95"
           [ngClass]="
             filtroTipo === 'DESPESA'
-              ? 'bg-[#FF4B4B] text-white border-[#FF4B4B]'
-              : 'bg-white text-[#FF4B4B]'
+              ? 'bg-[#FF4B4B]/10 text-[#FF4B4B] border-[#FF4B4B]/40'
+              : 'bg-white text-description border-transparent'
           "
           (click)="filtroTipo = 'DESPESA'; resetPage()"
         >
@@ -76,7 +69,7 @@
               class="rounded-xl px-4 py-3 flex items-center h-20 justify-between active:scale-[0.98] transition border"
               [ngClass]="
                 t.isSaldoInicial
-                  ? 'bg-secondary border-primary'
+                  ? 'bg-secondary/50 border-primary'
                   : 'bg-white border-black/5'
               "
             >
