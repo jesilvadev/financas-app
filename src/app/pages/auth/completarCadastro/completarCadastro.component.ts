@@ -217,11 +217,10 @@ export class CompletarCadastroComponent {
             usuarioId: this.usuarioId,
             payload,
           });
-          const mensagem =
-            error?.error?.message ||
-            error?.message ||
-            'Erro ao concluir cadastro';
-          this.alertService.showError(mensagem);
+          // Mensagem genérica para o usuário, sem expor detalhes técnicos
+          this.alertService.showError(
+            'Erro ao finalizar cadastro, tente novamente mais tarde.'
+          );
         },
       });
   }

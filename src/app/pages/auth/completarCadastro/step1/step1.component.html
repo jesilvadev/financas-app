@@ -15,11 +15,8 @@
         inputMode="decimal"
         autocomplete="off"
         [(ngModel)]="saldoAtual"
-        [useMask]="true"
-        mask="separator.2"
-        thousandSeparator="."
-        decimalMarker=","
-        [dropSpecialCharacters]="false"
+        [useMask]="false"
+        [moneyMode]="true"
         prefix="R$"
         [error]="saldoError"
       />

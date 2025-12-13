@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { UiInputComponent } from '../../../../shared/components/ui-input/ui-input.component';
 import { ButtonPrimaryComponent } from '../../../../shared/components/button-primary/button-primary.component';
 import { MatIconModule } from '@angular/material/icon';
+import { AlertService } from '../../../../services/alert.service';
 
 import { Categoria } from '../../../../models/categoria.model';
 
@@ -55,6 +56,8 @@ export class Step3Component {
     return this.categorias.filter((categoria) => categoria.tipo === 'DESPESA');
   }
 
+  constructor(private readonly alertService: AlertService) {}
+
   ngOnChanges(): void {
     if (
       this.presetExpenses &&
@@ -71,12 +74,35 @@ export class Step3Component {
 
   addExpense(): void {
     this.valueError = null;
-    if (!this.isCurrentExpenseValid()) {
-      this.valueError = 'Informe valor, categoria e dia do gasto.';
+
+    const expense = this.currentExpense;
+    const parsed = this.parseCurrencyBr(expense.value);
+    const hasValue = parsed !== null && parsed > 0;
+    const hasCategoria = !!expense.categoriaId;
+    const hasDay = !!expense.day;
+
+    // Valor inválido -> mensagem abaixo do input
+    if (!hasValue) {
+      this.valueError = 'Informe um valor válido para o gasto.';
       return;
     }
-    const parsed = this.parseCurrencyBr(this.currentExpense.value);
-    if (parsed === null || parsed <= 0) return;
+
+    // Categoria / dia ausentes -> mensagens via DisplayAlert
+    if (!hasCategoria && !hasDay) {
+      this.alertService.showError('Informe a categoria e o dia do gasto.');
+      return;
+    }
+
+    if (!hasCategoria) {
+      this.alertService.showError('Informe a categoria do gasto.');
+      return;
+    }
+
+    if (!hasDay) {
+      this.alertService.showError('Informe o dia do gasto.');
+      return;
+    }
+
     this.finalizedExpenses.push({
       value: parsed,
       categoriaId: this.currentExpense.categoriaId,
@@ -86,20 +112,53 @@ export class Step3Component {
   }
 
   deleteFinalized(index: number): void {
-    this.finalizedExpenses.splice(index, 1);
+    this.finalizedExpenses = this.finalizedExpenses.filter(
+      (_expense, idx) => idx !== index
+    );
   }
 
   onContinue(): void {
     this.valueError = null;
 
     const base: ExpenseForm[] = [...this.finalizedExpenses];
-    if (this.isCurrentExpenseValid()) {
-      const parsed = this.parseCurrencyBr(this.currentExpense.value);
+
+    const expense = this.currentExpense;
+    const hasAnyField =
+      (expense.value !== null && `${expense.value}`.trim() !== '') ||
+      !!expense.categoriaId ||
+      !!expense.day;
+
+    if (hasAnyField) {
+      const parsed = this.parseCurrencyBr(expense.value);
+      const hasValue = parsed !== null && parsed > 0;
+      const hasCategoria = !!expense.categoriaId;
+      const hasDay = !!expense.day;
+
+      if (!hasValue) {
+        this.valueError = 'Informe um valor válido para o gasto.';
+        return;
+      }
+
+      if (!hasCategoria && !hasDay) {
+        this.alertService.showError('Informe a categoria e o dia do gasto.');
+        return;
+      }
+
+      if (!hasCategoria) {
+        this.alertService.showError('Informe a categoria do gasto.');
+        return;
+      }
+
+      if (!hasDay) {
+        this.alertService.showError('Informe o dia do gasto.');
+        return;
+      }
+
       if (parsed !== null && parsed > 0) {
         base.push({
           value: parsed,
-          categoriaId: this.currentExpense.categoriaId,
-          day: this.currentExpense.day,
+          categoriaId: expense.categoriaId,
+          day: expense.day,
         });
       }
     }
@@ -117,7 +176,7 @@ export class Step3Component {
     if (validExpenses.length > 0) {
       this.next.emit({ expenses: validExpenses });
     } else {
-      this.valueError = 'Informe pelo menos um gasto válido.';
+      this.alertService.showError('Informe pelo menos um gasto válido.');
     }
   }
 
@@ -147,10 +206,6 @@ export class Step3Component {
   selectDay(day: string): void {
     this.currentExpense.day = day;
     this.closeDayModal();
-  }
-
-  isDaySelected(day: string): boolean {
-    return this.currentExpense.day === day;
   }
 
   isCurrentExpenseValid(): boolean {

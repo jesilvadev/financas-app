@@ -1,4 +1,10 @@
-import { Component, EventEmitter, Input, OnChanges, Output } from '@angular/core';
+import {
+  Component,
+  EventEmitter,
+  Input,
+  OnChanges,
+  Output,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ButtonPrimaryComponent } from '../../../../shared/components/button-primary/button-primary.component';
@@ -35,7 +41,7 @@ export class Step1Component implements OnChanges {
     const parsed = this.parseCurrencyBr(this.saldoAtual);
 
     if (parsed === null || parsed < 0) {
-      this.saldoError = 'Informe um saldo válido (zero ou maior).';
+      this.saldoError = 'Informe um saldo válido.';
       return;
     }
 
@@ -67,7 +73,11 @@ export class Step1Component implements OnChanges {
       return Number.isFinite(formatted) ? formatted : null;
     const str = String(formatted).trim();
     if (!str) return null;
-    const normalized = str.replace(/\./g, '').replace(',', '.').replace('R$', '').trim();
+    const normalized = str
+      .replace(/\./g, '')
+      .replace(',', '.')
+      .replace('R$', '')
+      .trim();
     const num = Number(normalized);
     return Number.isFinite(num) ? num : null;
   }

@@ -32,6 +32,13 @@ export class Step4Component {
   onFinish(): void {
     this.dayError = null;
 
+    // Nenhum dia informado
+    if (!this.startDay) {
+      this.dayError = 'Informe o dia do mês.';
+      return;
+    }
+
+    // Dia inválido
     if (!this.isValidDay) {
       this.dayError = 'Informe um dia entre 1 e 31.';
       return;
@@ -49,7 +56,7 @@ export class Step4Component {
   handleDayChange(value: string): void {
     this.dayError = null;
     // Mantém apenas dígitos
-    const onlyDigits = (value || '').replace(/\\D+/g, '');
+    const onlyDigits = (value || '').replace(/\D+/g, '');
     // Limita a 2 dígitos
     const trimmed = onlyDigits.slice(0, 2);
     // Converte e limita entre 1 e 31
@@ -59,7 +66,8 @@ export class Step4Component {
       return;
     }
     const clamped = Math.min(Math.max(num, 1), 31);
-    this.startDay = clamped.toString().padStart(2, '0');
+    // Usa apenas o número (sem zero à esquerda)
+    this.startDay = clamped.toString();
   }
 
   ngOnChanges(): void {

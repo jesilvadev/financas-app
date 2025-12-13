@@ -39,37 +39,56 @@
         [(ngModel)]="currentIncome.value"
         name="value-current"
         placeholder="0,00"
-        [useMask]="true"
-        mask="separator.2"
-        thousandSeparator="."
-        decimalMarker=","
-        [dropSpecialCharacters]="false"
+        [useMask]="false"
+        [moneyMode]="true"
         prefix="R$"
         inputMode="decimal"
         [error]="valueError"
       />
     </div>
 
-    <div class="flex flex-row justify-around gap-4 flex-wrap">
+    <div class="flex flex-row justify-between gap-4 flex-wrap">
       <div class="flex flex-col gap-2">
         <div class="relative">
           <select
             id="category-current"
             [(ngModel)]="currentIncome.categoriaId"
             name="category-current"
-            class="border-0 rounded-lg px-4 py-3 pr-10 bg-primary outline-none font-bold text-white appearance-none w-full"
+            class="border-0 rounded-lg px-4 py-3 pr-10 text-sm outline-none font-bold text-transparent appearance-none w-full"
+            [ngClass]="{
+              'bg-primary': !currentIncome.categoriaId,
+              'bg-white': !!currentIncome.categoriaId
+            }"
           >
-            <option class="bg-white text-primary" value="">Categoria</option>
             <option
-              class="bg-white text-primary"
+              class="bg-white text-black"
               *ngFor="let cat of categoriasReceita"
               [value]="cat.id"
             >
               {{ cat.nome }}
             </option>
           </select>
+
+          <span
+            class="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-sm font-medium"
+            [ngClass]="{
+              'text-black': !!currentIncome.categoriaId,
+              'text-white/80': !currentIncome.categoriaId
+            }"
+          >
+            {{
+              currentIncome.categoriaId
+                ? getCategoriaNome(currentIncome.categoriaId)
+                : "Categoria"
+            }}
+          </span>
+
           <mat-icon
-            class="pointer-events-none !text-white absolute right-3 top-1/2 -translate-y-1/2 select-none"
+            class="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 select-none"
+            [ngClass]="{
+              '!text-white': !currentIncome.categoriaId,
+              '!text-primary': !!currentIncome.categoriaId
+            }"
             >expand_more</mat-icon
           >
         </div>
@@ -87,11 +106,17 @@
           id="day-current"
           name="day-current"
           (click)="openDayModal()"
-          class="border-0 rounded-md px-6 py-3 bg-primary outline-none font-bold text-white flex items-center gap-1"
+          class="border-0 rounded-md px-6 py-3 text-sm outline-none font-medium flex items-center gap-1"
+          [ngClass]="{
+            'bg-primary text-white': !currentIncome.day,
+            'bg-white text-black': !!currentIncome.day
+          }"
           aria-haspopup="dialog"
           [attr.aria-expanded]="showDayModal ? 'true' : 'false'"
         >
-          {{ currentIncome.day ? "Dia " + currentIncome.day : "Dia" }}
+          <span class="mr-1">
+            {{ currentIncome.day ? "Dia " + currentIncome.day : "Dia" }}
+          </span>
         </button>
       </div>
     </div>
@@ -106,7 +131,7 @@
           class="w-full max-w-sm mx-2 rounded-lg bg-white px-4 py-8 shadow-lg"
         >
           <div class="flex items-center justify-between mb-3">
-            <h2 class="text-lg font-bold text-primary">Selecione o dia</h2>
+            <h2 class="text-lg font-semibold text-black">Selecione o dia</h2>
             <button
               type="button"
               (click)="closeDayModal()"
@@ -139,15 +164,12 @@
     <button
       type="button"
       (click)="addIncome()"
-      class="border-0 rounded px-4 py-2 text-lg flex gap-2 items-center justify-center text-primary font-bold"
+      class="border-0 rounded px-4 py-2 flex gap-2 items-center justify-center text-primary font-bold disabled:opacity-50 disabled:pointer-events-none"
+      [disabled]="!isCurrentIncomeValid()"
     >
-      <img src="/assets/adicionar.png" alt="Adicionar" /> Adicionar outra renda
+      <mat-icon>add_circle</mat-icon> Adicionar outra renda
     </button>
 
-    <app-button-primary
-      type="submit"
-      label="Continuar"
-      [disabled]="false"
-    />
+    <app-button-primary type="submit" label="Continuar" [disabled]="false" />
   </form>
 </section>

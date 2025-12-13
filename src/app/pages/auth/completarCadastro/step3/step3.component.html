@@ -1,7 +1,8 @@
 <section class="flex flex-col gap-6">
   <header class="flex flex-col gap-3">
     <h1 class="text-4xl font-bold text-primary">
-      Informe seus <span class="text-error">gastos</span> mensais fixos
+      Informe seus <br />
+      <span class="text-error">gastos</span> mensais fixos
     </h1>
 
     <ul *ngIf="finalizedExpenses.length" class="w-full space-y-2">
@@ -37,37 +38,56 @@
         [(ngModel)]="currentExpense.value"
         name="value-current-expense"
         placeholder="0,00"
-        [useMask]="true"
-        mask="separator.2"
-        thousandSeparator="."
-        decimalMarker=","
-        [dropSpecialCharacters]="false"
+        [useMask]="false"
+        [moneyMode]="true"
         prefix="R$"
         inputMode="decimal"
         [error]="valueError"
       />
     </div>
 
-    <div class="flex flex-row justify-around gap-4 flex-wrap">
+    <div class="flex flex-row justify-between gap-4 flex-wrap">
       <div class="flex flex-col gap-2">
         <div class="relative">
           <select
             id="category-current-expense"
             [(ngModel)]="currentExpense.categoriaId"
             name="category-current-expense"
-            class="border-0 rounded-lg px-4 py-3 pr-10 bg-primary outline-none font-bold text-white appearance-none w-full"
+            class="border-0 rounded-lg px-4 py-3 pr-10 text-sm outline-none font-bold text-transparent appearance-none w-full"
+            [ngClass]="{
+              'bg-primary': !currentExpense.categoriaId,
+              'bg-white': !!currentExpense.categoriaId
+            }"
           >
-            <option class="bg-white text-primary" value="">Categoria</option>
             <option
-              class="bg-white text-primary"
+              class="bg-white text-black"
               *ngFor="let cat of categoriasDespesa"
               [value]="cat.id"
             >
               {{ cat.nome }}
             </option>
           </select>
+
+          <span
+            class="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-sm font-medium"
+            [ngClass]="{
+              'text-black': !!currentExpense.categoriaId,
+              'text-white/80': !currentExpense.categoriaId
+            }"
+          >
+            {{
+              currentExpense.categoriaId
+                ? getCategoriaNome(currentExpense.categoriaId)
+                : "Categoria"
+            }}
+          </span>
+
           <mat-icon
-            class="pointer-events-none !text-white absolute right-3 top-1/2 -translate-y-1/2 select-none"
+            class="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 select-none"
+            [ngClass]="{
+              '!text-white': !currentExpense.categoriaId,
+              '!text-primary': !!currentExpense.categoriaId
+            }"
             >expand_more</mat-icon
           >
         </div>
@@ -85,11 +105,17 @@
           id="day-current-expense"
           name="day-current-expense"
           (click)="openDayModal()"
-          class="border-0 rounded-md px-6 py-3 bg-primary outline-none font-bold text-white flex items-center gap-1"
+          class="border-0 rounded-md px-6 py-3 text-sm outline-none font-medium flex items-center gap-1"
+          [ngClass]="{
+            'bg-primary text-white': !currentExpense.day,
+            'bg-white text-black': !!currentExpense.day
+          }"
           aria-haspopup="dialog"
           [attr.aria-expanded]="showDayModal ? 'true' : 'false'"
         >
-          {{ currentExpense.day ? "Dia " + currentExpense.day : "Dia" }}
+          <span class="mr-1">
+            {{ currentExpense.day ? "Dia " + currentExpense.day : "Dia" }}
+          </span>
         </button>
       </div>
     </div>
@@ -104,7 +130,7 @@
           class="w-full max-w-sm mx-2 rounded-lg bg-white px-4 py-8 shadow-lg"
         >
           <div class="flex items-center justify-between mb-3">
-            <h2 class="text-lg font-bold text-primary">Selecione o dia</h2>
+            <h2 class="text-lg font-semibold text-black">Selecione o dia</h2>
             <button
               type="button"
               (click)="closeDayModal()"
@@ -121,9 +147,10 @@
               (click)="selectDay(day)"
               class="rounded-md px-2 py-2 text-sm font-bold border"
               [ngClass]="{
-                'bg-primary text-white border-primary': isDaySelected(day),
+                'bg-primary text-white border-primary':
+                  day === currentExpense.day,
                 'bg-white text-primary border-primary hover:bg-primary hover:text-white':
-                  !isDaySelected(day)
+                  day !== currentExpense.day
               }"
             >
               {{ day }}
@@ -136,9 +163,10 @@
     <button
       type="button"
       (click)="addExpense()"
-      class="border-0 rounded px-4 py-2 text-lg flex gap-2 items-center justify-center text-primary font-bold"
+      class="border-0 rounded px-4 py-2 flex gap-2 items-center justify-center text-primary font-bold disabled:opacity-50 disabled:pointer-events-none"
+      [disabled]="!isCurrentExpenseValid()"
     >
-      <img src="/assets/adicionar.png" alt="Adicionar" /> Adicionar outro gasto
+      <mat-icon>add_circle</mat-icon> Adicionar outro gasto
     </button>
 
     <app-button-primary
