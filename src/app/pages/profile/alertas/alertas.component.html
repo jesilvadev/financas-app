@@ -1,38 +1,43 @@
-<div class="p-6 font-inter">
-  <!-- Header com voltar -->
-  <div class="flex items-center justify-center mt-6 mb-8 relative">
+<div class="pb-14 font-inter h-full flex flex-col">
+  <!-- Header fixo (padrão recorrentes/notificações) -->
+  <header
+    class="flex items-center justify-center pb-2 py-12 sticky top-0 z-10 bg-primary"
+    aria-label="Cabeçalho de alertas"
+  >
     <button
       type="button"
-      class="absolute left-0 px-1 py-1 rounded-full transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
+      class="absolute left-0 px-3 py-1 rounded-full transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
       routerLink="/profile"
       aria-label="Voltar"
     >
       <svg
         xmlns="http://www.w3.org/2000/svg"
-        width="28"
-        height="28"
+        width="24"
+        height="24"
         viewBox="0 0 24 24"
-        fill="#6B54EC"
+        fill="#ffffff"
       >
         <path d="M15.41 7.41 14 6l-6 6 6 6 1.41-1.41L10.83 12z" />
       </svg>
     </button>
-    <h1 class="text-center font-semibold text-primary">Alertas</h1>
-  </div>
+    <h1 class="text-lg font-semibold text-white text-center truncate">
+      Alertas
+    </h1>
+  </header>
 
   <!-- Descrição -->
-  <p class="text-sm text-description mb-6 px-2">
-    Escolha quais tipos de alertas você deseja receber para manter suas
-    finanças organizadas.
+  <p class="text-sm text-description mb-2 p-6">
+    Escolha quais tipos de alertas você deseja receber para manter suas finanças
+    organizadas.
   </p>
 
   <!-- Loading state -->
-  <div *ngIf="loading" class="text-center py-12">
+  <div *ngIf="loading" class="text-center py-12 px-6">
     <div class="text-sm text-description">Carregando configurações...</div>
   </div>
 
   <!-- Lista de alertas -->
-  <div *ngIf="!loading" class="space-y-3">
+  <div *ngIf="!loading" class="space-y-3 px-4">
     <div
       *ngFor="let tipoAlerta of tiposAlertas"
       class="rounded-xl bg-white/95 px-5 py-4 shadow-sm border border-black/5"
