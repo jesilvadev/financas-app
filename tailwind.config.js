@@ -11,6 +11,7 @@ module.exports = {
         // Paleta principal
         primary: "#6B54EC",
         secondary: "#BFCBFF",
+        "secondary-dark": "#9AA5FF",
 
         // Tons neutros e utilitários
         layer: "#FFFFFF",

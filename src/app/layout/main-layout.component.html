@@ -49,9 +49,13 @@
           <span
             *ngIf="unreadNotificationsCount > 0"
             class="absolute -top-0.5 -right-0.5 min-w-[18px] h-[18px] flex items-center justify-center px-1 rounded-full bg-red-500 text-white text-[10px] font-bold border-2 border-white"
-            [attr.aria-label]="unreadNotificationsCount + ' notificações não vistas'"
+            [attr.aria-label]="
+              unreadNotificationsCount + ' notificações não vistas'
+            "
           >
-            {{ unreadNotificationsCount > 99 ? '99+' : unreadNotificationsCount }}
+            {{
+              unreadNotificationsCount > 99 ? "99+" : unreadNotificationsCount
+            }}
           </span>
         </button>
       </div>
@@ -68,7 +72,7 @@
 
   <!-- MAIN (card flutuando) -->
   <main
-    class="flex-1 bg-secondary relative z-10"
+    class="flex-1 bg-white relative z-10"
     [ngClass]="{
       'rounded-t-3xl': showHeader,
       '-mt-10': showHeader,
@@ -90,7 +94,7 @@
   >
     <div class="relative mx-auto max-w-md">
       <div
-        class="h-20 bg-layer pt-4 pb-10 backdrop-blur flex items-center justify-around border border-black/5"
+        class="h-24 bg-secondary pt-4 pb-12 backdrop-blur flex items-center justify-around border border-black/5"
       >
         <!-- Home -->
         <a
@@ -100,7 +104,7 @@
           [routerLinkActiveOptions]="{ exact: true }"
           class="flex flex-col items-center gap-2 transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/30 rounded-lg px-3 py-2"
           [class.text-primary]="rlaHome.isActive"
-          [class.text-disable]="!rlaHome.isActive"
+          [class.text-secondary-dark]="!rlaHome.isActive"
           aria-current="page"
           aria-label="Início"
         >
@@ -125,7 +129,7 @@
           routerLinkActive
           class="flex flex-col items-center gap-2 transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/30 rounded-lg px-3 py-2"
           [class.text-primary]="rlaMetas.isActive"
-          [class.text-disable]="!rlaMetas.isActive"
+          [class.text-secondary-dark]="!rlaMetas.isActive"
           aria-label="Gráficos"
         >
           <svg
@@ -152,7 +156,7 @@
           routerLinkActive
           class="flex flex-col items-center gap-2 transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/30 rounded-lg px-3 py-2"
           [class.text-primary]="rlaHistory.isActive"
-          [class.text-disable]="!rlaHistory.isActive"
+          [class.text-secondary-dark]="!rlaHistory.isActive"
           aria-label="Histórico"
         >
           <svg
@@ -176,7 +180,7 @@
           routerLinkActive
           class="flex flex-col items-center gap-2 transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/30 rounded-lg px-3 py-2"
           [class.text-primary]="rlaProfile.isActive"
-          [class.text-disable]="!rlaProfile.isActive"
+          [class.text-secondary-dark]="!rlaProfile.isActive"
           aria-label="Perfil"
         >
           <svg
@@ -196,13 +200,13 @@
 
       <!-- FAB central -->
       <div
-        class="absolute -top-6 left-1/2 -translate-x-1/2 flex items-center justify-center"
+        class="absolute -top-8 left-1/2 -translate-x-1/2 flex items-center justify-center"
       >
         <div
-          class="relative h-14 w-14 flex items-center justify-center rounded-full bg-secondary"
+          class="relative h-16 w-16 flex items-center justify-center rounded-full bg-white"
         >
           <span
-            class="pointer-events-none absolute inset-0 rounded-full ring-4 ring-secondary"
+            class="pointer-events-none absolute inset-0 ring-4 ring-white rounded-full"
           ></span>
           <button
             aria-label="Adicionar"
