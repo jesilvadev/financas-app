@@ -45,6 +45,7 @@ export class Step2Component {
   finalizedIncomes: IncomeForm[] = [];
   currentIncome: IncomeForm = { value: null, categoriaId: '', day: '' };
   showDayModal = false;
+  valueError: string | null = null;
 
   days: string[] = Array.from({ length: 31 }, (_, i) =>
     (i + 1).toString().padStart(2, '0')
@@ -69,7 +70,11 @@ export class Step2Component {
   }
 
   addIncome(): void {
-    if (!this.isCurrentIncomeValid()) return;
+    this.valueError = null;
+    if (!this.isCurrentIncomeValid()) {
+      this.valueError = 'Informe valor, categoria e dia da renda.';
+      return;
+    }
     const parsed = this.parseCurrencyBr(this.currentIncome.value);
     if (parsed === null || parsed <= 0) return;
     this.finalizedIncomes.push({
@@ -85,6 +90,8 @@ export class Step2Component {
   }
 
   onContinue(): void {
+    this.valueError = null;
+
     const base: IncomeForm[] = [...this.finalizedIncomes];
     if (this.isCurrentIncomeValid()) {
       const parsed = this.parseCurrencyBr(this.currentIncome.value);
@@ -109,6 +116,8 @@ export class Step2Component {
 
     if (validIncomes.length > 0) {
       this.next.emit({ incomes: validIncomes });
+    } else {
+      this.valueError = 'Informe pelo menos uma renda válida.';
     }
   }
 

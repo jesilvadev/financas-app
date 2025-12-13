@@ -46,6 +46,7 @@
         [dropSpecialCharacters]="false"
         prefix="R$"
         inputMode="decimal"
+        [error]="valueError"
       />
     </div>
 
@@ -138,7 +139,6 @@
     <button
       type="button"
       (click)="addIncome()"
-      [disabled]="!isCurrentIncomeValid()"
       class="border-0 rounded px-4 py-2 text-lg flex gap-2 items-center justify-center text-primary font-bold"
     >
       <img src="/assets/adicionar.png" alt="Adicionar" /> Adicionar outra renda
@@ -147,7 +147,7 @@
     <app-button-primary
       type="submit"
       label="Continuar"
-      [disabled]="!isFormValid()"
+      [disabled]="false"
     />
   </form>
 </section>

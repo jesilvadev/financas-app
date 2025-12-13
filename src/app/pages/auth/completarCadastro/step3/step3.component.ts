@@ -45,6 +45,7 @@ export class Step3Component {
   finalizedExpenses: ExpenseForm[] = [];
   currentExpense: ExpenseForm = { value: null, categoriaId: '', day: '' };
   showDayModal = false;
+  valueError: string | null = null;
 
   days: string[] = Array.from({ length: 31 }, (_, i) =>
     (i + 1).toString().padStart(2, '0')
@@ -69,7 +70,11 @@ export class Step3Component {
   }
 
   addExpense(): void {
-    if (!this.isCurrentExpenseValid()) return;
+    this.valueError = null;
+    if (!this.isCurrentExpenseValid()) {
+      this.valueError = 'Informe valor, categoria e dia do gasto.';
+      return;
+    }
     const parsed = this.parseCurrencyBr(this.currentExpense.value);
     if (parsed === null || parsed <= 0) return;
     this.finalizedExpenses.push({
@@ -85,6 +90,8 @@ export class Step3Component {
   }
 
   onContinue(): void {
+    this.valueError = null;
+
     const base: ExpenseForm[] = [...this.finalizedExpenses];
     if (this.isCurrentExpenseValid()) {
       const parsed = this.parseCurrencyBr(this.currentExpense.value);
@@ -109,6 +116,8 @@ export class Step3Component {
 
     if (validExpenses.length > 0) {
       this.next.emit({ expenses: validExpenses });
+    } else {
+      this.valueError = 'Informe pelo menos um gasto válido.';
     }
   }
 

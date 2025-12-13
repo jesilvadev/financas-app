@@ -63,30 +63,41 @@ export class SigninComponent {
     }
 
     this.isLoading = true;
+    const startTime = Date.now();
 
     const payload: AuthLoginRequest = {
       email: trimmedEmail,
       senha: this.password,
     };
 
-    this.authService
-      .login(payload)
-      .pipe(finalize(() => (this.isLoading = false)))
-      .subscribe({
-        next: (response: AuthResponse) => {
-          console.log('Login bem-sucedido:', response.usuario);
+    this.authService.login(payload).subscribe({
+      next: (response: AuthResponse) => {
+        console.log('Login bem-sucedido:', response.usuario);
+
+        const elapsed = Date.now() - startTime;
+        const remaining = 1000 - elapsed;
+
+        if (remaining > 0) {
+          setTimeout(() => {
+            this.isLoading = false;
+            this.router.navigate(['/']);
+          }, remaining);
+        } else {
+          this.isLoading = false;
           this.router.navigate(['/']);
-        },
-        error: (error) => {
-          console.error('Erro no login:', error);
-          // Tenta pegar a mensagem do corpo da resposta da API
-          const apiMessage = error?.error?.message;
-          // Se não tiver, tenta a mensagem padrão do erro HTTP
-          const httpMessage = error?.message;
-          // Fallback para mensagem genérica
-          const mensagem = apiMessage || httpMessage || 'Erro ao fazer login';
-          this.alertService.showError(mensagem);
-        },
-      });
+        }
+      },
+      error: (error) => {
+        console.error('Erro no login:', error);
+        this.isLoading = false;
+        // Tenta pegar a mensagem do corpo da resposta da API
+        const apiMessage = error?.error?.message;
+        // Se não tiver, tenta a mensagem padrão do erro HTTP
+        const httpMessage = error?.message;
+        // Fallback para mensagem genérica
+        const mensagem = apiMessage || httpMessage || 'Erro ao fazer login';
+        this.alertService.showError(mensagem);
+      },
+    });
   }
 }

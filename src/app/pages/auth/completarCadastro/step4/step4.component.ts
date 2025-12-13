@@ -22,6 +22,7 @@ export class Step4Component {
   @Output() back = new EventEmitter<void>();
 
   startDay: string = '';
+  dayError: string | null = null;
 
   get isValidDay(): boolean {
     const num = Number(this.startDay);
@@ -29,7 +30,14 @@ export class Step4Component {
   }
 
   onFinish(): void {
-    if (this.isValidDay && !this.isLoading) {
+    this.dayError = null;
+
+    if (!this.isValidDay) {
+      this.dayError = 'Informe um dia entre 1 e 31.';
+      return;
+    }
+
+    if (!this.isLoading) {
       this.next.emit({ startDay: this.startDay });
     }
   }
@@ -39,6 +47,7 @@ export class Step4Component {
   }
 
   handleDayChange(value: string): void {
+    this.dayError = null;
     // Mantém apenas dígitos
     const onlyDigits = (value || '').replace(/\\D+/g, '');
     // Limita a 2 dígitos

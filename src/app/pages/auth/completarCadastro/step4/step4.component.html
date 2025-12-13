@@ -16,6 +16,7 @@
         autocomplete="off"
         [(ngModel)]="startDay"
         (ngModelChange)="handleDayChange($event)"
+        [error]="dayError"
       />
     </div>
 
@@ -24,7 +25,7 @@
       label="Finalizar"
       loadingText="Enviando..."
       [loading]="isLoading"
-      [disabled]="!isValidDay || isLoading"
+      [disabled]="isLoading"
     />
   </form>
 </section>

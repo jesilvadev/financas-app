@@ -2,7 +2,13 @@
   <div class="w-full max-w-md bg-transparent flex flex-col items-center gap-10">
     <h1 class="text-5xl font-bold text-primary">Entrar</h1>
 
-    <form class="w-full flex flex-col" (ngSubmit)="onSubmit()">
+    <form
+      class="w-full flex flex-col"
+      id="login-form"
+      name="login"
+      autocomplete="on"
+      (ngSubmit)="onSubmit()"
+    >
       <div class="flex flex-col gap-8">
         <app-ui-input
           id="email"
@@ -10,7 +16,8 @@
           [(ngModel)]="email"
           type="email"
           placeholder="E-mail"
-          autocomplete="email"
+          autocomplete="username"
+          inputMode="email"
           [error]="emailError"
         />
 

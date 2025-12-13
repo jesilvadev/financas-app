@@ -22,6 +22,7 @@ export class Step1Component implements OnChanges {
   @Output() back = new EventEmitter<void>();
 
   saldoAtual: string = '';
+  saldoError: string | null = null;
 
   get isValidSaldo(): boolean {
     const parsed = this.parseCurrencyBr(this.saldoAtual);
@@ -29,11 +30,17 @@ export class Step1Component implements OnChanges {
   }
 
   onFinish(): void {
-    if (this.isValidSaldo && !this.isLoading) {
-      const parsed = this.parseCurrencyBr(this.saldoAtual);
-      if (parsed !== null) {
-        this.next.emit({ saldoAtual: parsed });
-      }
+    this.saldoError = null;
+
+    const parsed = this.parseCurrencyBr(this.saldoAtual);
+
+    if (parsed === null || parsed < 0) {
+      this.saldoError = 'Informe um saldo válido (zero ou maior).';
+      return;
+    }
+
+    if (!this.isLoading) {
+      this.next.emit({ saldoAtual: parsed });
     }
   }
 
@@ -42,8 +49,14 @@ export class Step1Component implements OnChanges {
   }
 
   ngOnChanges(): void {
-    if (this.presetSaldoAtual !== null && this.presetSaldoAtual !== undefined && !this.saldoAtual) {
-      // Formata o valor para exibição
+    // Só pré-preenche o campo se vier um saldo REALMENTE definido e maior que zero.
+    // Quando o backend enviar 0, o campo permanece vazio para o usuário informar.
+    if (
+      this.presetSaldoAtual !== null &&
+      this.presetSaldoAtual !== undefined &&
+      this.presetSaldoAtual > 0 &&
+      !this.saldoAtual
+    ) {
       this.saldoAtual = this.formatCurrencyBr(this.presetSaldoAtual);
     }
   }

@@ -59,9 +59,6 @@
       (next)="onIntroNext()"
     ></app-completar-cadastro-intro>
 
-    <div *ngIf="categoriasLoading" class="text-center text-sm text-description">
-      Carregando categorias...
-    </div>
     <div *ngIf="categoriasError" class="text-center text-sm text-error">
       {{ categoriasError }}
     </div>

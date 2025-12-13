@@ -21,6 +21,7 @@
         decimalMarker=","
         [dropSpecialCharacters]="false"
         prefix="R$"
+        [error]="saldoError"
       />
     </div>
 
@@ -29,7 +30,7 @@
       label="Continuar"
       loadingText="Enviando..."
       [loading]="isLoading"
-      [disabled]="!isValidSaldo || isLoading"
+      [disabled]="isLoading"
     />
   </form>
 </section>
