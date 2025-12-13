@@ -17,9 +17,18 @@ export class PieChartComponent {
   @Input() data: PieChartData[] = [];
   @Input() title: string = '';
   @Input() size: number = 150;
+  /**
+   * Espaçamento interno (em pixels) entre o anel colorido e o círculo branco central.
+   * Valores maiores deixam o anel mais grosso. Padrão pensado para o gráfico de receitas.
+   */
+  @Input() innerInset = 20;
 
   get total(): number {
     return this.data.reduce((sum, item) => sum + item.value, 0);
+  }
+
+  get isSingleSlice(): boolean {
+    return this.data.length === 1 && this.total > 0;
   }
 
   getPath(index: number): string {

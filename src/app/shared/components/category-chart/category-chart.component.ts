@@ -22,16 +22,22 @@ export class CategoryChartComponent {
     return (valor / this.maxValue) * 100;
   }
 
+  // Retorna os gastos ordenados do maior para o menor valor para aplicar melhor as cores
+  get sortedGastos(): GastoCategoria[] {
+    return [...this.gastos].sort((a, b) => b.valor - a.valor);
+  }
+
   getColors(): string[] {
+    // Paleta focada em despesas: tons de vermelho e laranja (sem roxos)
     return [
-      '#6B54EC',
-      '#b90093',
-      '#5FB948',
-      '#006c05',
-      '#3B82F6',
-      '#FACC15',
-      '#c59e00',
-      '#EF4444',
+      '#EF4444', // vermelho principal
+      '#F97373', // vermelho claro
+      '#DC2626', // vermelho escuro
+      '#F97316', // laranja intenso
+      '#FB923C', // laranja claro
+      '#B91C1C', // vermelho profundo
+      '#F59E0B', // amarelo-alaranjado
+      '#EA580C', // laranja queimado
     ];
   }
 
@@ -40,4 +46,3 @@ export class CategoryChartComponent {
     return colors[index % colors.length];
   }
 }
-

@@ -1,34 +1,66 @@
-<div class="flex flex-col items-center gap-3">
-  <h3 class="text-sm font-semibold text-gray-700" *ngIf="title">{{ title }}</h3>
+<div class="flex flex-col items-center gap-4">
+  <h3 class="text-sm font-semibold text-gray-800" *ngIf="title">
+    {{ title }}
+  </h3>
 
-  <div class="relative" [style.width.px]="size" [style.height.px]="size">
-    <svg [attr.width]="size" [attr.height]="size" class="transform -rotate-90">
-      <g *ngFor="let item of data; let i = index">
-        <path
-          [attr.d]="getPath(i)"
-          [attr.fill]="item.color"
-          [attr.stroke]="'white'"
-          [attr.stroke-width]="2"
-          class="transition-opacity hover:opacity-80"
-        />
-      </g>
+  <div
+    class="relative rounded-full bg-white p-3"
+    [style.width.px]="size + 24"
+    [style.height.px]="size + 24"
+  >
+    <svg
+      [attr.width]="size"
+      [attr.height]="size"
+      class="transform -rotate-90 block mx-auto"
+    >
+      <!-- Caso com apenas 1 item: desenha um círculo completo sem separador -->
+      <ng-container *ngIf="isSingleSlice; else multiSlice">
+        <circle
+          [attr.cx]="size / 2"
+          [attr.cy]="size / 2"
+          [attr.r]="size / 2 - 2"
+          [attr.fill]="data[0].color || '#16A34A'"
+        ></circle>
+      </ng-container>
+
+      <!-- Caso com múltiplos itens: desenha slices com separadores brancos -->
+      <ng-template #multiSlice>
+        <g *ngFor="let item of data; let i = index">
+          <path
+            [attr.d]="getPath(i)"
+            [attr.fill]="item.color"
+            [attr.stroke]="'#ffffff'"
+            [attr.stroke-width]="3"
+            class="transition-opacity hover:opacity-80"
+          />
+        </g>
+      </ng-template>
     </svg>
 
     <!-- Centro com total -->
     <div
-      class="absolute inset-0 flex flex-col items-center justify-center pointer-events-none"
+      class="absolute flex flex-col items-center justify-center pointer-events-none rounded-full bg-white"
+      [style.top.px]="innerInset"
+      [style.right.px]="innerInset"
+      [style.bottom.px]="innerInset"
+      [style.left.px]="innerInset"
     >
-      <span class="text-lg font-bold text text-gray-900">
+      <span
+        class="text-[11px] font-medium uppercase tracking-wide text-description"
+      >
+        Total
+      </span>
+      <span class="text-xl font-extrabold text-gray-900">
         {{ total | currency : "BRL" : "symbol" : "1.0-0" : "pt" }}
       </span>
     </div>
   </div>
 
   <!-- Legenda -->
-  <div class="w-full space-y-2 mt-2">
+  <div class="w-full space-y-2 mt-1">
     <div
       *ngFor="let item of data"
-      class="flex items-center justify-between text-xs"
+      class="flex items-center justify-between text-xs px-2 py-1 rounded-lg hover:bg-gray-50 transition-colors"
     >
       <div class="flex items-center gap-2">
         <div
@@ -40,7 +72,7 @@
         }}</span>
       </div>
       <div class="flex items-center gap-2">
-        <span class="text-gray-600">
+        <span class="text-[11px] text-description">
           {{ getPercentage(item.value) | number : "1.0-0" }}%
         </span>
         <span class="text-gray-900 font-semibold">

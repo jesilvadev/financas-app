@@ -12,12 +12,18 @@ export class MetasSummaryComponent {
   @Input() metas: MetaDashboard[] = [];
   @Input() title: string = 'Metas';
 
+  // Ordena as metas pela maior porcentagem para aplicar melhor as cores e manter consistência visual
+  get sortedMetas(): MetaDashboard[] {
+    return [...this.metas].sort((a, b) => b.porcentagem - a.porcentagem);
+  }
+
   getProgressColor(porcentagem: number): string {
-    if (porcentagem >= 100) return '#5FB948'; // Verde - concluída
-    if (porcentagem >= 75) return '#5FB948'; // Verde claro
-    if (porcentagem >= 50) return '#FACC15'; // Amarelo
-    if (porcentagem >= 25) return '#FF4B4B'; // Vermelho claro
-    return '#EF4444'; // Vermelho
+    // Paleta específica para metas em tons de azul (do mais suave ao mais intenso)
+    if (porcentagem >= 100) return '#1D4ED8'; // Azul forte - meta atingida/superada
+    if (porcentagem >= 75) return '#2563EB'; // Azul médio - quase lá
+    if (porcentagem >= 50) return '#3B82F6'; // Azul padrão - em bom progresso
+    if (porcentagem >= 25) return '#60A5FA'; // Azul claro - começando bem
+    return '#BFDBFE'; // Azul bem suave - início da meta
   }
 
   getProgressWidth(porcentagem: number): number {

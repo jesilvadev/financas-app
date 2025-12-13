@@ -159,33 +159,54 @@ export class HomeComponent implements OnInit {
       }
     });
 
-    // Cores para os gráficos
-    const cores = [
-      '#6B54EC',
-      '#b90093',
-      '#5FB948',
-      '#006c05',
-      '#3B82F6',
-      '#FACC15',
-      '#c59e00',
-      '#EF4444',
+    // Paletas distintas para reforçar o significado das transações
+    // Receitas: tons positivos (verdes/azuis) com bastante contraste entre si
+    const coresReceitas = [
+      '#16A34A', // verde médio
+      '#22C55E', // verde claro
+      '#166534', // verde musgo escuro
+      '#0EA5E9', // azul claro
+      '#0284C7', // azul médio
+      '#22C1C3', // teal vibrante
+      '#0D9488', // verde água escuro
+      '#38BDF8', // azul suave
     ];
 
-    // Prepara dados de receitas
-    this.receitasChartData = Array.from(receitasPorCategoria.entries()).map(
+    // Despesas: tons negativos (vermelhos/laranjas) bem variados
+    const coresDespesas = [
+      '#EF4444', // vermelho vivo
+      '#991B1B', // vinho escuro
+      '#F97316', // laranja intenso
+      '#7F1D1D', // bordô profundo
+      '#FB923C', // laranja claro
+      '#B91C1C', // vermelho profundo
+      '#F59E0B', // amarelo-alaranjado
+      '#EA580C', // laranja queimado
+    ];
+
+    // Ordena categorias por valor (maior -> menor) para aplicar cores na ordem
+    const receitasOrdenadas = Array.from(receitasPorCategoria.entries()).sort(
+      (a, b) => b[1] - a[1]
+    );
+    const despesasOrdenadas = Array.from(despesasPorCategoria.entries()).sort(
+      (a, b) => b[1] - a[1]
+    );
+
+    // Prepara dados de receitas com paleta positiva (maior valor recebe cor mais forte)
+    this.receitasChartData = receitasOrdenadas.map(
       ([categoria, valor], index) => ({
         label: categoria,
         value: valor,
-        color: cores[index % cores.length],
+        color: coresReceitas[index % coresReceitas.length],
       })
     );
 
-    // Prepara dados de despesas
-    this.despesasChartData = Array.from(despesasPorCategoria.entries()).map(
+    // Prepara dados de despesas com paleta negativa (maior valor recebe cor mais forte)
+    this.despesasChartData = despesasOrdenadas.map(
       ([categoria, valor], index) => ({
         label: categoria,
         value: valor,
-        color: cores[index % cores.length],
+        color: coresDespesas[index % coresDespesas.length],
       })
     );
   }
