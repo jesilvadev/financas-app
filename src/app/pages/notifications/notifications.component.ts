@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+import { CommonModule, Location } from '@angular/common';
 import { Component, DestroyRef, OnInit, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatIcon } from '@angular/material/icon';
@@ -12,6 +12,7 @@ import {
   SeveridadeAlerta,
   SEVERIDADE_METADATA,
 } from '../../models/alerta.model';
+import { forkJoin } from 'rxjs';
 
 type FiltroStatus = 'TODOS' | 'NAO_VISTOS' | 'VISTOS';
 
@@ -26,6 +27,8 @@ export class NotificationsComponent implements OnInit {
   alertasFiltrados: AlertaResponse[] = [];
   loading = false;
   filtroStatus: FiltroStatus = 'TODOS';
+  /** IDs das notificações que eram não vistas quando o usuário entrou na tela */
+  private novosAlertasIds: Set<string> = new Set<string>();
 
   readonly TIPOS_ALERTA_METADATA = TIPOS_ALERTA_METADATA;
   readonly SEVERIDADE_METADATA = SEVERIDADE_METADATA;
@@ -35,7 +38,8 @@ export class NotificationsComponent implements OnInit {
 
   constructor(
     private readonly authService: AuthService,
-    private notificationService: NotificationService
+    private notificationService: NotificationService,
+    private readonly location: Location
   ) {}
 
   ngOnInit(): void {
@@ -66,6 +70,31 @@ export class NotificationsComponent implements OnInit {
           const dateB = new Date(b.dataCriacao).getTime();
           return dateB - dateA;
         });
+
+        // Marca automaticamente todos como vistos ao entrar na tela
+        const naoVistos = this.alertas.filter((a) => !a.visto);
+        if (naoVistos.length > 0) {
+          // Guarda quais eram novas nesta visita para destacar visualmente
+          this.novosAlertasIds = new Set(naoVistos.map((a) => a.id));
+
+          // Atualiza estado local para refletir imediatamente
+          const agora = new Date().toISOString();
+          naoVistos.forEach((a) => {
+            a.visto = true;
+            a.dataVisto = agora;
+          });
+
+          // Dispara requisições para marcar como vistos no backend
+          forkJoin(
+            naoVistos.map((a) =>
+              this.notificationService.marcarComoVisto(a.id)
+            )
+          ).subscribe({
+            error: (error) =>
+              console.error('Erro ao marcar notificações como vistas:', error),
+          });
+        }
+
         this.aplicarFiltro();
         this.loading = false;
       },
@@ -76,22 +105,13 @@ export class NotificationsComponent implements OnInit {
     });
   }
 
-  aplicarFiltro(): void {
-    switch (this.filtroStatus) {
-      case 'NAO_VISTOS':
-        this.alertasFiltrados = this.alertas.filter((a) => !a.visto);
-        break;
-      case 'VISTOS':
-        this.alertasFiltrados = this.alertas.filter((a) => a.visto);
-        break;
-      default:
-        this.alertasFiltrados = this.alertas;
-    }
+  voltar(): void {
+    this.location.back();
   }
 
-  alterarFiltro(status: FiltroStatus): void {
-    this.filtroStatus = status;
-    this.aplicarFiltro();
+  aplicarFiltro(): void {
+    // Sem filtros na interface: sempre exibe todas as notificações
+    this.alertasFiltrados = this.alertas;
   }
 
   marcarComoVisto(alerta: AlertaResponse, event?: Event): void {
@@ -108,6 +128,7 @@ export class NotificationsComponent implements OnInit {
         // Atualizar o alerta localmente
         alerta.visto = true;
         alerta.dataVisto = new Date().toISOString();
+        this.novosAlertasIds.delete(alerta.id);
         this.aplicarFiltro();
       },
       error: (error) => {
@@ -130,5 +151,9 @@ export class NotificationsComponent implements OnInit {
       color: 'primary',
       icon: 'info',
     };
+  }
+
+  isNovo(alerta: AlertaResponse): boolean {
+    return this.novosAlertasIds.has(alerta.id);
   }
 }
