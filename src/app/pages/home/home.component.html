@@ -1,22 +1,12 @@
-<div class="p-5 font-inter">
-  <div class="w-full max-w-md mx-auto space-y-6">
+<div class="px-4 py-5 font-inter">
+  <div class="w-full max-w-md mx-auto space-y-5">
     <!-- Filtro de Período -->
-    <section class="w-full">
-      <div class="flex items-center justify-between mb-3">
-        <h2 class="text-base font-semibold text-black">Período</h2>
-        <button
-          *ngIf="periodoSelecionado !== PeriodoDashboard.MES_ATUAL"
-          type="button"
-          class="text-xs text-primary hover:underline"
-          (click)="resetarPeriodo()"
-        >
-          Resetar
-        </button>
-      </div>
+    <section>
+      <h2 class="text-sm font-medium text-description mb-2">Período</h2>
       <select
         [(ngModel)]="periodoSelecionado"
         (ngModelChange)="onPeriodoChange()"
-        class="w-full h-12 rounded-xl border-2 border-primary/30 bg-white px-4 py-3 text-black outline-none focus:border-primary transition"
+        class="w-full h-12 rounded-xl border border-primary/40 bg-white px-4 text-sm font-medium focus:border-primary focus:ring-2 focus:ring-primary/20 transition"
       >
         <option *ngFor="let periodo of periodos" [value]="periodo.value">
           {{ periodo.label }}
@@ -24,128 +14,125 @@
       </select>
     </section>
 
-    <!-- Card de saldo -->
-    <section
-      class="w-full rounded-xl bg-white px-5 py-4 shadow-sm border border-black/5"
-    >
-      <div class="flex items-center justify-between mb-3">
-        <h2 class="text-base font-semibold text-black">Saldo atual</h2>
-      </div>
-
-      <div class="mb-3">
-        <p
-          class="text-4xl font-bold"
-          [ngClass]="saldoAtual >= 0 ? 'text-success' : 'text-error'"
-        >
-          {{ saldoAtual | currency : "BRL" : "symbol" : "1.2-2" : "pt" }}
-        </p>
-      </div>
+    <!-- Saldo Atual -->
+    <section class="rounded-xl bg-white p-5 shadow-sm border border-black/5">
+      <h2 class="text-sm font-medium text-description mb-1">Saldo atual</h2>
+      <p
+        class="text-4xl font-extrabold tracking-tight"
+        [ngClass]="saldoAtual >= 0 ? 'text-success' : 'text-error'"
+      >
+        {{ saldoAtual | currency : "BRL" : "symbol" : "1.2-2" : "pt" }}
+      </p>
+      <p class="text-xs text-description mt-1">
+        Disponível no período selecionado
+      </p>
     </section>
 
-    <!-- Cards de Receitas e Despesas -->
+    <!-- Receitas / Despesas -->
     <section class="grid grid-cols-2 gap-4">
-      <div
-        class="rounded-xl bg-white px-4 py-3 shadow-sm border border-black/5"
-      >
-        <div class="text-xs text-description mb-1">Total de Receitas</div>
-        <div class="text-2xl font-bold text-success">
+      <div class="rounded-xl bg-white p-4 shadow-sm border border-black/5">
+        <div class="text-xs text-description uppercase tracking-wide mb-1">
+          Receitas
+        </div>
+        <div class="text-xl font-semibold text-success">
           {{ totalReceitas | currency : "BRL" : "symbol" : "1.0-0" : "pt" }}
         </div>
       </div>
-      <div
-        class="rounded-xl bg-white px-4 py-3 shadow-sm border border-black/5"
-      >
-        <div class="text-xs text-description mb-1">Total de Despesas</div>
-        <div class="text-2xl font-bold text-error">
+
+      <div class="rounded-xl bg-white p-4 shadow-sm border border-black/5">
+        <div class="text-xs text-description uppercase tracking-wide mb-1">
+          Despesas
+        </div>
+        <div class="text-xl font-semibold text-error">
           {{ totalDespesas | currency : "BRL" : "symbol" : "1.0-0" : "pt" }}
         </div>
       </div>
     </section>
 
-    <!-- Gráficos de Pizza -->
+    <!-- Gráficos -->
     <section
-      *ngIf="receitasChartData.length > 0 || despesasChartData.length > 0"
-      class="grid grid-cols-2 gap-4"
+      *ngIf="receitasChartData.length || despesasChartData.length"
+      class="grid grid-cols-1 sm:grid-cols-2 gap-4"
     >
       <div
-        *ngIf="receitasChartData.length > 0"
-        class="rounded-xl bg-white px-4 py-4 shadow-sm border border-black/5"
+        *ngIf="receitasChartData.length"
+        class="rounded-xl bg-white p-4 shadow-sm border border-black/5"
       >
         <app-pie-chart
           [data]="receitasChartData"
           [title]="'Receitas'"
-          [size]="120"
-        ></app-pie-chart>
+          [size]="140"
+        />
       </div>
+
       <div
-        *ngIf="despesasChartData.length > 0"
-        class="rounded-xl bg-white px-4 py-4 shadow-sm border border-black/5"
+        *ngIf="despesasChartData.length"
+        class="rounded-xl bg-white p-4 shadow-sm border border-black/5"
       >
         <app-pie-chart
           [data]="despesasChartData"
           [title]="'Despesas'"
-          [size]="120"
-        ></app-pie-chart>
+          [size]="140"
+        />
       </div>
     </section>
 
     <!-- Gastos por Categoria -->
-    <section
-      *ngIf="dashboardData && dashboardData.gastosPorCategoria.length > 0"
-      class="rounded-xl bg-white px-5 py-4 shadow-sm border border-black/5"
-    >
-      <app-category-chart
-        [gastos]="dashboardData.gastosPorCategoria"
-        [title]="'Gastos por Categoria'"
-      ></app-category-chart>
-    </section>
+    <ng-container *ngIf="dashboardData as data">
+      <section
+        *ngIf="data.gastosPorCategoria?.length"
+        class="rounded-xl bg-white p-5 shadow-sm border border-black/5"
+      >
+        <app-category-chart
+          [gastos]="data.gastosPorCategoria"
+          [title]="'Gastos por Categoria'"
+        />
+      </section>
 
-    <!-- Resumo de Metas -->
-    <section
-      *ngIf="dashboardData && dashboardData.metas.length > 0"
-      class="rounded-xl bg-white px-5 py-4 shadow-sm border border-black/5"
-    >
-      <app-metas-summary
-        [metas]="dashboardData.metas"
-        [title]="'Metas'"
-      ></app-metas-summary>
-    </section>
+      <!-- Metas -->
+      <section
+        *ngIf="data.metas?.length"
+        class="rounded-xl bg-white p-5 shadow-sm border border-black/5"
+      >
+        <app-metas-summary [metas]="data.metas" [title]="'Metas'" />
+      </section>
+    </ng-container>
 
-    <!-- Acesso às transações recorrentes -->
-    <section class="w-full mt-4">
+    <!-- CTA Recorrentes -->
+    <section>
       <a
         [routerLink]="['/recorrentes']"
-        class="flex items-center justify-between rounded-xl bg-primary pl-6 pr-2 py-4 shadow-sm hover:shadow-md transition border border-black/5"
+        class="flex items-center justify-between rounded-xl bg-primary px-5 py-4 shadow-sm active:scale-[0.98] transition"
       >
-        <div class="flex">
-          <span class="font-semibold text-white"> Transações recorrentes </span>
-        </div>
-        <mat-icon class="text-base text-white">arrow_forward_ios</mat-icon>
+        <span class="font-semibold text-white"> Transações recorrentes </span>
+        <mat-icon class="text-white text-base">chevron_right</mat-icon>
       </a>
     </section>
 
-    <!-- Botão Gerar Relatório -->
-    <section class="w-full mt-4">
+    <!-- Botão Relatório -->
+    <section>
       <button
         type="button"
-        class="w-full flex items-center justify-center gap-2 rounded-xl bg-white pl-6 pr-6 py-4 shadow-sm hover:shadow-md transition border border-primary text-primary font-semibold active:scale-95"
         (click)="openRelatorioModal()"
+        class="w-full flex items-center justify-center gap-2 rounded-xl border border-primary/40 bg-white py-4 text-primary text-sm font-semibold active:scale-95 transition"
       >
         <mat-icon class="text-base">description</mat-icon>
-        Gerar Relatório
+        Gerar relatório
       </button>
     </section>
 
-    <!-- Loading State -->
-    <div *ngIf="loading" class="text-center py-8 text-description text-sm">
-      Carregando dados...
+    <!-- Loading -->
+    <div
+      *ngIf="loading"
+      class="flex justify-center py-10 text-description text-sm"
+    >
+      Carregando dados…
     </div>
   </div>
 
-  <!-- Modal de Relatório -->
   <app-relatorio-modal
     [open]="isRelatorioModalOpen"
     (close)="handleRelatorioModalClose()"
     (confirm)="handleRelatorioModalConfirm($event)"
-  ></app-relatorio-modal>
+  />
 </div>

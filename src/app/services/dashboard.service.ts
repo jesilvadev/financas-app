@@ -30,10 +30,6 @@ export class DashboardService {
     localStorage.setItem(this.PERIODO_KEY, periodo);
   }
 
-  resetarPeriodo(): void {
-    localStorage.removeItem(this.PERIODO_KEY);
-  }
-
   obterDashboard(
     usuarioId?: string,
     periodo?: PeriodoDashboard

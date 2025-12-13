@@ -91,10 +91,20 @@ export class MainLayoutComponent implements OnInit {
 
         const rawName = (user.nome ?? '').trim();
         const parts = rawName.split(/\s+/).filter(Boolean);
+
+        const formatWord = (word: string): string =>
+          word
+            ? word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()
+            : '';
+
+        const formattedParts = parts.map(formatWord);
+
         this.userName =
-          parts.length <= 1
-            ? rawName
-            : `${parts[0]} ${parts[parts.length - 1]}`;
+          formattedParts.length <= 1
+            ? (formattedParts[0] ?? '')
+            : `${formattedParts[0]} ${
+                formattedParts[formattedParts.length - 1]
+              }`;
 
         // Inicial com primeira letra do primeiro e do último nome (ex: "João Silva" -> "JS")
         if (parts.length === 0) {

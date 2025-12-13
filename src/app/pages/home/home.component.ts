@@ -115,14 +115,6 @@ export class HomeComponent implements OnInit {
     }
   }
 
-  resetarPeriodo(): void {
-    this.dashboardService.resetarPeriodo();
-    this.periodoSelecionado = PeriodoDashboard.MES_ATUAL;
-    if (this.currentUserId) {
-      this.carregarResumo(this.currentUserId);
-    }
-  }
-
   private carregarResumo(userId: string): void {
     this.loading = true;
 
