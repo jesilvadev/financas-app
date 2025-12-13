@@ -26,8 +26,9 @@ export class PieChartComponent {
     if (this.total === 0 || index >= this.data.length) return '';
 
     let currentAngle = 0;
-    const radius = (this.size / 2) - 2; // Deixa um pouco de espaço para a borda
+    const radius = this.size / 2 - 2; // Deixa um pouco de espaço para a borda
     const center = this.size / 2;
+    const singleSlice = this.data.length === 1;
 
     // Calcula o ângulo acumulado até o item anterior
     for (let i = 0; i < index; i++) {
@@ -37,7 +38,9 @@ export class PieChartComponent {
 
     // Calcula o ângulo do item atual
     const percentage = this.data[index].value / this.total;
-    const angle = percentage * 360;
+    // Quando só existe um item (100%), usar um ângulo levemente menor
+    // para evitar que o arco se torne "degenerado" (start === end)
+    const angle = (singleSlice ? 359.99 : 360) * percentage;
 
     // Se o ângulo for muito pequeno ou zero, não desenha
     if (angle < 0.1) return '';
