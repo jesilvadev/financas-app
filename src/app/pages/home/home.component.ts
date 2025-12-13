@@ -58,6 +58,8 @@ export class HomeComponent implements OnInit {
     { value: PeriodoDashboard.TODA_UTILIZACAO, label: 'Toda Utilização' },
   ];
 
+  filtroPeriodoAberto = false;
+
   dashboardData: DashboardResponse | null = null;
   receitasChartData: PieChartData[] = [];
   despesasChartData: PieChartData[] = [];
@@ -113,6 +115,25 @@ export class HomeComponent implements OnInit {
     if (this.currentUserId) {
       this.carregarResumo(this.currentUserId);
     }
+  }
+
+  toggleFiltroPeriodo(): void {
+    this.filtroPeriodoAberto = !this.filtroPeriodoAberto;
+  }
+
+  selecionarPeriodo(periodo: PeriodoDashboard): void {
+    if (this.periodoSelecionado !== periodo) {
+      this.periodoSelecionado = periodo;
+      this.onPeriodoChange();
+    }
+    this.filtroPeriodoAberto = false;
+  }
+
+  get periodoSelecionadoLabel(): string {
+    return (
+      this.periodos.find((p) => p.value === this.periodoSelecionado)?.label ??
+      ''
+    );
   }
 
   private carregarResumo(userId: string): void {

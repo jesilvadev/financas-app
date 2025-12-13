@@ -1,31 +1,64 @@
-<div class="px-4 py-5 font-inter">
+<div class="px-4 pt-5 font-inter pb-14">
   <div class="w-full max-w-md mx-auto space-y-5">
-    <!-- Filtro de Período -->
-    <section>
-      <h2 class="text-sm font-medium text-description mb-2">Período</h2>
-      <select
-        [(ngModel)]="periodoSelecionado"
-        (ngModelChange)="onPeriodoChange()"
-        class="w-full h-12 rounded-xl border border-primary/40 bg-white px-4 text-sm font-medium focus:border-primary focus:ring-2 focus:ring-primary/20 transition"
-      >
-        <option *ngFor="let periodo of periodos" [value]="periodo.value">
-          {{ periodo.label }}
-        </option>
-      </select>
-    </section>
-
     <!-- Saldo Atual -->
-    <section class="rounded-xl bg-white p-5 shadow-sm border border-black/5">
-      <h2 class="text-sm font-medium text-description mb-1">Saldo atual</h2>
+    <section class="rounded-2xl mt-2 py-8 border border-secondary px-6">
+      <h2 class="text-sm font-medium text-black mb-1">Saldo atual</h2>
       <p
         class="text-4xl font-extrabold tracking-tight"
         [ngClass]="saldoAtual >= 0 ? 'text-success' : 'text-error'"
       >
         {{ saldoAtual | currency : "BRL" : "symbol" : "1.2-2" : "pt" }}
       </p>
-      <p class="text-xs text-description mt-1">
-        Disponível no período selecionado
-      </p>
+    </section>
+
+    <!-- Filtro de Período (texto à esquerda + ícone à direita, abaixo do saldo) -->
+    <section class="flex items-center justify-between mt-1">
+      <span class="text-xs font-medium text-primary">
+        {{ periodoSelecionadoLabel }}
+      </span>
+
+      <div class="relative">
+        <button
+          type="button"
+          (click)="toggleFiltroPeriodo()"
+          class="inline-flex items-center justify-center w-10 h-10 pt-1 rounded-md bg-primary text-white shadow-md hover:bg-primary/90 active:scale-95 transition"
+          aria-label="Alterar período do dashboard"
+        >
+          <mat-icon class="text-[20px]">tune</mat-icon>
+        </button>
+
+        <!-- Dropdown de períodos -->
+        <div
+          *ngIf="filtroPeriodoAberto"
+          class="absolute right-0 mt-2 w-52 rounded-2xl bg-white shadow-xl border border-black/5 py-2 z-20"
+        >
+          <p
+            class="px-3 pb-1 text-[11px] font-medium text-description uppercase"
+          >
+            Período
+          </p>
+          <button
+            *ngFor="let periodo of periodos"
+            type="button"
+            (click)="selecionarPeriodo(periodo.value)"
+            class="w-full flex items-center justify-between px-3 py-2 text-xs rounded-xl hover:bg-gray-50 active:scale-[0.99] transition text-gray-800"
+          >
+            <span class="truncate">{{ periodo.label }}</span>
+            <span
+              class="text-[11px] font-semibold"
+              [ngClass]="
+                periodoSelecionado === periodo.value
+                  ? 'text-primary'
+                  : 'text-description'
+              "
+            >
+              <ng-container *ngIf="periodoSelecionado === periodo.value">
+                <mat-icon class="text-[16px] align-middle">check</mat-icon>
+              </ng-container>
+            </span>
+          </button>
+        </div>
+      </div>
     </section>
 
     <!-- Receitas / Despesas -->
@@ -100,25 +133,14 @@
       </section>
     </ng-container>
 
-    <!-- CTA Recorrentes -->
-    <section>
-      <a
-        [routerLink]="['/recorrentes']"
-        class="flex items-center justify-between rounded-xl bg-primary px-5 py-4 shadow-sm active:scale-[0.98] transition"
-      >
-        <span class="font-semibold text-white"> Transações recorrentes </span>
-        <mat-icon class="text-white text-base">chevron_right</mat-icon>
-      </a>
-    </section>
-
     <!-- Botão Relatório -->
     <section>
       <button
         type="button"
         (click)="openRelatorioModal()"
-        class="w-full flex items-center justify-center gap-2 rounded-xl border border-primary/40 bg-white py-4 text-primary text-sm font-semibold active:scale-95 transition"
+        class="w-full flex items-center justify-center gap-2 rounded-xl border border-primary/40 bg-white py-4 text-primary font-semibold active:scale-95 transition"
       >
-        <mat-icon class="text-base">description</mat-icon>
+        <mat-icon class="text-lg">file_download</mat-icon>
         Gerar relatório
       </button>
     </section>
@@ -130,6 +152,17 @@
     >
       Carregando dados…
     </div>
+
+    <!-- CTA Recorrentes -->
+    <section>
+      <a
+        [routerLink]="['/recorrentes']"
+        class="flex items-center justify-between rounded-xl bg-primary px-5 py-4 shadow-sm active:scale-[0.98] transition"
+      >
+        <span class="text-white"> Transações recorrentes </span>
+        <mat-icon class="text-white text-base">chevron_right</mat-icon>
+      </a>
+    </section>
   </div>
 
   <app-relatorio-modal
