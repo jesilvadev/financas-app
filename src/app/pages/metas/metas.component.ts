@@ -3,6 +3,7 @@ import { Component, DestroyRef, OnInit, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatIcon } from '@angular/material/icon';
+import { ButtonPrimaryComponent } from '../../shared/components/button-primary/button-primary.component';
 
 import { CreateMetaModalComponent } from '../../shared/components/create-meta-modal/create-meta-modal.component';
 import { AddAporteModalComponent } from '../../shared/components/add-aporte-modal/add-aporte-modal.component';
@@ -20,6 +21,7 @@ import { UsuarioResponse } from '../../models/user.model';
     CommonModule,
     FormsModule,
     MatIcon,
+    ButtonPrimaryComponent,
     CreateMetaModalComponent,
     AddAporteModalComponent,
   ],
