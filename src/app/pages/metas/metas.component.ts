@@ -233,6 +233,19 @@ export class MetasComponent implements OnInit {
     return Math.ceil(diff / (1000 * 60 * 60 * 24));
   }
 
+  getMetaProgressColor(meta: MetaResponse): string {
+    const porcentagem = this.getProgressPercentage(meta);
+
+    // Meta concluída: verde específico de sucesso (mesmo tom usado na Home)
+    if (meta.concluida) return '#16A34A';
+
+    // Demais estados: paleta azul das estatísticas de metas da Home
+    if (porcentagem >= 75) return '#2563EB'; // quase lá
+    if (porcentagem >= 50) return '#3B82F6'; // bom progresso
+    if (porcentagem >= 25) return '#60A5FA'; // começando bem
+    return '#BFDBFE'; // início da meta
+  }
+
   formatDate(dateString: string): string {
     const date = new Date(dateString);
     return date.toLocaleDateString('pt-BR', {
