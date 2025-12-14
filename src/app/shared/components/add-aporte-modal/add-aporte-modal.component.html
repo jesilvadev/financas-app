@@ -27,14 +27,33 @@
       <div *ngIf="meta" class="text-center">
         <p class="text-sm text-description">Meta: {{ meta.nome }}</p>
         <p class="text-xs text-description mt-1">
-          Progresso: {{ meta.valorAtual | currency : "BRL" : "symbol" : "1.2-2" : "pt" }} / {{ meta.valorAlvo | currency : "BRL" : "symbol" : "1.2-2" : "pt" }}
+          Progresso:
+          {{ meta.valorAtual | currency : "BRL" : "symbol" : "1.2-2" : "pt" }} /
+          {{ meta.valorAlvo | currency : "BRL" : "symbol" : "1.2-2" : "pt" }}
+        </p>
+        <p
+          class="text-xs text-primary mt-1 font-medium"
+          *ngIf="valorMaximoPermitido > 0"
+        >
+          Valor máximo:
+          {{
+            valorMaximoPermitido | currency : "BRL" : "symbol" : "1.2-2" : "pt"
+          }}
+        </p>
+        <p class="text-xs text-error mt-1" *ngIf="meta.concluida">
+          Esta meta já foi concluída
         </p>
       </div>
 
       <div class="flex-1 space-y-6 overflow-y-auto pr-1">
         <div class="space-y-2">
           <div
-            class="h-[63px] rounded-md border-2 border-primary/30 bg-white px-4 py-3 focus-within:border-primary focus-within:ring-0"
+            [class]="
+              'h-[63px] rounded-md border-2 bg-white px-4 py-3 focus-within:ring-0 ' +
+              (valorExcedeMaximo
+                ? 'border-error focus-within:border-error'
+                : 'border-primary/30 focus-within:border-primary')
+            "
           >
             <div class="flex h-full items-center gap-3 text-description">
               <span>R$</span>
@@ -53,6 +72,16 @@
               />
             </div>
           </div>
+          <p *ngIf="valorExcedeMaximo" class="text-xs text-error">
+            O valor máximo permitido é
+            {{
+              valorMaximoPermitido
+                | currency : "BRL" : "symbol" : "1.2-2" : "pt"
+            }}
+          </p>
+          <p *ngIf="meta && meta.concluida" class="text-xs text-error">
+            Esta meta já foi concluída. Não é possível fazer mais aportes.
+          </p>
         </div>
 
         <button
@@ -68,4 +97,3 @@
     </div>
   </div>
 </div>
-
