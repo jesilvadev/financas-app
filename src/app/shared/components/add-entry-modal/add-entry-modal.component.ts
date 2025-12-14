@@ -170,6 +170,7 @@ export class AddEntryModalComponent implements OnChanges {
             this.close.emit();
           },
           error: (error) => {
+            this.handleClose()
             console.error('Erro ao atualizar transação', error);
             const mensagem =
               error?.error?.message || error?.message || 'Erro ao atualizar';
