@@ -1,5 +1,11 @@
 import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, Input, OnChanges, Output } from '@angular/core';
+import {
+  Component,
+  EventEmitter,
+  Input,
+  OnChanges,
+  Output,
+} from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { NgxMaskDirective } from 'ngx-mask';
 import { AporteRequest, MetaResponse } from '../../../models/meta.model';
@@ -19,11 +25,28 @@ export class AddAporteModalComponent implements OnChanges {
   valorInput = '';
   isSubmitting = false;
 
-  get isFormValid(): boolean {
+  get valorMaximoPermitido(): number {
+    if (!this.meta) return 0;
+    return Math.max(0, this.meta.valorAlvo - this.meta.valorAtual);
+  }
+
+  get valorAtualDigitado(): number {
+    if (!this.valorInput) return 0;
     return (
-      !!this.valorInput &&
-      parseFloat(this.valorInput.replace(/\./g, '').replace(',', '.')) > 0
+      parseFloat(this.valorInput.replace(/\./g, '').replace(',', '.')) || 0
     );
+  }
+
+  get isFormValid(): boolean {
+    if (!this.valorInput || !this.meta || this.meta.concluida) return false;
+
+    const valor = this.valorAtualDigitado;
+    return valor > 0 && valor <= this.valorMaximoPermitido;
+  }
+
+  get valorExcedeMaximo(): boolean {
+    if (!this.valorInput || !this.meta) return false;
+    return this.valorAtualDigitado > this.valorMaximoPermitido;
   }
 
   ngOnChanges(): void {
@@ -45,9 +68,17 @@ export class AddAporteModalComponent implements OnChanges {
   submit(): void {
     if (!this.isFormValid || this.isSubmitting || !this.meta) return;
 
-    const valor = parseFloat(
-      this.valorInput.replace(/\./g, '').replace(',', '.')
-    );
+    // Não permite aporte se a meta já está concluída
+    if (this.meta.concluida) {
+      return;
+    }
+
+    const valor = this.valorAtualDigitado;
+
+    // Validação adicional de segurança
+    if (valor > this.valorMaximoPermitido) {
+      return;
+    }
 
     // Usa automaticamente a data atual
     const dataAtual = new Date().toISOString().split('T')[0];
@@ -73,4 +104,3 @@ export class AddAporteModalComponent implements OnChanges {
     this.close.emit();
   }
 }
-

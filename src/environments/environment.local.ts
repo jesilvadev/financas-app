@@ -8,6 +8,6 @@ export interface Environment {
 export const environment: Environment = {
   production: false,
   appName: 'OperacaoOTCApp',
-  apiBaseUrl: 'http://localhost:8080/',
+  apiBaseUrl: 'https://apifinanca-production.up.railway.app/',
   authProvider: 'none',
 };

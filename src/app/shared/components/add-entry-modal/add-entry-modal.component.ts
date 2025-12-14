@@ -43,7 +43,6 @@ export class AddEntryModalComponent implements OnChanges {
 
   categorias: Categoria[] = [];
   private usuarioId: string | null = null;
-  private carregouCategorias = false;
 
   constructor(
     private readonly categoriaService: CategoriaService,
@@ -57,7 +56,6 @@ export class AddEntryModalComponent implements OnChanges {
         const updatedId = user?.id ?? null;
         if (updatedId && updatedId !== this.usuarioId) {
           this.usuarioId = updatedId;
-          this.carregouCategorias = false;
           this.loadCategorias();
         } else if (!updatedId) {
           this.usuarioId = null;
@@ -67,6 +65,11 @@ export class AddEntryModalComponent implements OnChanges {
   }
 
   ngOnChanges(changes: SimpleChanges): void {
+    // Recarrega categorias sempre que o modal é aberto
+    if (changes['open'] && this.open && this.usuarioId) {
+      this.loadCategorias();
+    }
+
     if (
       (changes['open'] || changes['mode'] || changes['initialTransacao']) &&
       this.open &&
@@ -194,14 +197,13 @@ export class AddEntryModalComponent implements OnChanges {
   }
 
   private loadCategorias(): void {
-    if (!this.usuarioId || this.carregouCategorias) {
+    if (!this.usuarioId) {
       return;
     }
 
     this.categoriaService.listarPorUsuario(this.usuarioId).subscribe({
       next: (categorias) => {
         this.categorias = categorias;
-        this.carregouCategorias = true;
       },
       error: (error) => {
         console.error('Erro ao carregar categorias', error);
