@@ -7,6 +7,7 @@ import { SigninComponent } from './pages/auth/signin/signin.component';
 import { SignupComponent } from './pages/auth/signup/signup.component';
 import { OnboardingComponent } from './pages/auth/onboarding/onboarding.component';
 import { CompletarCadastroComponent } from './pages/auth/completarCadastro/completarCadastro.component';
+import { ForgotPasswordComponent } from './pages/auth/forgot-password/forgot-password.component';
 import { authGuard } from './guards/auth.guard';
 import { guestGuard } from './guards/guest.guard';
 import { ProfileDadosComponent } from './pages/profile/dados/dados.component';
@@ -34,6 +35,12 @@ export const routes: Routes = [
   {
     path: 'onboarding',
     component: OnboardingComponent,
+    canActivate: [guestGuard],
+    data: { themeColor: '#BFCBFF' },
+  },
+  {
+    path: 'forgot-password',
+    component: ForgotPasswordComponent,
     canActivate: [guestGuard],
     data: { themeColor: '#BFCBFF' },
   },
