@@ -177,6 +177,15 @@ export class MainLayoutComponent implements OnInit {
     if (path.startsWith('/profile/dados')) {
       return false;
     }
+    if (path.startsWith('/profile/seguranca')) {
+      return false;
+    }
+    if (path.startsWith('/profile/personalizacao')) {
+      return false;
+    }
+    if (path.startsWith('/profile/alertas')) {
+      return false;
+    }
     if (path.startsWith('/recorrentes')) {
       return false;
     }

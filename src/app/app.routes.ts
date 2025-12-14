@@ -19,23 +19,36 @@ import { MetasComponent } from './pages/metas/metas.component';
 
 export const routes: Routes = [
   // Rotas de autenticação (apenas para não autenticados)
-  { path: 'signin', component: SigninComponent, canActivate: [guestGuard] },
-  { path: 'signup', component: SignupComponent, canActivate: [guestGuard] },
+  {
+    path: 'signin',
+    component: SigninComponent,
+    canActivate: [guestGuard],
+    data: { themeColor: '#BFCBFF' },
+  },
+  {
+    path: 'signup',
+    component: SignupComponent,
+    canActivate: [guestGuard],
+    data: { themeColor: '#BFCBFF' },
+  },
   {
     path: 'onboarding',
     component: OnboardingComponent,
     canActivate: [guestGuard],
+    data: { themeColor: '#BFCBFF' },
   },
   {
     path: 'completar-cadastro',
     component: CompletarCadastroComponent,
     canActivate: [authGuard],
+    data: { themeColor: '#BFCBFF' },
   },
 
   {
     path: 'notifications',
     component: NotificationsComponent,
     canActivate: [authGuard],
+    data: { themeColor: '#FFFFFF' },
   },
 
   // Rotas principais com layout (apenas para autenticados)
@@ -43,18 +56,37 @@ export const routes: Routes = [
     path: '',
     component: MainLayoutComponent,
     canActivate: [authGuard],
+    // Default: todas as telas internas herdam #BFCBFF, exceto as que sobrescrevem abaixo.
+    data: { themeColor: '#BFCBFF' },
     children: [
       { path: '', component: HomeComponent },
       { path: 'metas', component: MetasComponent },
       { path: 'history', component: HistoryComponent },
-      { path: 'recorrentes', component: RecorrentesComponent },
+      {
+        path: 'recorrentes',
+        component: RecorrentesComponent,
+        data: { themeColor: '#FFFFFF' },
+      },
       { path: 'profile', component: ProfileComponent },
-      { path: 'profile/dados', component: ProfileDadosComponent },
-      { path: 'profile/seguranca', component: ProfileSegurancaComponent },
-      { path: 'profile/alertas', component: ProfileAlertasComponent },
+      {
+        path: 'profile/dados',
+        component: ProfileDadosComponent,
+        data: { themeColor: '#FFFFFF' },
+      },
+      {
+        path: 'profile/seguranca',
+        component: ProfileSegurancaComponent,
+        data: { themeColor: '#FFFFFF' },
+      },
+      {
+        path: 'profile/alertas',
+        component: ProfileAlertasComponent,
+        data: { themeColor: '#FFFFFF' },
+      },
       {
         path: 'profile/personalizacao',
         component: ProfilePersonalizacaoComponent,
+        data: { themeColor: '#FFFFFF' },
       },
     ],
   },
