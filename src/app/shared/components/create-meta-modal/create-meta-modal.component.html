@@ -1,0 +1,91 @@
+<div
+  *ngIf="open"
+  class="fixed inset-0 z-[999] flex items-center justify-center bg-black/50 backdrop-blur-sm px-4"
+  (click)="handleBackdropClick()"
+>
+  <div
+    class="w-full max-w-xs rounded-3xl bg-layer shadow-2xl ring-1 ring-black/10 overflow-hidden flex flex-col"
+    (click)="$event.stopPropagation()"
+  >
+    <div class="flex flex-1 flex-col px-5 py-5 gap-5">
+      <div class="flex items-center">
+        <div class="flex-1 font-semibold text-center text-primary">
+          Nova Meta
+        </div>
+        <div class="w-8 flex items-center justify-end">
+          <button
+            type="button"
+            aria-label="Fechar modal"
+            class="text-primary text-base leading-none px-1 py-1 rounded-full transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
+            (click)="handleClose()"
+          >
+            ✕
+          </button>
+        </div>
+      </div>
+
+      <div class="flex-1 space-y-6 overflow-y-auto pr-1">
+        <div class="space-y-2">
+          <div
+            class="h-[63px] rounded-md border-2 border-primary/30 bg-white px-4 py-3 focus-within:border-primary focus-within:ring-0"
+          >
+            <input
+              type="text"
+              placeholder="Nome da meta"
+              class="w-full h-full border-0 bg-transparent text-black outline-none placeholder:text-disable"
+              [(ngModel)]="nome"
+              maxlength="100"
+            />
+          </div>
+        </div>
+
+        <div class="space-y-2">
+          <div
+            class="h-[63px] rounded-md border-2 border-primary/30 bg-white px-4 py-3 focus-within:border-primary focus-within:ring-0"
+          >
+            <div class="flex h-full items-center gap-3 text-description">
+              <span>R$</span>
+              <input
+                type="text"
+                inputmode="decimal"
+                autocomplete="off"
+                placeholder="0,00"
+                mask="separator.2"
+                thousandSeparator="."
+                decimalMarker=","
+                [dropSpecialCharacters]="false"
+                class="w-full border-0 bg-transparent text-base text-black outline-none placeholder:text-disable"
+                [ngModel]="valorAlvoInput"
+                (ngModelChange)="valorAlvoInput = $event"
+              />
+            </div>
+          </div>
+        </div>
+
+        <div class="space-y-2">
+          <div
+            class="h-[63px] rounded-md border-2 border-primary/30 bg-white px-4 py-3 focus-within:border-primary focus-within:ring-0"
+          >
+            <input
+              type="date"
+              class="w-full h-full border-0 bg-transparent text-black outline-none placeholder:text-disable"
+              [(ngModel)]="dataAlvo"
+              [min]="getTodayDate()"
+            />
+          </div>
+        </div>
+
+        <button
+          type="button"
+          class="h-[63px] w-full items-center justify-center rounded-xl bg-primary px-6 text-base font-medium text-white transition hover:bg-primary/90 active:scale-95 disabled:pointer-events-none disabled:opacity-50"
+          [disabled]="!isFormValid || isSubmitting"
+          (click)="submit()"
+        >
+          <span *ngIf="!isSubmitting">Criar Meta</span>
+          <span *ngIf="isSubmitting">Criando...</span>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+

@@ -32,6 +32,7 @@ export class UiInputComponent implements ControlValueAccessor {
   @Input() inputMode?: string;
   @Input() autocomplete?: string;
   @Input() disabled = false;
+  @Input() error: string | null = null;
 
   // Visual add-ons
   @Input() prefix?: string; // Ex.: "R$"
@@ -42,6 +43,9 @@ export class UiInputComponent implements ControlValueAccessor {
   @Input() thousandSeparator: string = '.';
   @Input() decimalMarker: '.' | ',' | ['.', ','] = ',';
   @Input() dropSpecialCharacters: boolean = false;
+
+  // Modo moeda: digitação vai preenchendo centavos (ex.: 1 -> 0,01; 2 -> 0,12; 3 -> 1,23)
+  @Input() moneyMode: boolean = false;
 
   @Output() enter = new EventEmitter<void>();
 
@@ -72,7 +76,33 @@ export class UiInputComponent implements ControlValueAccessor {
 
   onInput(event: Event): void {
     const target = event.target as HTMLInputElement;
-    this.value = target.value;
+    let rawValue = target.value ?? '';
+
+    if (this.moneyMode) {
+      const digits = rawValue.replace(/\D+/g, '');
+
+      if (!digits) {
+        this.value = '';
+        this.onChange(this.value);
+        target.value = '';
+        return;
+      }
+
+      const cents = Number(digits);
+      const amount = cents / 100;
+
+      const formatted = amount.toLocaleString('pt-BR', {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+      });
+
+      this.value = formatted;
+      this.onChange(this.value);
+      target.value = formatted;
+      return;
+    }
+
+    this.value = rawValue;
     this.onChange(this.value);
   }
 }

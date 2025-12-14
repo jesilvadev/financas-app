@@ -1,24 +1,14 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import {
+  Component,
+  EventEmitter,
+  Input,
+  OnChanges,
+  Output,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { UiInputComponent } from '../../../../shared/components/ui-input/ui-input.component';
 import { ButtonPrimaryComponent } from '../../../../shared/components/button-primary/button-primary.component';
-import { MatIconModule } from '@angular/material/icon';
-
-import { Categoria } from '../../../../models/categoria.model';
-
-interface IncomeForm {
-  value: number | string | null;
-  categoriaId: string;
-  day: string;
-}
-
-export interface IncomeResult {
-  value: number;
-  categoriaId: string;
-  categoriaNome: string;
-  day: string;
-}
+import { UiInputComponent } from '../../../../shared/components/ui-input/ui-input.component';
 
 @Component({
   selector: 'app-step1',
@@ -26,89 +16,37 @@ export interface IncomeResult {
   imports: [
     CommonModule,
     FormsModule,
-    UiInputComponent,
     ButtonPrimaryComponent,
-    MatIconModule,
+    UiInputComponent,
   ],
   templateUrl: './step1.component.html',
 })
-export class Step1Component {
-  @Input() categorias: Categoria[] = [];
-  @Input() presetIncomes: {
-    value: number;
-    categoriaId: string;
-    day: string;
-  }[] = [];
-  @Output() next = new EventEmitter<{ incomes: IncomeResult[] }>();
+export class Step1Component implements OnChanges {
+  @Input() presetSaldoAtual: number | null = null;
+  @Input() isLoading: boolean = false;
+  @Output() next = new EventEmitter<{ saldoAtual: number }>();
   @Output() back = new EventEmitter<void>();
 
-  finalizedIncomes: IncomeForm[] = [];
-  currentIncome: IncomeForm = { value: null, categoriaId: '', day: '' };
-  showDayModal = false;
+  saldoAtual: string = '';
+  saldoError: string | null = null;
 
-  days: string[] = Array.from({ length: 31 }, (_, i) =>
-    (i + 1).toString().padStart(2, '0')
-  );
-
-  get categoriasReceita(): Categoria[] {
-    return this.categorias.filter((categoria) => categoria.tipo === 'RECEITA');
+  get isValidSaldo(): boolean {
+    const parsed = this.parseCurrencyBr(this.saldoAtual);
+    return parsed !== null && parsed >= 0;
   }
 
-  ngOnChanges(): void {
-    if (
-      this.presetIncomes &&
-      this.presetIncomes.length &&
-      this.finalizedIncomes.length === 0
-    ) {
-      this.finalizedIncomes = this.presetIncomes.map((i) => ({
-        value: i.value,
-        categoriaId: i.categoriaId,
-        day: i.day,
-      }));
-    }
-  }
+  onFinish(): void {
+    this.saldoError = null;
 
-  addIncome(): void {
-    if (!this.isCurrentIncomeValid()) return;
-    const parsed = this.parseCurrencyBr(this.currentIncome.value);
-    if (parsed === null || parsed <= 0) return;
-    this.finalizedIncomes.push({
-      value: parsed,
-      categoriaId: this.currentIncome.categoriaId,
-      day: this.currentIncome.day,
-    });
-    this.currentIncome = { value: null, categoriaId: '', day: '' };
-  }
+    const parsed = this.parseCurrencyBr(this.saldoAtual);
 
-  deleteFinalized(index: number): void {
-    this.finalizedIncomes.splice(index, 1);
-  }
-
-  onContinue(): void {
-    const base: IncomeForm[] = [...this.finalizedIncomes];
-    if (this.isCurrentIncomeValid()) {
-      const parsed = this.parseCurrencyBr(this.currentIncome.value);
-      if (parsed !== null && parsed > 0) {
-        base.push({
-          value: parsed,
-          categoriaId: this.currentIncome.categoriaId,
-          day: this.currentIncome.day,
-        });
-      }
+    if (parsed === null || parsed < 0) {
+      this.saldoError = 'Informe um saldo válido.';
+      return;
     }
 
-    const validIncomes: IncomeResult[] = base.map((income) => ({
-      value:
-        typeof income.value === 'number'
-          ? income.value
-          : this.parseCurrencyBr(income.value) ?? 0,
-      categoriaId: income.categoriaId,
-      categoriaNome: this.getCategoriaNome(income.categoriaId),
-      day: income.day,
-    }));
-
-    if (validIncomes.length > 0) {
-      this.next.emit({ incomes: validIncomes });
+    if (!this.isLoading) {
+      this.next.emit({ saldoAtual: parsed });
     }
   }
 
@@ -116,40 +54,17 @@ export class Step1Component {
     this.back.emit();
   }
 
-  openDayModal(): void {
-    this.showDayModal = true;
-  }
-
-  closeDayModal(): void {
-    this.showDayModal = false;
-  }
-
-  selectDay(day: string): void {
-    this.currentIncome.day = day;
-    this.closeDayModal();
-  }
-
-  isFormValid(): boolean {
-    return this.finalizedIncomes.length > 0 || this.isCurrentIncomeValid();
-  }
-
-  isCurrentIncomeValid(): boolean {
-    const income = this.currentIncome;
-    const parsed = this.parseCurrencyBr(income.value);
-    return !!(
-      parsed &&
-      parsed > 0 &&
-      income.categoriaId &&
-      income.day &&
-      this.getCategoriaNome(income.categoriaId)
-    );
-  }
-
-  getCategoriaNome(id: string): string {
-    return (
-      this.categoriasReceita.find((categoria) => categoria.id === id)?.nome ??
-      ''
-    );
+  ngOnChanges(): void {
+    // Só pré-preenche o campo se vier um saldo REALMENTE definido e maior que zero.
+    // Quando o backend enviar 0, o campo permanece vazio para o usuário informar.
+    if (
+      this.presetSaldoAtual !== null &&
+      this.presetSaldoAtual !== undefined &&
+      this.presetSaldoAtual > 0 &&
+      !this.saldoAtual
+    ) {
+      this.saldoAtual = this.formatCurrencyBr(this.presetSaldoAtual);
+    }
   }
 
   private parseCurrencyBr(formatted: unknown): number | null {
@@ -158,8 +73,19 @@ export class Step1Component {
       return Number.isFinite(formatted) ? formatted : null;
     const str = String(formatted).trim();
     if (!str) return null;
-    const normalized = str.replace(/\./g, '').replace(',', '.');
+    const normalized = str
+      .replace(/\./g, '')
+      .replace(',', '.')
+      .replace('R$', '')
+      .trim();
     const num = Number(normalized);
     return Number.isFinite(num) ? num : null;
+  }
+
+  private formatCurrencyBr(value: number): string {
+    return value.toLocaleString('pt-BR', {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    });
   }
 }

@@ -10,8 +10,10 @@ export interface UsuarioResponse {
   nome: string;
   email: string;
   faixaSalario: number | null;
-  dataCriacao: string;        // ISO date-time
-  dataAtualizacao: string;    // ISO date-time
+  dataCriacao: string; // ISO date-time
+  dataAtualizacao: string; // ISO date-time
   dataInicioControle: string | null; // ISO date
   primeiroAcesso: boolean;
+  saldoInicial?: number | null;
+  saldoAtual?: number | null;
 }

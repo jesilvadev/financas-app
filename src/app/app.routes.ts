@@ -1,7 +1,6 @@
 import { Routes } from '@angular/router';
 import { MainLayoutComponent } from './layout/main-layout.component';
 import { HomeComponent } from './pages/home/home.component';
-import { StatsComponent } from './pages/stats/stats.component';
 import { HistoryComponent } from './pages/history/history.component';
 import { ProfileComponent } from './pages/profile/profile.component';
 import { SigninComponent } from './pages/auth/signin/signin.component';
@@ -13,6 +12,10 @@ import { guestGuard } from './guards/guest.guard';
 import { ProfileDadosComponent } from './pages/profile/dados/dados.component';
 import { ProfileSegurancaComponent } from './pages/profile/seguranca/seguranca.component';
 import { ProfilePersonalizacaoComponent } from './pages/profile/personalizacao/personalizacao.component';
+import { RecorrentesComponent } from './pages/recorrentes/recorrentes.component';
+import { NotificationsComponent } from './pages/notifications/notifications.component';
+import { ProfileAlertasComponent } from './pages/profile/alertas/alertas.component';
+import { MetasComponent } from './pages/metas/metas.component';
 
 export const routes: Routes = [
   // Rotas de autenticação (apenas para não autenticados)
@@ -29,6 +32,12 @@ export const routes: Routes = [
     canActivate: [authGuard],
   },
 
+  {
+    path: 'notifications',
+    component: NotificationsComponent,
+    canActivate: [authGuard],
+  },
+
   // Rotas principais com layout (apenas para autenticados)
   {
     path: '',
@@ -36,11 +45,13 @@ export const routes: Routes = [
     canActivate: [authGuard],
     children: [
       { path: '', component: HomeComponent },
-      { path: 'stats', component: StatsComponent },
+      { path: 'metas', component: MetasComponent },
       { path: 'history', component: HistoryComponent },
+      { path: 'recorrentes', component: RecorrentesComponent },
       { path: 'profile', component: ProfileComponent },
       { path: 'profile/dados', component: ProfileDadosComponent },
       { path: 'profile/seguranca', component: ProfileSegurancaComponent },
+      { path: 'profile/alertas', component: ProfileAlertasComponent },
       {
         path: 'profile/personalizacao',
         component: ProfilePersonalizacaoComponent,

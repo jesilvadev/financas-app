@@ -1,27 +1,28 @@
 <section class="flex flex-col gap-6">
   <header class="flex flex-col gap-3">
     <h1 class="text-4xl font-bold text-primary">
-      Informe seus <span class="text-error">gastos</span> mensais fixos
+      Informe suas <br />
+      <span class="text-success">fontes de rendas</span> mensais fixas
     </h1>
 
-    <ul *ngIf="finalizedExpenses.length" class="w-full space-y-2">
+    <ul *ngIf="finalizedIncomes.length" class="w-full space-y-2">
       <li
-        *ngFor="let exp of finalizedExpenses; let idx = index"
+        *ngFor="let inc of finalizedIncomes; let idx = index"
         class="flex items-center justify-between rounded-lg bg-white/60 px-3 py-2"
       >
         <div class="text-sm text-primary">
           <span class="font-semibold">
-            {{ exp.value | currency : "BRL" : "symbol" : "1.2-2" }}
+            {{ inc.value | currency : "BRL" : "symbol" : "1.2-2" }}
           </span>
           <span class="mx-1">•</span>
-          <span>{{ getCategoriaNome(exp.categoriaId) }}</span>
+          <span>{{ getCategoriaNome(inc.categoriaId) }}</span>
           <span class="mx-1">•</span>
-          <span>Dia {{ exp.day }}</span>
+          <span>Dia {{ inc.day }}</span>
         </div>
         <button
           type="button"
           class="text-error"
-          aria-label="Remover gasto"
+          aria-label="Remover renda"
           (click)="deleteFinalized(idx)"
         >
           <mat-icon>delete</mat-icon>
@@ -32,63 +33,90 @@
 
   <form class="flex flex-col gap-6" (ngSubmit)="onContinue()">
     <div class="flex flex-col gap-2">
+      <label for="value-current" class="text-sm font-medium"> </label>
       <app-ui-input
-        id="value-current-expense"
-        [(ngModel)]="currentExpense.value"
-        name="value-current-expense"
+        id="value-current"
+        [(ngModel)]="currentIncome.value"
+        name="value-current"
         placeholder="0,00"
-        [useMask]="true"
-        mask="separator.2"
-        thousandSeparator="."
-        decimalMarker=","
-        [dropSpecialCharacters]="false"
+        [useMask]="false"
+        [moneyMode]="true"
         prefix="R$"
         inputMode="decimal"
+        [error]="valueError"
       />
     </div>
 
-    <div class="flex flex-row justify-around gap-4 flex-wrap">
+    <div class="flex flex-row justify-between gap-4 flex-wrap">
       <div class="flex flex-col gap-2">
         <div class="relative">
           <select
-            id="category-current-expense"
-            [(ngModel)]="currentExpense.categoriaId"
-            name="category-current-expense"
-            class="border-0 rounded-lg px-4 py-3 pr-10 bg-primary outline-none font-bold text-white appearance-none w-full"
+            id="category-current"
+            [(ngModel)]="currentIncome.categoriaId"
+            name="category-current"
+            class="border-0 rounded-lg px-4 py-3 pr-10 text-sm outline-none font-bold text-transparent appearance-none w-full"
+            [ngClass]="{
+              'bg-primary': !currentIncome.categoriaId,
+              'bg-white': !!currentIncome.categoriaId
+            }"
           >
-            <option class="bg-white text-primary" value="">Categoria</option>
             <option
-              class="bg-white text-primary"
-              *ngFor="let cat of categoriasDespesa"
+              class="bg-white text-black"
+              *ngFor="let cat of categoriasReceita"
               [value]="cat.id"
             >
               {{ cat.nome }}
             </option>
           </select>
+
+          <span
+            class="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-sm font-medium"
+            [ngClass]="{
+              'text-black': !!currentIncome.categoriaId,
+              'text-white/80': !currentIncome.categoriaId
+            }"
+          >
+            {{
+              currentIncome.categoriaId
+                ? getCategoriaNome(currentIncome.categoriaId)
+                : "Categoria"
+            }}
+          </span>
+
           <mat-icon
-            class="pointer-events-none !text-white absolute right-3 top-1/2 -translate-y-1/2 select-none"
+            class="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 select-none"
+            [ngClass]="{
+              '!text-white': !currentIncome.categoriaId,
+              '!text-primary': !!currentIncome.categoriaId
+            }"
             >expand_more</mat-icon
           >
         </div>
         <p
-          *ngIf="categoriasDespesa.length === 0"
+          *ngIf="categoriasReceita.length === 0"
           class="text-xs text-error text-center"
         >
-          Nenhuma categoria de despesa disponível.
+          Nenhuma categoria de receita disponível.
         </p>
       </div>
 
       <div class="flex flex-row items-center gap-2">
         <button
           type="button"
-          id="day-current-expense"
-          name="day-current-expense"
+          id="day-current"
+          name="day-current"
           (click)="openDayModal()"
-          class="border-0 rounded-md px-6 py-3 bg-primary outline-none font-bold text-white flex items-center gap-1"
+          class="border-0 rounded-md px-6 py-3 text-sm outline-none font-medium flex items-center gap-1"
+          [ngClass]="{
+            'bg-primary text-white': !currentIncome.day,
+            'bg-white text-black': !!currentIncome.day
+          }"
           aria-haspopup="dialog"
           [attr.aria-expanded]="showDayModal ? 'true' : 'false'"
         >
-          {{ currentExpense.day ? "Dia " + currentExpense.day : "Dia" }}
+          <span class="mr-1">
+            {{ currentIncome.day ? "Dia " + currentIncome.day : "Dia" }}
+          </span>
         </button>
       </div>
     </div>
@@ -103,7 +131,7 @@
           class="w-full max-w-sm mx-2 rounded-lg bg-white px-4 py-8 shadow-lg"
         >
           <div class="flex items-center justify-between mb-3">
-            <h2 class="text-lg font-bold text-primary">Selecione o dia</h2>
+            <h2 class="text-lg font-semibold text-black">Selecione o dia</h2>
             <button
               type="button"
               (click)="closeDayModal()"
@@ -120,9 +148,10 @@
               (click)="selectDay(day)"
               class="rounded-md px-2 py-2 text-sm font-bold border"
               [ngClass]="{
-                'bg-primary text-white border-primary': isDaySelected(day),
+                'bg-primary text-white border-primary':
+                  day === currentIncome.day,
                 'bg-white text-primary border-primary hover:bg-primary hover:text-white':
-                  !isDaySelected(day)
+                  day !== currentIncome.day
               }"
             >
               {{ day }}
@@ -134,17 +163,13 @@
 
     <button
       type="button"
-      (click)="addExpense()"
-      [disabled]="!isCurrentExpenseValid()"
-      class="border-0 rounded px-4 py-2 text-lg flex gap-2 items-center justify-center text-primary font-bold"
+      (click)="addIncome()"
+      class="border-0 rounded px-4 py-2 flex gap-2 items-center justify-center text-primary font-bold disabled:opacity-50 disabled:pointer-events-none"
+      [disabled]="!isCurrentIncomeValid()"
     >
-      <img src="/assets/adicionar.png" alt="Adicionar" /> Adicionar outro gasto
+      <mat-icon>add_circle</mat-icon> Adicionar outra renda
     </button>
 
-    <app-button-primary
-      type="submit"
-      label="Continuar"
-      [disabled]="!isFormValid()"
-    />
+    <app-button-primary type="submit" label="Continuar" [disabled]="false" />
   </form>
 </section>

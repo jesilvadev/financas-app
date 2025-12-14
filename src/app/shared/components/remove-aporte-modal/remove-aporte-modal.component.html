@@ -1,0 +1,89 @@
+<div
+  *ngIf="open"
+  class="fixed inset-0 z-[999] flex items-center justify-center bg-black/50 backdrop-blur-sm px-4"
+  (click)="handleBackdropClick()"
+>
+  <div
+    class="w-full max-w-xs rounded-3xl bg-layer shadow-2xl ring-1 ring-black/10 overflow-hidden flex flex-col"
+    (click)="$event.stopPropagation()"
+  >
+    <div class="flex flex-1 flex-col px-5 py-5 gap-5">
+      <div class="flex items-center">
+        <div class="flex-1 font-semibold text-center text-primary">
+          Remover Aporte
+        </div>
+        <div class="w-8 flex items-center justify-end">
+          <button
+            type="button"
+            aria-label="Fechar modal"
+            class="text-primary text-base leading-none px-1 py-1 rounded-full transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
+            (click)="handleClose()"
+          >
+            ✕
+          </button>
+        </div>
+      </div>
+
+      <div *ngIf="meta" class="text-center">
+        <p class="text-sm text-description">Meta: {{ meta.nome }}</p>
+        <p class="text-xs text-description mt-1">
+          Valor disponível: {{ meta.valorAtual | currency : "BRL" : "symbol" : "1.2-2" : "pt" }}
+        </p>
+      </div>
+
+      <div class="flex-1 space-y-6 overflow-y-auto pr-1">
+        <div class="space-y-2">
+          <div
+            class="h-[63px] rounded-md border-2 border-primary/30 bg-white px-4 py-3 focus-within:border-primary focus-within:ring-0"
+          >
+            <div class="flex h-full items-center gap-3 text-description">
+              <span>R$</span>
+              <input
+                type="text"
+                inputmode="decimal"
+                autocomplete="off"
+                placeholder="0,00"
+                mask="separator.2"
+                thousandSeparator="."
+                decimalMarker=","
+                [dropSpecialCharacters]="false"
+                class="w-full border-0 bg-transparent text-base text-black outline-none placeholder:text-disable"
+                [ngModel]="valorInput"
+                (ngModelChange)="valorInput = $event"
+                [max]="maxValue"
+              />
+            </div>
+          </div>
+          <p
+            *ngIf="valorInput && !isFormValid && meta"
+            class="text-xs text-error"
+          >
+            O valor deve ser maior que zero e não pode exceder {{ meta.valorAtual | currency : "BRL" : "symbol" : "1.2-2" : "pt" }}
+          </p>
+        </div>
+
+        <button
+          type="button"
+          class="h-[63px] w-full items-center justify-center rounded-xl bg-error px-6 text-base font-medium text-white transition hover:bg-error/90 active:scale-95 disabled:pointer-events-none disabled:opacity-50"
+          [disabled]="!isFormValid || isSubmitting"
+          (click)="submit()"
+        >
+          <span *ngIf="!isSubmitting">Remover Aporte</span>
+          <span *ngIf="isSubmitting">Removendo...</span>
+        </button>
+
+        <!-- Link para excluir meta -->
+        <div class="flex justify-center">
+          <button
+            *ngIf="meta"
+            type="button"
+            class="text-sm text-error hover:underline active:scale-95 transition"
+            (click)="handleDeleteMeta()"
+          >
+            Excluir meta
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

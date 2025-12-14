@@ -3,11 +3,14 @@ import { Component, DestroyRef, OnInit, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { UiInputComponent } from '../../../shared/components/ui-input/ui-input.component';
 import { ButtonPrimaryComponent } from '../../../shared/components/button-primary/button-primary.component';
+import { ConfirmModalComponent } from '../../../shared/components/confirm-modal/confirm-modal.component';
 import { AuthService } from '../../../services/auth.service';
-import { UsuarioService } from '../../../services/usuario.service';
+import { PerfilService } from '../../../services/perfil.service';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { UpdatePerfilRequest } from '../../../models/perfil.model';
 import { UsuarioResponse } from '../../../models/user.model';
 import { RouterLink } from '@angular/router';
+import { AlertService } from '../../../services/alert.service';
 
 @Component({
   selector: 'app-profile-dados',
@@ -17,6 +20,7 @@ import { RouterLink } from '@angular/router';
     FormsModule,
     UiInputComponent,
     ButtonPrimaryComponent,
+    ConfirmModalComponent,
     RouterLink,
   ],
   templateUrl: './dados.component.html',
@@ -31,12 +35,13 @@ export class ProfileDadosComponent implements OnInit {
 
   loading = false;
   saving = false;
-  errorMessage = '';
   isEditing = false;
+  isConfirmModalOpen = false;
 
   constructor(
     private readonly authService: AuthService,
-    private readonly usuarioService: UsuarioService
+    private readonly perfilService: PerfilService,
+    private readonly alertService: AlertService
   ) {}
 
   ngOnInit(): void {
@@ -45,7 +50,7 @@ export class ProfileDadosComponent implements OnInit {
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((user: UsuarioResponse | null) => {
         const full = (user?.nome ?? '').trim();
-        this.nome = full;
+        this.nome = this.formatName(full);
         this.email = user?.email ?? '';
         this.originalNome = this.nome;
         this.originalEmail = this.email;
@@ -63,34 +68,58 @@ export class ProfileDadosComponent implements OnInit {
     return this.isEditing && nameOk && emailOk && changed;
   }
 
+  openConfirmModal(): void {
+    if (!this.canSave) return;
+    this.isConfirmModalOpen = true;
+  }
+
+  closeConfirmModal(): void {
+    if (this.saving) return;
+    this.isConfirmModalOpen = false;
+  }
+
   salvar(): void {
     if (!this.canSave) return;
     const userId = this.authService.currentUserValue?.id;
-    if (!userId) return;
+    if (!userId) {
+      this.isConfirmModalOpen = false;
+      this.alertService.showError('Não foi possível identificar o usuário.');
+      return;
+    }
+
+    const nomeNormalizado = this.formatName(this.nome.trim());
+    const emailNormalizado = this.email.trim();
 
     this.saving = true;
-    this.errorMessage = '';
 
-    this.usuarioService
-      .atualizar(userId, { nome: this.nome.trim(), email: this.email.trim() })
-      .subscribe({
-        next: () => {
-          // Atualiza estado local e AuthService
-          this.originalNome = this.nome.trim();
-          this.originalEmail = this.email.trim();
-          this.authService.fetchCurrentUser().subscribe({
-            complete: () => {
-              this.saving = false;
-              this.isEditing = false;
-            },
-          });
-        },
-        error: (err) => {
-          this.errorMessage =
-            err?.error?.message || err?.message || 'Erro ao salvar dados';
-          this.saving = false;
-        },
-      });
+    const payload: UpdatePerfilRequest = {
+      nome: nomeNormalizado,
+      email: emailNormalizado,
+    };
+
+    this.perfilService.atualizarPerfil(userId, payload).subscribe({
+      next: () => {
+        // Atualiza estado local e AuthService
+        this.nome = nomeNormalizado;
+        this.email = emailNormalizado;
+        this.originalNome = nomeNormalizado;
+        this.originalEmail = emailNormalizado;
+        this.authService.fetchCurrentUser().subscribe({
+          complete: () => {
+            this.saving = false;
+            this.isEditing = false;
+            this.isConfirmModalOpen = false;
+          },
+        });
+      },
+      error: (err) => {
+        const mensagem =
+          err?.error?.message || err?.message || 'Erro ao salvar dados';
+        this.alertService.showError(mensagem);
+        this.saving = false;
+        this.isConfirmModalOpen = false;
+      },
+    });
   }
 
   editar(): void {
@@ -103,6 +132,18 @@ export class ProfileDadosComponent implements OnInit {
     this.nome = this.originalNome;
     this.email = this.originalEmail;
     this.isEditing = false;
-    this.errorMessage = '';
+  }
+
+  private formatName(value: string): string {
+    const trimmed = (value ?? '').trim();
+    if (!trimmed) return '';
+
+    // Deixa a primeira letra de CADA palavra maiúscula e o resto minúsculo
+    return trimmed
+      .toLowerCase()
+      .split(/\s+/)
+      .filter(Boolean)
+      .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+      .join(' ');
   }
 }

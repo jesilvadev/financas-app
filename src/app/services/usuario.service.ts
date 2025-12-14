@@ -29,4 +29,8 @@ export class UsuarioService {
   ): Observable<UsuarioResponse> {
     return this.http.put<UsuarioResponse>(`${this.baseUrl}/${id}`, payload);
   }
+
+  deletar(id: string): Observable<void> {
+    return this.http.delete<void>(`${this.baseUrl}/${id}`);
+  }
 }

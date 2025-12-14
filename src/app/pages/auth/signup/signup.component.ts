@@ -11,6 +11,7 @@ import {
   AuthLoginRequest,
   AuthRegisterRequest,
 } from '../../../models/auth.model';
+import { AlertService } from '../../../services/alert.service';
 
 interface Step1Payload {
   nome: string;
@@ -24,7 +25,12 @@ interface Step2Payload {
 @Component({
   selector: 'app-signup',
   standalone: true,
-  imports: [CommonModule, Step1Component, Step2Component, Step3Component],
+  imports: [
+    CommonModule,
+    Step1Component,
+    Step2Component,
+    Step3Component,
+  ],
   templateUrl: './signup.component.html',
 })
 export class SignupComponent {
@@ -35,9 +41,12 @@ export class SignupComponent {
     senha: '',
   };
   isLoading: boolean = false;
-  errorMessage: string = '';
 
-  constructor(private authService: AuthService, private router: Router) {}
+  constructor(
+    private authService: AuthService,
+    private router: Router,
+    private readonly alertService: AlertService
+  ) {}
 
   headerBack(): void {
     if (this.currentStep === 1) {
@@ -65,7 +74,6 @@ export class SignupComponent {
 
   private register(): void {
     this.isLoading = true;
-    this.errorMessage = '';
 
     const loginPayload: AuthLoginRequest = {
       email: this.signupData.email,
@@ -76,8 +84,9 @@ export class SignupComponent {
       switchMap(() => this.authService.login(loginPayload)),
       catchError((error) => {
         console.error('Erro no cadastro:', error);
-        this.errorMessage =
+        const mensagem =
           error?.error?.message || error?.message || 'Erro ao criar conta';
+        this.alertService.showError(mensagem);
         // Volta para a step 2 em caso de erro
         this.currentStep = 2;
         return of(null);

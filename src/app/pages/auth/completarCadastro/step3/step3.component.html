@@ -1,30 +1,178 @@
 <section class="flex flex-col gap-6">
-  <header class="flex flex-col gap-2">
+  <header class="flex flex-col gap-3">
     <h1 class="text-4xl font-bold text-primary">
-      Defina o dia de início do seu controle mensal
+      Informe seus <br />
+      <span class="text-error">gastos</span> mensais fixos
     </h1>
+
+    <ul *ngIf="finalizedExpenses.length" class="w-full space-y-2">
+      <li
+        *ngFor="let exp of finalizedExpenses; let idx = index"
+        class="flex items-center justify-between rounded-lg bg-white/60 px-3 py-2"
+      >
+        <div class="text-sm text-primary">
+          <span class="font-semibold">
+            {{ exp.value | currency : "BRL" : "symbol" : "1.2-2" }}
+          </span>
+          <span class="mx-1">•</span>
+          <span>{{ getCategoriaNome(exp.categoriaId) }}</span>
+          <span class="mx-1">•</span>
+          <span>Dia {{ exp.day }}</span>
+        </div>
+        <button
+          type="button"
+          class="text-error"
+          aria-label="Remover gasto"
+          (click)="deleteFinalized(idx)"
+        >
+          <mat-icon>delete</mat-icon>
+        </button>
+      </li>
+    </ul>
   </header>
 
-  <form class="flex flex-col gap-8" (ngSubmit)="onFinish()">
+  <form class="flex flex-col gap-6" (ngSubmit)="onContinue()">
     <div class="flex flex-col gap-2">
       <app-ui-input
-        id="startDay"
-        name="startDay"
-        [type]="'tel'"
-        placeholder="Dia do mês (1-31)"
-        inputMode="numeric"
-        autocomplete="off"
-        [(ngModel)]="startDay"
-        (ngModelChange)="handleDayChange($event)"
+        id="value-current-expense"
+        [(ngModel)]="currentExpense.value"
+        name="value-current-expense"
+        placeholder="0,00"
+        [useMask]="false"
+        [moneyMode]="true"
+        prefix="R$"
+        inputMode="decimal"
+        [error]="valueError"
       />
     </div>
 
+    <div class="flex flex-row justify-between gap-4 flex-wrap">
+      <div class="flex flex-col gap-2">
+        <div class="relative">
+          <select
+            id="category-current-expense"
+            [(ngModel)]="currentExpense.categoriaId"
+            name="category-current-expense"
+            class="border-0 rounded-lg px-4 py-3 pr-10 text-sm outline-none font-bold text-transparent appearance-none w-full"
+            [ngClass]="{
+              'bg-primary': !currentExpense.categoriaId,
+              'bg-white': !!currentExpense.categoriaId
+            }"
+          >
+            <option
+              class="bg-white text-black"
+              *ngFor="let cat of categoriasDespesa"
+              [value]="cat.id"
+            >
+              {{ cat.nome }}
+            </option>
+          </select>
+
+          <span
+            class="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-sm font-medium"
+            [ngClass]="{
+              'text-black': !!currentExpense.categoriaId,
+              'text-white/80': !currentExpense.categoriaId
+            }"
+          >
+            {{
+              currentExpense.categoriaId
+                ? getCategoriaNome(currentExpense.categoriaId)
+                : "Categoria"
+            }}
+          </span>
+
+          <mat-icon
+            class="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 select-none"
+            [ngClass]="{
+              '!text-white': !currentExpense.categoriaId,
+              '!text-primary': !!currentExpense.categoriaId
+            }"
+            >expand_more</mat-icon
+          >
+        </div>
+        <p
+          *ngIf="categoriasDespesa.length === 0"
+          class="text-xs text-error text-center"
+        >
+          Nenhuma categoria de despesa disponível.
+        </p>
+      </div>
+
+      <div class="flex flex-row items-center gap-2">
+        <button
+          type="button"
+          id="day-current-expense"
+          name="day-current-expense"
+          (click)="openDayModal()"
+          class="border-0 rounded-md px-6 py-3 text-sm outline-none font-medium flex items-center gap-1"
+          [ngClass]="{
+            'bg-primary text-white': !currentExpense.day,
+            'bg-white text-black': !!currentExpense.day
+          }"
+          aria-haspopup="dialog"
+          [attr.aria-expanded]="showDayModal ? 'true' : 'false'"
+        >
+          <span class="mr-1">
+            {{ currentExpense.day ? "Dia " + currentExpense.day : "Dia" }}
+          </span>
+        </button>
+      </div>
+    </div>
+
+    <ng-container *ngIf="showDayModal">
+      <div
+        class="fixed inset-0 bg-black/40 z-40"
+        (click)="closeDayModal()"
+      ></div>
+      <div class="fixed inset-0 z-50 flex items-center justify-center p-4">
+        <div
+          class="w-full max-w-sm mx-2 rounded-lg bg-white px-4 py-8 shadow-lg"
+        >
+          <div class="flex items-center justify-between mb-3">
+            <h2 class="text-lg font-semibold text-black">Selecione o dia</h2>
+            <button
+              type="button"
+              (click)="closeDayModal()"
+              aria-label="Fechar"
+              class="text-primary"
+            >
+              <mat-icon>close</mat-icon>
+            </button>
+          </div>
+          <div class="grid grid-cols-7 gap-2">
+            <button
+              type="button"
+              *ngFor="let day of days"
+              (click)="selectDay(day)"
+              class="rounded-md px-2 py-2 text-sm font-bold border"
+              [ngClass]="{
+                'bg-primary text-white border-primary':
+                  day === currentExpense.day,
+                'bg-white text-primary border-primary hover:bg-primary hover:text-white':
+                  day !== currentExpense.day
+              }"
+            >
+              {{ day }}
+            </button>
+          </div>
+        </div>
+      </div>
+    </ng-container>
+
+    <button
+      type="button"
+      (click)="addExpense()"
+      class="border-0 rounded px-4 py-2 flex gap-2 items-center justify-center text-primary font-bold disabled:opacity-50 disabled:pointer-events-none"
+      [disabled]="!isCurrentExpenseValid()"
+    >
+      <mat-icon>add_circle</mat-icon> Adicionar outro gasto
+    </button>
+
     <app-button-primary
       type="submit"
-      label="Finalizar"
-      loadingText="Enviando..."
-      [loading]="isLoading"
-      [disabled]="!isValidDay || isLoading"
+      label="Continuar"
+      [disabled]="false"
     />
   </form>
 </section>

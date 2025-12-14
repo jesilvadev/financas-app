@@ -17,6 +17,7 @@ import { CategoriaService } from '../../../services/categoria.service';
 import { TransacaoService } from '../../../services/transacao.service';
 import { AuthService } from '../../../services/auth.service';
 import { TipoTransacao } from '../../../models/tipoTransacao.enum';
+import { AlertService } from '../../../services/alert.service';
 
 type EntryType = 'income' | 'expense';
 
@@ -39,7 +40,6 @@ export class AddEntryModalComponent implements OnChanges {
   selectedCategoryId = '';
   descricao = '';
   isSubmitting = false;
-  errorMessage = '';
 
   categorias: Categoria[] = [];
   private usuarioId: string | null = null;
@@ -48,7 +48,8 @@ export class AddEntryModalComponent implements OnChanges {
   constructor(
     private readonly categoriaService: CategoriaService,
     private readonly transacaoService: TransacaoService,
-    private readonly authService: AuthService
+    private readonly authService: AuthService,
+    private readonly alertService: AlertService
   ) {
     this.authService.currentUser$
       .pipe(takeUntilDestroyed())
@@ -74,11 +75,15 @@ export class AddEntryModalComponent implements OnChanges {
     ) {
       const t = this.initialTransacao;
       this.entryType = t.tipo === 'RECEITA' ? 'income' : 'expense';
-      this.amountInput = this.formatCurrencyBr(t.valor);
+      // Formata o valor para o mask processar corretamente
+      this.amountInput = this.formatValueForMask(t.valor);
       this.selectedCategoryId = t.categoriaId;
       this.descricao = t.descricao ?? '';
       this.usuarioId = t.userId;
       this.loadCategorias();
+    } else if (changes['open'] && !this.open) {
+      // Limpa os campos quando o modal é fechado
+      this.reset();
     }
   }
 
@@ -104,7 +109,6 @@ export class AddEntryModalComponent implements OnChanges {
     this.entryType = type;
     this.selectedCategoryId = '';
     this.descricao = '';
-    this.errorMessage = '';
     this.loadCategorias();
   }
 
@@ -113,7 +117,6 @@ export class AddEntryModalComponent implements OnChanges {
     this.amountInput = '';
     this.selectedCategoryId = '';
     this.descricao = '';
-    this.errorMessage = '';
     this.isSubmitting = false;
   }
 
@@ -121,7 +124,6 @@ export class AddEntryModalComponent implements OnChanges {
     this.entryType = null;
     this.selectedCategoryId = '';
     this.descricao = '';
-    this.errorMessage = '';
   }
 
   handleClose(): void {
@@ -140,17 +142,19 @@ export class AddEntryModalComponent implements OnChanges {
       return;
     }
 
+    const now = new Date();
+    now.setHours(now.getHours() - 3);
+
     const payload: TransacaoRequest = {
       tipo: this.entryType === 'income' ? 'RECEITA' : 'DESPESA',
       valor: parsed,
-      data: new Date().toISOString().split('T')[0],
+      data: now.toISOString(),
       descricao: this.descricao.trim() ? this.descricao.trim() : undefined,
       userId: this.usuarioId,
       categoriaId: this.selectedCategoryId,
     };
 
     this.isSubmitting = true;
-    this.errorMessage = '';
 
     if (this.mode === 'edit' && this.initialTransacao) {
       this.transacaoService
@@ -164,8 +168,9 @@ export class AddEntryModalComponent implements OnChanges {
           },
           error: (error) => {
             console.error('Erro ao atualizar transação', error);
-            this.errorMessage =
+            const mensagem =
               error?.error?.message || error?.message || 'Erro ao atualizar';
+            this.alertService.showError(mensagem);
             this.isSubmitting = false;
           },
         });
@@ -179,8 +184,9 @@ export class AddEntryModalComponent implements OnChanges {
         },
         error: (error) => {
           console.error('Erro ao registrar transação', error);
-          this.errorMessage =
+          const mensagem =
             error?.error?.message || error?.message || 'Erro ao registrar';
+          this.alertService.showError(mensagem);
           this.isSubmitting = false;
         },
       });
@@ -199,19 +205,29 @@ export class AddEntryModalComponent implements OnChanges {
       },
       error: (error) => {
         console.error('Erro ao carregar categorias', error);
-        this.errorMessage =
+        const mensagem =
           error?.error?.message ||
           error?.message ||
           'Erro ao carregar categorias';
+        this.alertService.showError(mensagem);
       },
     });
   }
 
   private parseCurrencyBr(formatted: string): number | null {
     if (!formatted) return null;
+    // Remove separadores de milhares e converte vírgula para ponto
     const normalized = formatted.replace(/\./g, '').replace(',', '.');
     const num = Number(normalized);
     return Number.isFinite(num) ? num : null;
+  }
+
+  private formatValueForMask(value: number): string {
+    // Converte o valor numérico para string no formato que o ngx-mask espera
+    // O mask "separator.2" com dropSpecialCharacters=true espera uma string numérica
+    // simples com vírgula para decimais, sem separadores de milhares
+    // Ex: 1000.00 -> "1000,00" (será formatado como "1.000,00" pelo mask)
+    return value.toFixed(2).replace('.', ',');
   }
 
   private formatCurrencyBr(value: number): string {

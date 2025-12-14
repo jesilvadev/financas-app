@@ -27,6 +27,9 @@ export class Step2Component {
   confirmarSenha: string = '';
   showPassword: boolean = false;
   showConfirmPassword: boolean = false;
+  emailError: string | null = null;
+  senhaError: string | null = null;
+  confirmarSenhaError: string | null = null;
 
   togglePasswordVisibility(): void {
     this.showPassword = !this.showPassword;
@@ -37,15 +40,33 @@ export class Step2Component {
   }
 
   onConfirm(): void {
+    this.emailError = null;
+    this.senhaError = null;
+    this.confirmarSenhaError = null;
+
     const emailLimpo = this.email.trim();
-    if (
-      emailLimpo &&
-      this.senha &&
-      this.confirmarSenha &&
-      this.senha === this.confirmarSenha
-    ) {
-      this.next.emit({ email: emailLimpo, senha: this.senha });
+
+    if (!emailLimpo) {
+      this.emailError = 'Informe seu e-mail.';
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailLimpo)) {
+      this.emailError = 'Informe um e-mail válido.';
     }
+
+    if (!this.senha) {
+      this.senhaError = 'Informe uma senha.';
+    }
+
+    if (!this.confirmarSenha) {
+      this.confirmarSenhaError = 'Confirme sua senha.';
+    } else if (!this.senhaError && this.senha !== this.confirmarSenha) {
+      this.confirmarSenhaError = 'As senhas não coincidem.';
+    }
+
+    if (this.emailError || this.senhaError || this.confirmarSenhaError) {
+      return;
+    }
+
+    this.next.emit({ email: emailLimpo, senha: this.senha });
   }
 
   onBack(): void {

@@ -1,0 +1,31 @@
+<section class="flex flex-col gap-6">
+  <header class="flex flex-col gap-2">
+    <h1 class="text-4xl font-bold text-primary">
+      Defina o dia de início do seu controle mensal
+    </h1>
+  </header>
+
+  <form class="flex flex-col gap-8" (ngSubmit)="onFinish()">
+    <div class="flex flex-col gap-2">
+      <app-ui-input
+        id="startDay"
+        name="startDay"
+        [type]="'tel'"
+        placeholder="Dia do mês (1-31)"
+        inputMode="numeric"
+        autocomplete="off"
+        [(ngModel)]="startDay"
+        (ngModelChange)="handleDayChange($event)"
+        [error]="dayError"
+      />
+    </div>
+
+    <app-button-primary
+      type="submit"
+      label="Finalizar"
+      loadingText="Enviando..."
+      [loading]="isLoading"
+      [disabled]="isLoading"
+    />
+  </form>
+</section>

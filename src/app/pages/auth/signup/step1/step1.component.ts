@@ -19,11 +19,33 @@ export class Step1Component {
   @Output() next = new EventEmitter<{ nome: string }>();
 
   nome: string = '';
+  nomeError: string | null = null;
 
   onContinue(): void {
-    const nomeLimpo = this.nome.trim();
-    if (nomeLimpo) {
-      this.next.emit({ nome: nomeLimpo });
+    this.nomeError = null;
+
+    // Normaliza espaços em branco
+    const nomeLimpo = this.nome.trim().replace(/\s+/g, ' ');
+
+    if (!nomeLimpo) {
+      this.nomeError = 'Informe seu nome completo.';
+      return;
     }
+
+    // Permite apenas letras (incluindo acentos) e espaços
+    const nomeValido = /^[A-Za-zÀ-ÖØ-öø-ÿ\s]+$/.test(nomeLimpo);
+    if (!nomeValido) {
+      this.nomeError = 'Nome inválido.';
+      return;
+    }
+
+    // Exige pelo menos duas palavras (nome e sobrenome)
+    const partes = nomeLimpo.split(' ').filter(Boolean);
+    if (partes.length < 2) {
+      this.nomeError = 'Informe seu nome completo.';
+      return;
+    }
+
+    this.next.emit({ nome: nomeLimpo });
   }
 }

@@ -1,0 +1,226 @@
+<div class="pb-14 font-inter h-full flex flex-col">
+  <!-- Header fixo com voltar (padrão notificações) -->
+  <header
+    class="flex items-center justify-center pb-2 py-12 sticky top-0 z-10 bg-primary"
+    aria-label="Cabeçalho de transações recorrentes"
+  >
+    <button
+      type="button"
+      routerLink="/"
+      class="absolute left-0 px-3 py-1 rounded-full transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
+      aria-label="Voltar"
+    >
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="24"
+        height="24"
+        viewBox="0 0 24 24"
+        fill="#ffffff"
+      >
+        <path d="M15.41 7.41 14 6l-6 6 6 6 1.41-1.41L10.83 12z" />
+      </svg>
+    </button>
+    <h1 class="text-lg font-semibold text-white text-center truncate">
+      Transações recorrentes
+    </h1>
+  </header>
+
+  <!-- Conteúdo rolável -->
+  <div class="flex-1 overflow-y-auto px-2 pt-4">
+    <!-- Ação para abrir modal -->
+    <section class="max-w-md mx-auto mt-4 mb-4 px-2">
+      <button
+        type="button"
+        class="h-[50px] w-full flex items-center justify-center rounded-xl bg-primary px-6 text-sm font-medium text-white transition hover:bg-primary/90 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
+        (click)="abrirNovoRecorrente()"
+      >
+        Nova transação recorrente
+      </button>
+    </section>
+
+    <!-- Listagem -->
+    <section class="space-y-6 max-w-md mx-auto mb-6 px-2">
+      <!-- Receitas recorrentes -->
+      <div class="space-y-3">
+        <h3 class="text-sm text-description mb-1">Ganhos recorrentes</h3>
+
+        <div *ngIf="loading" class="text-center text-xs text-description py-4">
+          Carregando transações recorrentes...
+        </div>
+
+        <ng-container *ngIf="!loading">
+          <ng-container
+            *ngIf="recorrentesReceita.length > 0; else semRecorrentesReceita"
+          >
+            <div class="space-y-3">
+              <article
+                *ngFor="let r of recorrentesReceita"
+                class="rounded-xl px-4 py-3 flex items-center h-20 justify-between active:scale-[0.98] transition border bg-white border-black/5"
+              >
+                <div class="flex items-center gap-3 min-w-0">
+                  <div
+                    class="w-10 h-10 flex items-center justify-center rounded-[12px] bg-[#5DC486]"
+                  >
+                    <span class="text-2xl text-[#1E8315] font-bold"> + </span>
+                  </div>
+                  <div class="flex flex-col gap-0.5 min-w-0">
+                    <span class="text-black font-semibold text-sm truncate">
+                      {{ r.categoriaNome }}
+                    </span>
+
+                    <span
+                      class="text-description text-[11px] whitespace-nowrap"
+                    >
+                      Todo dia {{ r.diaRecorrencia }}
+                    </span>
+                  </div>
+                </div>
+                <div class="flex flex-col items-end gap-1 ml-3">
+                  <span class="font-bold text-base text-gray-900">
+                    {{ r.valor | currency : "BRL" : "symbol" : "1.2-2" : "pt" }}
+                  </span>
+                  <div class="flex items-center gap-2">
+                    <button
+                      type="button"
+                      class="p-1 rounded-full hover:bg-gray-100 active:scale-95 transition"
+                      (click)="abrirEdicaoRecorrente(r)"
+                      aria-label="Editar recorrência"
+                    >
+                      <img
+                        src="assets/icons/pen.png"
+                        class="w-4 h-4 opacity-80"
+                      />
+                    </button>
+                    <button
+                      type="button"
+                      class="p-1 rounded-full hover:bg-gray-100 active:scale-95 transition"
+                      (click)="solicitarExclusao(r)"
+                      aria-label="Excluir recorrência"
+                    >
+                      <img
+                        src="assets/icons/trashCan.png"
+                        class="w-4 h-4 opacity-80"
+                      />
+                    </button>
+                  </div>
+                </div>
+              </article>
+            </div>
+          </ng-container>
+        </ng-container>
+
+        <ng-template #semRecorrentesReceita>
+          <div
+            class="text-center py-8 text-description font-semibold text-sm bg-white rounded-2xl border border-dashed border-gray-200"
+          >
+            Nenhum ganho recorrente cadastrado.
+          </div>
+        </ng-template>
+      </div>
+
+      <!-- Despesas recorrentes -->
+      <div class="space-y-3">
+        <h3 class="text-sm text-description mb-1">Gastos recorrentes</h3>
+
+        <div *ngIf="loading" class="text-center text-xs text-description py-4">
+          Carregando transações recorrentes...
+        </div>
+
+        <ng-container *ngIf="!loading">
+          <ng-container
+            *ngIf="recorrentesDespesa.length > 0; else semRecorrentesDespesa"
+          >
+            <div class="space-y-3">
+              <article
+                *ngFor="let r of recorrentesDespesa"
+                class="rounded-xl px-4 py-3 flex items-center h-20 justify-between active:scale-[0.98] transition border bg-white border-black/5"
+              >
+                <div class="flex items-center gap-3 min-w-0">
+                  <div
+                    class="w-10 h-10 flex items-center justify-center rounded-[12px] bg-[#f6a1a1]"
+                  >
+                    <span class="text-2xl text-[#f85656] font-bold"> − </span>
+                  </div>
+                  <div class="flex flex-col gap-0.5 min-w-0">
+                    <span class="text-black font-semibold text-sm truncate">
+                      {{ r.categoriaNome }}
+                    </span>
+                    <span
+                      class="text-description text-[11px] whitespace-nowrap"
+                    >
+                      Todo dia {{ r.diaRecorrencia }}
+                    </span>
+                  </div>
+                </div>
+                <div class="flex flex-col items-end gap-1 ml-3">
+                  <span class="font-bold text-base text-gray-900">
+                    {{ r.valor | currency : "BRL" : "symbol" : "1.2-2" : "pt" }}
+                  </span>
+                  <div class="flex items-center gap-2">
+                    <button
+                      type="button"
+                      class="p-1 rounded-full hover:bg-gray-100 active:scale-95 transition"
+                      (click)="abrirEdicaoRecorrente(r)"
+                      aria-label="Editar recorrência"
+                    >
+                      <img
+                        src="assets/icons/pen.png"
+                        class="w-4 h-4 opacity-80"
+                      />
+                    </button>
+                    <button
+                      type="button"
+                      class="p-1 rounded-full hover:bg-gray-100 active:scale-95 transition"
+                      (click)="solicitarExclusao(r)"
+                      aria-label="Excluir recorrência"
+                    >
+                      <img
+                        src="assets/icons/trashCan.png"
+                        class="w-4 h-4 opacity-80"
+                      />
+                    </button>
+                  </div>
+                </div>
+              </article>
+            </div>
+          </ng-container>
+        </ng-container>
+
+        <ng-template #semRecorrentesDespesa>
+          <div
+            class="text-center py-8 text-description font-semibold text-sm bg-white rounded-2xl border border-dashed border-gray-200"
+          >
+            Nenhum gasto recorrente cadastrado.
+          </div>
+        </ng-template>
+      </div>
+    </section>
+
+    <!-- Modal confirmar exclusão -->
+    <app-confirm-modal
+      [open]="isDeleteModalOpen"
+      [title]="'Excluir recorrência'"
+      [description]="
+        recorrenteParaExcluir
+          ? 'Tem certeza que deseja excluir a recorrência da categoria ' +
+            recorrenteParaExcluir.categoriaNome +
+            '?'
+          : ''
+      "
+      [confirmLabel]="'Sim, excluir'"
+      [cancelLabel]="'Cancelar'"
+      [confirming]="deleting"
+      (close)="closeDeleteModal()"
+      (confirm)="confirmarExclusao()"
+    ></app-confirm-modal>
+
+    <!-- Modal de criar/editar recorrente -->
+    <app-recurring-entry-modal
+      [open]="isRecurringModalOpen"
+      [mode]="modalMode"
+      [initialRecorrente]="editingRecorrenteModal"
+      (close)="fecharModalRecorrente()"
+      (confirm)="handleModalConfirm($event)"
+    ></app-recurring-entry-modal>
+  </div>
+</div>

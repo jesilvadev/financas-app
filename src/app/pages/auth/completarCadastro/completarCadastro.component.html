@@ -3,7 +3,7 @@
 >
   <!-- Header fixo seguindo padrão do signup/onboarding (oculto na conclusão) -->
   <header
-    *ngIf="currentStep < 4"
+    *ngIf="currentStep < 5"
     class="w-full max-w-md flex items-center justify-between mt-2"
   >
     <div class="w-14 h-14 flex items-center justify-start">
@@ -19,7 +19,7 @@
     </div>
     <div class="flex-1"></div>
     <div
-      class="w-20 h-14 flex items-center justify-end gap-2"
+      class="w-28 h-14 flex items-center justify-end gap-2"
       *ngIf="currentStep >= 1"
     >
       <span
@@ -43,22 +43,22 @@
           'bg-white': currentStep < 3
         }"
       ></span>
+      <span
+        class="w-3 h-3 rounded-full transition-all"
+        [ngClass]="{
+          'bg-primary': currentStep >= 4,
+          'bg-white': currentStep < 4
+        }"
+      ></span>
     </div>
   </header>
 
   <div class="w-full max-w-md flex flex-col gap-6 mt-6">
-    <div *ngIf="errorMessage" class="flex flex-col gap-2 text-sm">
-      <p>{{ errorMessage }}</p>
-    </div>
-
     <app-completar-cadastro-intro
       *ngIf="currentStep === 0"
       (next)="onIntroNext()"
     ></app-completar-cadastro-intro>
 
-    <div *ngIf="categoriasLoading" class="text-center text-sm text-description">
-      Carregando categorias...
-    </div>
     <div *ngIf="categoriasError" class="text-center text-sm text-error">
       {{ categoriasError }}
     </div>
@@ -67,26 +67,34 @@
       *ngIf="currentStep === 1"
       (next)="onStep1Next($event)"
       (back)="onStep1Back()"
-      [categorias]="categoriasReceita"
-      [presetIncomes]="presetIncomesForStep"
+      [presetSaldoAtual]="presetSaldoAtualForStep"
+      [isLoading]="false"
     ></app-step1>
 
     <app-step2
       *ngIf="currentStep === 2"
       (next)="onStep2Next($event)"
       (back)="onStep2Back()"
-      [categorias]="categoriasDespesa"
-      [presetExpenses]="presetExpensesForStep"
+      [categorias]="categoriasReceita"
+      [presetIncomes]="presetIncomesForStep"
     ></app-step2>
 
     <app-step3
       *ngIf="currentStep === 3"
       (next)="onStep3Next($event)"
       (back)="onStep3Back()"
-      [isLoading]="isLoading"
-      [presetStartDay]="presetStartDayForStep"
+      [categorias]="categoriasDespesa"
+      [presetExpenses]="presetExpensesForStep"
     ></app-step3>
 
-    <app-conclusao *ngIf="currentStep === 4"></app-conclusao>
+    <app-step4
+      *ngIf="currentStep === 4"
+      (next)="onStep4Next($event)"
+      (back)="onStep4Back()"
+      [isLoading]="isLoading"
+      [presetStartDay]="presetStartDayForStep"
+    ></app-step4>
+
+    <app-conclusao *ngIf="currentStep === 5"></app-conclusao>
   </div>
 </section>

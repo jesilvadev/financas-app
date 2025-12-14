@@ -1,41 +1,77 @@
 <div class="min-h-svh bg-layer text-black flex flex-col">
   <!-- HEADER -->
   <header
-    *ngIf="isHome"
-    class="relative bg-primary text-white px-5 pt-12 pb-20 overflow-hidden"
+    *ngIf="showHeader"
+    class="sticky top-0 bg-primary text-white px-5 pt-16 pb-20 overflow-hidden z-0"
   >
-    <div class="mx-auto max-w-md">
+    <div class="mx-auto max-w-md relative z-10">
+      <!-- Linha usuário + ações -->
       <div class="flex items-center justify-between">
-        <div class="flex items-center gap-3">
+        <div class="flex items-center gap-4">
           <div
-            class="h-10 w-10 rounded-full ring-2 ring-white/40 bg-white/20 flex items-center justify-center text-white font-semibold select-none"
+            class="h-10 w-10 rounded-full ring-2 ring-white/40 bg-white/15 flex items-center justify-center text-white font-semibold select-none"
           >
             <span>{{ userInitial }}</span>
           </div>
-          <div class="text-sm font-medium truncate">{{ userName }}</div>
+          <div class="flex flex-col">
+            <span class="text-sm font-light text-white/80">Olá,</span>
+            <span class="text-xl font-semibold truncate max-w-[180px]">
+              {{ userName || "Usuário" }}
+            </span>
+          </div>
         </div>
+
+        <!-- Ícone de notificação -->
+        <button
+          type="button"
+          class="notification-btn relative inline-flex h-9 w-9 items-center justify-center rounded-full hover:bg-white/20 transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/40"
+          [class.notification-btn--active]="hasActiveAlert"
+          [ngClass]="
+            hasActiveAlert ? 'bg-white text-primary' : 'bg-white/10 text-white'
+          "
+          aria-label="Notificações"
+          (click)="navigateToNotifications()"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            class="h-5 w-5"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <path d="M18 8a6 6 0 1 0-12 0c0 7-3 9-3 9h18s-3-2-3-9" />
+            <path d="M13.73 21a2 2 0 0 1-3.46 0" />
+          </svg>
+          <!-- Badge de notificações não vistas -->
+          <span
+            *ngIf="unreadNotificationsCount > 0"
+            class="absolute -top-0.5 -right-0.5 min-w-[18px] h-[18px] flex items-center justify-center px-1 rounded-full bg-red-500 text-white text-[10px] font-bold border-2 border-white"
+            [attr.aria-label]="
+              unreadNotificationsCount + ' notificações não vistas'
+            "
+          >
+            {{
+              unreadNotificationsCount > 99 ? "99+" : unreadNotificationsCount
+            }}
+          </span>
+        </button>
       </div>
     </div>
-
-    <!-- decor -->
-    <div
-      class="pointer-events-none absolute -top-10 -left-10 h-40 w-40 rounded-full bg-white/10 blur-2xl"
-    ></div>
-    <div
-      class="pointer-events-none absolute -bottom-16 right-0 h-52 w-52 rounded-full bg-white/10 blur-3xl"
-    ></div>
   </header>
 
   <!-- MAIN (card flutuando) -->
   <main
-    class="flex-1 bg-secondary relative z-10"
+    class="flex-1 bg-white relative"
     [ngClass]="{
-      'rounded-t-3xl': isHome,
-      '-mt-10': isHome,
-      'md:-mt-12': isHome
+      'rounded-t-3xl': showHeader,
+      '-mt-10': showHeader,
+      'md:-mt-12': showHeader
     }"
   >
-    <div class="mx-auto max-w-md">
+    <div class="mx-auto max-w-md pb-24">
       <router-outlet></router-outlet>
     </div>
   </main>
@@ -50,7 +86,7 @@
   >
     <div class="relative mx-auto max-w-md">
       <div
-        class="h-20 bg-layer pt-4 pb-10 backdrop-blur flex items-center justify-around border border-black/5"
+        class="h-24 bg-secondary pt-4 pb-12 backdrop-blur flex items-center justify-around border border-black/5"
       >
         <!-- Home -->
         <a
@@ -60,7 +96,7 @@
           [routerLinkActiveOptions]="{ exact: true }"
           class="flex flex-col items-center gap-2 transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/30 rounded-lg px-3 py-2"
           [class.text-primary]="rlaHome.isActive"
-          [class.text-disable]="!rlaHome.isActive"
+          [class.text-secondary-dark]="!rlaHome.isActive"
           aria-current="page"
           aria-label="Início"
         >
@@ -76,30 +112,32 @@
               fill="currentColor"
             />
           </svg>
+          <span class="text-[10px] font-medium leading-none">Home</span>
         </a>
 
         <!-- Stats -->
         <a
-          routerLink="/stats"
-          #rlaStats="routerLinkActive"
+          routerLink="/metas"
+          #rlaMetas="routerLinkActive"
           routerLinkActive
           class="flex flex-col items-center gap-2 transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/30 rounded-lg px-3 py-2"
-          [class.text-primary]="rlaStats.isActive"
-          [class.text-disable]="!rlaStats.isActive"
+          [class.text-primary]="rlaMetas.isActive"
+          [class.text-secondary-dark]="!rlaMetas.isActive"
           aria-label="Gráficos"
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
-            width="32"
-            height="32"
-            viewBox="0 0 32 32"
+            width="22"
+            height="22"
+            viewBox="0 0 22 22"
             fill="none"
           >
             <path
-              d="M21.7777 26.6667V17.3334H26.6667V26.6667H21.7777ZM13.5557 26.6667V5.33337H18.4443V26.6667H13.5557ZM5.33334 26.6667V12H10.2223V26.6667H5.33334Z"
+              d="M16.4443 21.3333V12H21.3333V21.3333H16.4443ZM8.22233 21.3333V0H13.111V21.3333H8.22233ZM0 21.3333V6.66667H4.889V21.3333H0Z"
               fill="currentColor"
             />
           </svg>
+          <span class="text-[10px] font-medium leading-none">Metas</span>
         </a>
 
         <!-- Espaço para FAB -->
@@ -112,21 +150,22 @@
           routerLinkActive
           class="flex flex-col items-center gap-2 transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/30 rounded-lg px-3 py-2"
           [class.text-primary]="rlaHistory.isActive"
-          [class.text-disable]="!rlaHistory.isActive"
+          [class.text-secondary-dark]="!rlaHistory.isActive"
           aria-label="Histórico"
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
-            width="32"
-            height="32"
-            viewBox="0 0 32 32"
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
             fill="none"
           >
             <path
-              d="M15.9333 28C12.7038 28 9.93901 26.8797 7.63901 24.639C5.33901 22.3981 4.13345 19.6592 4.02234 16.4223H6.26667C6.37045 19.0446 7.35012 21.2593 9.20567 23.0667C11.0612 24.874 13.3038 25.7777 15.9333 25.7777C18.6816 25.7777 21.0093 24.8166 22.9167 22.8943C24.824 20.9721 25.7777 18.637 25.7777 15.889C25.7777 13.1852 24.8166 10.8981 22.8943 9.02767C20.9721 7.15744 18.6518 6.22233 15.9333 6.22233C14.4149 6.22233 12.9927 6.57044 11.6667 7.26667C10.3407 7.96289 9.19989 8.89622 8.24434 10.0667H11.8V12.289H4.48901V5H6.71101V8.4C7.85923 7.02222 9.23523 5.94444 10.839 5.16667C12.4426 4.38889 14.1407 4 15.9333 4C17.6 4 19.1648 4.313 20.6277 4.939C22.0908 5.56478 23.3686 6.41656 24.461 7.49433C25.5537 8.57211 26.4167 9.83511 27.05 11.2833C27.6833 12.7316 28 14.289 28 15.9557C28 17.6223 27.6833 19.1871 27.05 20.65C26.4167 22.1129 25.5537 23.387 24.461 24.4723C23.3686 25.5574 22.0908 26.4167 20.6277 27.05C19.1648 27.6833 17.6 28 15.9333 28ZM20.0223 21.489L14.911 16.4223V9.26667H17.1333V15.511L21.6 19.911L20.0223 21.489Z"
+              d="M11.911 24C8.68145 24 5.91667 22.8797 3.61667 20.639C1.31667 18.3981 0.111111 15.6592 0 12.4223H2.24433C2.34811 15.0446 3.32778 17.2593 5.18333 19.0667C7.03889 20.874 9.28145 21.7777 11.911 21.7777C14.6592 21.7777 16.987 20.8166 18.8943 18.8943C20.8017 16.9721 21.7553 14.637 21.7553 11.889C21.7553 9.18522 20.7942 6.89811 18.872 5.02767C16.9498 3.15744 14.6294 2.22233 11.911 2.22233C10.3926 2.22233 8.97033 2.57044 7.64433 3.26667C6.31833 3.96289 5.17756 4.89622 4.222 6.06667H7.77767V8.289H0.466667V1H2.68867V4.4C3.83689 3.02222 5.21289 1.94444 6.81667 1.16667C8.42022 0.388889 10.1183 0 11.911 0C13.5777 0 15.1424 0.312999 16.6053 0.938999C18.0684 1.56478 19.3462 2.41656 20.4387 3.49433C21.5313 4.57211 22.3943 5.83511 23.0277 7.28333C23.661 8.73156 23.9777 10.289 23.9777 11.9557C23.9777 13.6223 23.661 15.1871 23.0277 16.65C22.3943 18.1129 21.5313 19.387 20.4387 20.4723C19.3462 21.5574 18.0684 22.4167 16.6053 23.05C15.1424 23.6833 13.5777 24 11.911 24ZM16 17.489L10.8887 12.4223V5.26667H13.111V11.511L17.5777 15.911L16 17.489Z"
               fill="currentColor"
             />
           </svg>
+          <span class="text-[10px] font-medium leading-none">Histórico</span>
         </a>
 
         <!-- Perfil -->
@@ -136,33 +175,34 @@
           routerLinkActive
           class="flex flex-col items-center gap-2 transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/30 rounded-lg px-3 py-2"
           [class.text-primary]="rlaProfile.isActive"
-          [class.text-disable]="!rlaProfile.isActive"
+          [class.text-secondary-dark]="!rlaProfile.isActive"
           aria-label="Perfil"
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
-            width="32"
-            height="32"
-            viewBox="0 0 32 32"
+            width="22"
+            height="21"
+            viewBox="0 0 22 21"
             fill="none"
           >
             <path
-              d="M16 15.9776C14.5333 15.9776 13.3148 15.4925 12.3443 14.5223C11.3741 13.5518 10.889 12.3333 10.889 10.8666C10.889 9.39995 11.3741 8.18139 12.3443 7.21095C13.3148 6.24073 14.5333 5.75562 16 5.75562C17.4667 5.75562 18.6852 6.24073 19.6557 7.21095C20.6259 8.18139 21.111 9.39995 21.111 10.8666C21.111 12.3333 20.6259 13.5518 19.6557 14.5223C18.6852 15.4925 17.4667 15.9776 16 15.9776ZM5.33334 26.6666V23.3333C5.33334 22.5184 5.5389 21.8054 5.95001 21.1943C6.36112 20.5832 6.89634 20.1184 7.55568 19.7999C9.00745 19.1259 10.4259 18.6204 11.811 18.2833C13.1963 17.9462 14.5927 17.7776 16 17.7776C17.4073 17.7776 18.7999 17.9498 20.1777 18.2943C21.5555 18.6387 22.9703 19.1406 24.4223 19.7999C25.0963 20.1184 25.6389 20.5832 26.05 21.1943C26.4611 21.8054 26.6667 22.5184 26.6667 23.3333V26.6666H5.33334Z"
+              d="M10.6667 10.222C9.2 10.222 7.98144 9.73689 7.011 8.76667C6.04078 7.79622 5.55567 6.57767 5.55567 5.111C5.55567 3.64433 6.04078 2.42578 7.011 1.45533C7.98144 0.485112 9.2 0 10.6667 0C12.1333 0 13.3519 0.485112 14.3223 1.45533C15.2926 2.42578 15.7777 3.64433 15.7777 5.111C15.7777 6.57767 15.2926 7.79622 14.3223 8.76667C13.3519 9.73689 12.1333 10.222 10.6667 10.222ZM0 20.911V17.5777C0 16.7628 0.205556 16.0498 0.616667 15.4387C1.02778 14.8276 1.563 14.3628 2.22233 14.0443C3.67411 13.3703 5.09256 12.8648 6.47767 12.5277C7.863 12.1906 9.25933 12.022 10.6667 12.022C12.074 12.022 13.4666 12.1942 14.8443 12.5387C16.2221 12.8831 17.637 13.385 19.089 14.0443C19.763 14.3628 20.3056 14.8276 20.7167 15.4387C21.1278 16.0498 21.3333 16.7628 21.3333 17.5777V20.911H0Z"
               fill="currentColor"
             />
           </svg>
+          <span class="text-[10px] font-medium leading-none">Perfil</span>
         </a>
       </div>
 
       <!-- FAB central -->
       <div
-        class="absolute -top-6 left-1/2 -translate-x-1/2 flex items-center justify-center"
+        class="absolute -top-8 left-1/2 -translate-x-1/2 flex items-center justify-center"
       >
         <div
-          class="relative h-14 w-14 flex items-center justify-center rounded-full bg-secondary"
+          class="relative h-16 w-16 flex items-center justify-center rounded-full bg-white"
         >
           <span
-            class="pointer-events-none absolute inset-0 rounded-full ring-4 ring-secondary"
+            class="pointer-events-none absolute inset-0 ring-4 ring-white rounded-full"
           ></span>
           <button
             aria-label="Adicionar"

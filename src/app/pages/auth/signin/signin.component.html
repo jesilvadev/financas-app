@@ -1,45 +1,57 @@
 <section class="min-h-screen flex items-center justify-center bg-secondary p-6">
-  <div class="w-full max-w-xs bg-transparent flex flex-col items-center gap-14">
+  <div class="w-full max-w-md bg-transparent flex flex-col items-center gap-10">
     <h1 class="text-5xl font-bold text-primary">Entrar</h1>
 
-    <form class="w-full flex flex-col gap-4" (ngSubmit)="onSubmit()">
-      <app-ui-input
-        id="email"
-        name="email"
-        [(ngModel)]="email"
-        type="email"
-        placeholder="E-mail"
-        autocomplete="email"
-      />
-
-      <div class="relative w-full">
+    <form
+      class="w-full flex flex-col"
+      id="login-form"
+      name="login"
+      autocomplete="on"
+      (ngSubmit)="onSubmit()"
+    >
+      <div class="flex flex-col gap-8">
         <app-ui-input
-          [type]="showPassword ? 'text' : 'password'"
-          id="password"
-          name="password"
-          [(ngModel)]="password"
-          placeholder="Senha"
-          autocomplete="current-password"
+          id="email"
+          name="email"
+          [(ngModel)]="email"
+          type="email"
+          placeholder="E-mail"
+          autocomplete="username"
+          inputMode="email"
+          [error]="emailError"
         />
-        <button
-          type="button"
-          (click)="togglePasswordVisibility()"
-          class="absolute inset-y-0 right-4 flex items-center text-description/60"
-        >
-          <mat-icon>
-            {{ showPassword ? "visibility_off" : "visibility" }}
-          </mat-icon>
-        </button>
+
+        <div class="relative w-full">
+          <app-ui-input
+            [type]="showPassword ? 'text' : 'password'"
+            id="password"
+            name="password"
+            [(ngModel)]="password"
+            placeholder="Senha"
+            autocomplete="current-password"
+            [error]="passwordError"
+          />
+          <button
+            type="button"
+            (click)="togglePasswordVisibility()"
+            class="absolute inset-y-0 right-4 flex items-center text-description/60"
+          >
+            <mat-icon>
+              {{ showPassword ? "visibility_off" : "visibility" }}
+            </mat-icon>
+          </button>
+        </div>
       </div>
 
       <a
         routerLink="/forgot-password"
-        class="text-sm text-primary self-end hover:underline"
+        class="my-3 text-sm text-primary self-end hover:underline"
       >
         Esqueceu sua senha?
       </a>
 
       <app-button-primary
+        class="mt-3"
         type="submit"
         [loading]="isLoading"
         label="Entrar"
